@@ -2,7 +2,7 @@
 Open Rocket Document Format
 ===========================
 
-.. image:: https://travis-ci.org/natronics/openrocketdoc.svg
+.. image:: https://travis-ci.org/natronics/openrocketdoc.png
     :target: https://travis-ci.org/natronics/openrocketdoc
 
 
