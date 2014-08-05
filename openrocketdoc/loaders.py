@@ -4,6 +4,8 @@
 from __future__ import print_function
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
+import openrocketdoc as rdoc
+
 
 class Openrocket(object):
     """Loader for OpenRocket files.
@@ -18,10 +20,15 @@ class Openrocket(object):
 
     """
 
+    # list of OpenRocket parts we care about
     part_types = [
         'nosecone',
         'bodytube',
         'trapezoidfinset',
+        'masscomponent',
+        'streamer',
+        'centeringring',
+        'engineblock',
     ]
 
     def __init__(self):
@@ -37,6 +44,19 @@ class Openrocket(object):
                 for meta in subcomponent:
                     if meta.tag == 'subcomponents':
                         component['parts'] = [sub for sub in self._subcomponent_walk(meta)]
+                if subcomponent.tag == 'nosecone':
+                    component['data'] = rdoc.Nosecone()
+                    for desc in subcomponent:
+                        if desc.tag == 'name':
+                            component['data'].name = desc.text
+                        if desc.tag == 'length':
+                            component['data'].length = float(desc.text)
+                        if desc.tag == 'shape':
+                            component['data'].shape = desc.text
+                        if desc.tag == 'thickness':
+                            component['data'].thickness = desc.text
+
+                component['data'] = component.get('data', rdoc.Component()).__dict__
                 yield component
             elif subcomponent.tag == 'subcomponents':
                 yield [sub for sub in self._subcomponent_walk(subcomponent)]
@@ -61,7 +81,11 @@ class Openrocket(object):
                     if orkrocket.tag == 'subcomponents':
                         for orkstage in orkrocket:
                             if orkstage.tag == 'stage':
-                                stage = {'parts': [part for part in self._subcomponent_walk(orkstage)]}
+                                name = "stage {0}".format(len(stages))
+                                for _tag in orkstage:
+                                    if _tag.tag == 'name':
+                                        name = _tag.text
+                                stage = {'name': name, 'parts': [part for part in self._subcomponent_walk(orkstage)]}
                             stages.append(stage)
 
         self.rocket = {'name': rocket_name, 'stages': stages}

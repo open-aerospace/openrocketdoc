@@ -23,7 +23,7 @@ class TestLoaders(unittest.TestCase):
         ork = loaders.Openrocket()
         ork.load('tests/data/example_simple_1.ork')
 
-        print(json.dumps(ork.rocket, indent=4, separators=(',', ': ')))
+        #print(json.dumps(ork.rocket, indent=4, separators=(',', ': ')))
 
         # Expected traits for this file:
         self.assertEqual(ork.or_version, '1.4')
