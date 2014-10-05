@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 """
-test_openrocketdoc
+test_document
 ----------------------------------
 
-Tests for `openrocketdoc` module.
+Tests for `document` module.
 """
 
 import unittest
 
-from openrocketdoc import openrocketdoc
+from openrocketdoc import document
 
 
 class TestOpenrocketdoc(unittest.TestCase):

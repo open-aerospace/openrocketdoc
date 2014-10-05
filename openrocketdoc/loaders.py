@@ -4,7 +4,7 @@
 from __future__ import print_function
 from zipfile import ZipFile
 import xml.etree.ElementTree as ET
-import openrocketdoc as rdoc
+import openrocketdoc.document as rdoc
 
 
 class Openrocket(object):
