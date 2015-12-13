@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
@@ -56,7 +55,7 @@ class Openrocket(object):
                         if desc.tag == 'thickness':
                             component['data'].thickness = desc.text
 
-                component['data'] = component.get('data', rdoc.Component()).__dict__
+                component['data'] = component.get('data', rdoc.Component("name")).__dict__
                 yield component
             elif subcomponent.tag == 'subcomponents':
                 yield [sub for sub in self._subcomponent_walk(subcomponent)]

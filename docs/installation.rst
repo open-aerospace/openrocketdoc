@@ -2,11 +2,17 @@
 Installation
 ============
 
-At the command line::
-
-    $ easy_install openrocketdoc
-
-Or, if you have virtualenvwrapper installed::
+If you have virtualenvwrapper installed::
 
     $ mkvirtualenv openrocketdoc
     $ pip install openrocketdoc
+
+
+Install from source
+===================
+
+::
+
+    $ git clone https://github.com/natronics/openrocketdoc.git
+    $ mkvirtualenv openrocketdoc
+    $ python setup.py install
