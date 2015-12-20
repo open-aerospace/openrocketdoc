@@ -44,7 +44,7 @@ class Openrocket(object):
                     if meta.tag == 'subcomponents':
                         component['parts'] = [sub for sub in self._subcomponent_walk(meta)]
                 if subcomponent.tag == 'nosecone':
-                    component['data'] = rdoc.Nosecone()
+                    component['data'] = rdoc.Nosecone("")
                     for desc in subcomponent:
                         if desc.tag == 'name':
                             component['data'].name = desc.text
