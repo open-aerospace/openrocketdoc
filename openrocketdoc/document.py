@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from enum import Enum
+Noseshape = Enum('Noseshape', 'CONE VONKARMAN')
 
 
 class Rocket(object):
