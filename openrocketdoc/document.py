@@ -7,6 +7,10 @@ class Rocket(object):
         self.name = name
         self.stages = []
 
+    @property
+    def mass(self):
+        return sum(stage.mass for stage in self.stages)
+
 
 class Stage(object):
     """One Stage of a Rocket. Contains list of components"""
