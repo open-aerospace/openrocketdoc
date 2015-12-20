@@ -18,6 +18,7 @@ class Stage(object):
     def mass(self):
         return sum(c.mass for c in self.components)
 
+
 class Component(object):
     """A Component is a piece of the rocket like a fin or noesecone."""
 
@@ -38,5 +39,13 @@ class Nosecone(Component):
 
 class Bodytube(Component):
     """docstring for Bodytube"""
+
     def __init__(self, name, **kwargs):
         super(Bodytube, self).__init__(name, **kwargs)
+
+
+class Fin(Component):
+    """A single rocket fin"""
+
+    def __init__(self, **kwargs):
+        super(Fin, self).__init__("Fin", **kwargs)

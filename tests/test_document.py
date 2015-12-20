@@ -35,6 +35,10 @@ class TestOpenrocketdoc(unittest.TestCase):
         ]
         self.assertEqual(24.8, stage0.mass)
 
+    def test_fins(self):
+        fin = document.Fin()
+        self.assertEqual(0, fin.mass)
+
     def tearDown(self):
         pass
 
