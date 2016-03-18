@@ -1,17 +1,27 @@
 # Config file for automatic testing at travis-ci.org
+# This file will be regenerated if you run travis_pypi_setup.py
 
 language: python
+python: 3.5
 
-python:
-  - "3.5"
-  - "3.4"
-  - "3.3"
-  - "2.7"
-  - "2.6"
-  - "pypy"
+env:
+  - TOXENV=py35
+  - TOXENV=py34
+  - TOXENV=py27
+  - TOXENV=pypy
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r requirements.txt
+install: pip install -r requirements_dev.txt
 
 # command to run tests, e.g. python setup.py test
-script: python setup.py test
+script:
+  - tox
+  - cd docs
+  - make html
+
+# Deploy docs to gh-pages
+after_success:
+  - cd docs
+  - make html
+  - cp _config.yml _build/html/
+  - ./deploy.sh
