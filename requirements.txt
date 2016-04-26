@@ -1,2 +1,2 @@
-wheel==0.22.0
-enum34
+enum34==1.1.4
+PyYAML==3.11
