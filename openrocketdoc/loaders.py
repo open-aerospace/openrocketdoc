@@ -6,7 +6,26 @@ import xml.etree.ElementTree as ET
 import openrocketdoc.document as rdoc
 
 
-class RaspEngine(object):
+class FilelikeLoader(object):
+    """Baseclass for classes that will load a file, or file-like object. We
+    test to see if the passed object looks like a filehandle, or just a
+    filename.
+    """
+
+    def load(self, filelike):
+        """Parse the file into a OpenRocketDoc representation.
+
+        :param filelike filelike: File handle or str filename to open and parse
+        """
+
+        if hasattr(filelike, 'read') and hasattr(filelike, 'readlines'):
+            self._load(filelike)
+        else:
+            with open(filelike) as fh:
+                self._load(fh)
+
+
+class RaspEngine(FilelikeLoader):
     """File loader for RASP engine files (.eng)
     """
 
@@ -23,45 +42,44 @@ class RaspEngine(object):
     def __init__(self):
         self.engine = {}
 
-    def load(self, filelike):
+    def _load(self, filehandle):
         comments = ""
-        with open(filelike) as fin:
-            start_data = False  # flag to throw after we finish reading the header
-            for line in fin.readlines():
-                if line[0] == ';':
-                    if not start_data:
-                        comments += line[1:]
+        start_data = False  # flag to throw after we finish reading the header
+        for line in filehandle.readlines():
+            if line[0] == ';':
+                if not start_data:
+                    comments += line[1:]
+            else:
+                if not start_data:
+                    # This is the first data line, has metadata
+
+                    # RASP metadata is space-delimited
+                    fields = line.split(' ')
+
+                    # Fields are positional
+                    for i, definition in enumerate(self.eng_engine_defs):
+                        if definition['type'] is float:
+                            val = float(fields[i])
+                            val = val * definition.get('convert', 1)  # default to 1 if no conversion factor
+                            self.engine[definition['name']] = val
+                        else:
+                            self.engine[definition['name']] = fields[i]
+
+                    # After we read the first data line, know the rest is thrust curve
+                    start_data = True
+                    self.engine["Thrustcurve"] = []
                 else:
-                    if not start_data:
-                        # This is the first data line, has metadata
-
-                        # RASP metadata is space-delimited
+                    # Thrustcuve data:
+                    if any(char.isdigit() for char in line):
                         fields = line.split(' ')
+                        time = float(fields[0].strip())
+                        thrust = float(fields[0].strip())
+                        self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust})
 
-                        # Fields are positional
-                        for i, definition in enumerate(self.eng_engine_defs):
-                            if definition['type'] is float:
-                                val = float(fields[i])
-                                val = val * definition.get('convert', 1)  # default to 1 if no conversion factor
-                                self.engine[definition['name']] = val
-                            else:
-                                self.engine[definition['name']] = fields[i]
-
-                        # After we read the first data line, know the rest is thrust curve
-                        start_data = True
-                        self.engine["Thrustcurve"] = []
-                    else:
-                        # Thrustcuve data:
-                        if any(char.isdigit() for char in line):
-                            fields = line.split(' ')
-                            time = float(fields[0].strip())
-                            thrust = float(fields[0].strip())
-                            self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust})
-
-            self.engine['Comments'] = comments
+        self.engine['Comments'] = comments
 
 
-class RockSimEngine(object):
+class RockSimEngine(FilelikeLoader):
     """File Loader for RockSim engine files (.rse).
 
     RockSim Engine files are XML.
@@ -87,32 +105,31 @@ class RockSimEngine(object):
     def __init__(self):
         self.engine = {}
 
-    def load(self, filelike):
-        with open(filelike) as fin:
-            root = ET.fromstring(fin.read())
-            engine = root[0][0]
+    def _load(self, filehandle):
+        root = ET.fromstring(filehandle.read())
+        engine = root[0][0]
 
-            for definition in self.rse_engine_defs:
-                if definition['type'] is float:
-                    # grab number out of XML
-                    val = float(engine.get(definition['key']))
-                    # convert to MKS
-                    val = val * definition.get('convert', 1)  # default to 1 for no conversion factor
-                    self.engine[definition['name']] = val
-                else:
-                    self.engine[definition['name']] = engine.get(definition['key'])
+        for definition in self.rse_engine_defs:
+            if definition['type'] is float:
+                # grab number out of XML
+                val = float(engine.get(definition['key']))
+                # convert to MKS
+                val = val * definition.get('convert', 1)  # default to 1 for no conversion factor
+                self.engine[definition['name']] = val
+            else:
+                self.engine[definition['name']] = engine.get(definition['key'])
 
-            for element in engine:
-                if element.tag == "comments":
-                    self.engine["Comments"] = element.text
-                if element.tag == "data":
-                    self.engine["Thrustcurve"] = []
-                    for datapoint in element:
-                        time = float(datapoint.get('t'))
-                        thrust = float(datapoint.get('f'))
-                        mass = float(datapoint.get('m')) / 1000.0  # convert to kilograms
-                        cg = float(datapoint.get('cg')) / 1000.0  # convert to meters
-                        self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
+        for element in engine:
+            if element.tag == "comments":
+                self.engine["Comments"] = element.text
+            if element.tag == "data":
+                self.engine["Thrustcurve"] = []
+                for datapoint in element:
+                    time = float(datapoint.get('t'))
+                    thrust = float(datapoint.get('f'))
+                    mass = float(datapoint.get('m')) / 1000.0  # convert to kilograms
+                    cg = float(datapoint.get('cg')) / 1000.0  # convert to meters
+                    self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
 
 
 class Openrocket(object):
