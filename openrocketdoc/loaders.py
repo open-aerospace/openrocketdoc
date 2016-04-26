@@ -42,7 +42,7 @@ class RockSimEngine(object):
                     # grab number out of XML
                     val = float(engine.get(definition['key']))
                     # convert to MKS
-                    val = val * definition.get('convert', 1) # default to 1 for no conversion factor
+                    val = val * definition.get('convert', 1)  # default to 1 for no conversion factor
                     self.engine[definition['name']] = val
                 else:
                     self.engine[definition['name']] = engine.get(definition['key'])

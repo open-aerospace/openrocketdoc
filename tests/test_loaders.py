@@ -10,7 +10,7 @@ Tests for `loaders` module.
 
 from __future__ import print_function
 import unittest
-import json
+# import json
 from openrocketdoc import loaders
 
 
@@ -49,10 +49,11 @@ class TestLoaders(unittest.TestCase):
         self.assertAlmostEqual(rse.engine['Peak thrust'], 28.22)
         self.assertAlmostEqual(rse.engine['Mass fraction'], 48.39)
 
-        #print(json.dumps(rse.engine, indent=4, separators=(',', ': ')))
+        # print(json.dumps(rse.engine, indent=4, separators=(',', ': ')))
 
     def tearDown(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()
