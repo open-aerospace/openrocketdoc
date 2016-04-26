@@ -6,6 +6,61 @@ import xml.etree.ElementTree as ET
 import openrocketdoc.document as rdoc
 
 
+class RaspEngine(object):
+    """File loader for RASP engine files (.eng)
+    """
+
+    eng_engine_defs = [
+        {'name': u"Name", 'type': str},
+        {'name': u"Diameter", 'type': float, 'convert': 1e-3},
+        {'name': u"Length", 'type': float, 'convert': 1e-3},
+        {'name': u"Delays", 'type': str},
+        {'name': u"Propellent weight", 'type': float},
+        {'name': u"Initial weight", 'type': float},
+        {'name': u"Manufacturer", 'type': str},
+    ]
+
+    def __init__(self):
+        self.engine = {}
+
+    def load(self, filelike):
+        comments = ""
+        with open(filelike) as fin:
+            start_data = False  # flag to throw after we finish reading the header
+            for line in fin.readlines():
+                if line[0] == ';':
+                    if not start_data:
+                        comments += line[1:]
+                else:
+                    if not start_data:
+                        # This is the first data line, has metadata
+
+                        # RASP metadata is space-delimited
+                        fields = line.split(' ')
+
+                        # Fields are positional
+                        for i, definition in enumerate(self.eng_engine_defs):
+                            if definition['type'] is float:
+                                val = float(fields[i])
+                                val = val * definition.get('convert', 1)  # default to 1 if no conversion factor
+                                self.engine[definition['name']] = val
+                            else:
+                                self.engine[definition['name']] = fields[i]
+
+                        # After we read the first data line, know the rest is thrust curve
+                        start_data = True
+                        self.engine["Thrustcurve"] = []
+                    else:
+                        # Thrustcuve data:
+                        if any(char.isdigit() for char in line):
+                            fields = line.split(' ')
+                            time = float(fields[0].strip())
+                            thrust = float(fields[0].strip())
+                            self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust})
+
+            self.engine['Comments'] = comments
+
+
 class RockSimEngine(object):
     """File Loader for RockSim engine files (.rse).
 
@@ -20,11 +75,11 @@ class RockSimEngine(object):
         {'name': u"Name", 'key': 'code', 'type': str},
         {'name': u"Diameter", 'key': 'dia', 'type': float, 'convert': 1e-3},
         {'name': u"Exit diameter", 'key': 'exitDia', 'type': float, 'convert': 1e-3},
-        {'name': u"Inital Weight", 'key': 'initWt', 'type': float, 'convert': 1e-3},
+        {'name': u"Initial Weight", 'key': 'initWt', 'type': float, 'convert': 1e-3},
         {'name': u"Mass fraction", 'key': 'massFrac', 'type': float},
-        {'name': u"Manafacturer", 'key': 'mfg', 'type': str},
+        {'name': u"Manufacturer", 'key': 'mfg', 'type': str},
         {'name': u"Peak thrust", 'key': 'peakThrust', 'type': float},
-        {'name': u"Thoat diameter", 'key': 'throatDia', 'type': float, 'convert': 1e-3},
+        {'name': u"Throat diameter", 'key': 'throatDia', 'type': float, 'convert': 1e-3},
         {'name': u"Propellent weight", 'key': 'propWt', 'type': float, 'convert': 1e-3},
         {'name': u"Length", 'key': 'len', 'type': float, 'convert': 1e-3},
     ]
