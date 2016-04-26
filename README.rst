@@ -8,6 +8,9 @@ Open Rocket Document Format
 .. image:: https://travis-ci.org/open-aerospace/openrocketdoc.svg?branch=master
     :target: https://travis-ci.org/open-aerospace/openrocketdoc
 
+.. image:: https://coveralls.io/repos/github/open-aerospace/openrocketdoc/badge.svg?branch=master
+        :target: https://coveralls.io/github/open-aerospace/openrocketdoc?branch=master
+
 *Open Rocket Document* (.ord) is a suggested open document standard for
 describing sounding rockets. Includes many useful format transformations for
 use with scientific computing packages.
