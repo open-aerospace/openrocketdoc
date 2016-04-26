@@ -6,6 +6,60 @@ import xml.etree.ElementTree as ET
 import openrocketdoc.document as rdoc
 
 
+class RockSimEngine(object):
+    """File Loader for RockSim engine files (.rse).
+
+    RockSim Engine files are XML.
+    """
+
+    rse_engine_defs = [
+        {'name': u"Isp", 'key': 'Isp', 'type': float},
+        {'name': u"Total impulse", 'key': 'Itot', 'type': float},
+        {'name': u"Average thrust", 'key': 'avgThrust', 'type': float},
+        {'name': u"Burn time", 'key': 'burn-time', 'type': float},
+        {'name': u"Name", 'key': 'code', 'type': str},
+        {'name': u"Diameter", 'key': 'dia', 'type': float, 'convert': 1e-3},
+        {'name': u"Exit diameter", 'key': 'exitDia', 'type': float, 'convert': 1e-3},
+        {'name': u"Inital Weight", 'key': 'initWt', 'type': float, 'convert': 1e-3},
+        {'name': u"Mass fraction", 'key': 'massFrac', 'type': float},
+        {'name': u"Manafacturer", 'key': 'mfg', 'type': str},
+        {'name': u"Peak thrust", 'key': 'peakThrust', 'type': float},
+        {'name': u"Thoat diameter", 'key': 'throatDia', 'type': float, 'convert': 1e-3},
+        {'name': u"Propellent weight", 'key': 'propWt', 'type': float, 'convert': 1e-3},
+        {'name': u"Length", 'key': 'len', 'type': float, 'convert': 1e-3},
+    ]
+
+    def __init__(self):
+        self.engine = {}
+
+    def load(self, filelike):
+        with open(filelike) as fin:
+            root = ET.fromstring(fin.read())
+            engine = root[0][0]
+
+            for definition in self.rse_engine_defs:
+                if definition['type'] is float:
+                    # grab number out of XML
+                    val = float(engine.get(definition['key']))
+                    # convert to MKS
+                    val = val * definition.get('convert', 1) # default to 1 for no conversion factor
+                    self.engine[definition['name']] = val
+                else:
+                    self.engine[definition['name']] = engine.get(definition['key'])
+
+            for element in engine:
+                if element.tag == "comments":
+                    self.engine["Comments"] = element.text
+                if element.tag == "data":
+                    self.engine["Thrustcurve"] = []
+                    for datapoint in element:
+                        time = float(datapoint.get('t'))
+                        thrust = float(datapoint.get('f'))
+                        mass = float(datapoint.get('m')) / 1000.0  # convert to kilograms
+                        cg = float(datapoint.get('cg')) / 1000.0  # convert to meters
+                        self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
+
+
 class Openrocket(object):
     """Loader for OpenRocket files.
 
