@@ -4,24 +4,23 @@
 language: python
 python: 3.5
 
-env:
-  - TOXENV=py35
-  - TOXENV=py34
-  - TOXENV=py27
-  - TOXENV=pypy
-
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
-install: pip install -r requirements_dev.txt
+install:
+ - pip install -r requirements_dev.txt --use-mirrors
 
 # command to run tests, e.g. python setup.py test
 script:
   - tox
+  - coverage run --source=openrocketdoc setup.py test
   - cd docs
   - make html
+  - cd ..
 
 # Deploy docs to gh-pages
 after_success:
+  - coveralls
   - cd docs
   - make html
   - cp _config.yml _build/html/
+  - x=$(for i in `git log --all --pretty=format:{\"hash\":\ \"%h\"\,\ \"time\":\"%ad\"},`; do echo -n "${i} "; done| sed 's/, $//') ; echo "["$x"]" > _build/html/git.json
   - ./deploy.sh
