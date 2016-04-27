@@ -73,3 +73,39 @@ class Fin(Component):
 
     def __init__(self, **kwargs):
         super(Fin, self).__init__("Fin", **kwargs)
+
+
+class Engine(object):
+    """The rocket part"""
+
+    def __init__(self, name):
+        self.name = name
+        self.manufacturer = ""
+        self.throat_diameter = 0
+
+        self._Isp = None
+        self._length = None
+        self._diameter = None
+        self._I_total = None
+        self._thrust_avg = None
+        self._thrust_peak = None
+        self._t_burn = None
+        self._mass_frac = None
+        self._m_fuel = None
+        self._m_ox = None
+
+        self.tanks = []
+        self.thrustcurve = []
+
+    def get_length(self):
+        if self._length is not None:
+            return self._length
+
+        # if no length is set directly, report it being the length of the system
+        l = sum([tank.length for tank in self.tanks])
+        return l
+
+    def set_length(self, l):
+        self._length = l
+
+    length = property(get_length, set_length)

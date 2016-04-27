@@ -57,6 +57,24 @@ class TestOpenrocketdoc(unittest.TestCase):
         fin = document.Fin()
         self.assertEqual(0, fin.mass)
 
+    def test_engine_length(self):
+        engine = document.Engine("test")
+
+        # length not set
+        self.assertEqual(engine.length, 0)
+
+        # set directly
+        engine.length = 25.4
+        self.assertEqual(engine.length, 25.4)
+
+    def test_engine_name(self):
+        engine = document.Engine("test Name")
+        self.assertEqual(engine.name, "test Name")
+        self.assertEqual(engine.manufacturer, "")
+
+        engine.manufacturer = "python"
+        self.assertEqual(engine.manufacturer, "python")
+
     def tearDown(self):
         pass
 
