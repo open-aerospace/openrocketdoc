@@ -29,18 +29,8 @@ class RaspEngine(FilelikeLoader):
     """File loader for RASP engine files (.eng)
     """
 
-    eng_engine_defs = [
-        {'name': u"Name", 'type': str},
-        {'name': u"Diameter", 'type': float, 'convert': 1e-3},
-        {'name': u"Length", 'type': float, 'convert': 1e-3},
-        {'name': u"Delays", 'type': str},
-        {'name': u"Propellent weight", 'type': float},
-        {'name': u"Initial weight", 'type': float},
-        {'name': u"Manufacturer", 'type': str},
-    ]
-
     def __init__(self):
-        self.engine = {}
+        self.engine = rdoc.Engine("Imported RASP Egine")
 
     def _load(self, filehandle):
         comments = ""
@@ -53,30 +43,33 @@ class RaspEngine(FilelikeLoader):
                 if not start_data:
                     # This is the first data line, has metadata
 
-                    # RASP metadata is space-delimited
+                    # RASP engine data is space-delimited
                     fields = line.split(' ')
 
                     # Fields are positional
-                    for i, definition in enumerate(self.eng_engine_defs):
-                        if definition['type'] is float:
-                            val = float(fields[i])
-                            val = val * definition.get('convert', 1)  # default to 1 if no conversion factor
-                            self.engine[definition['name']] = val
-                        else:
-                            self.engine[definition['name']] = fields[i]
+                    self.engine.name = fields[0]
+                    self.engine.manufacturer = fields[6].strip()
+                    self.engine.m_prop = float(fields[4])
+
+                    # build a "tank" the size of the solid motor
+                    self.engine.tanks.append({
+                        "mass": float(fields[5]) - float(fields[4]),  # initial weight - propellent weight
+                        "length": float(fields[2]) / 1000.0,          # convert to meters
+                        "diameter": float(fields[1]) / 1000.0,        # convert to meters
+                    })
 
                     # After we read the first data line, know the rest is thrust curve
                     start_data = True
-                    self.engine["Thrustcurve"] = []
                 else:
                     # Thrustcuve data:
                     if any(char.isdigit() for char in line):
                         fields = line.split(' ')
                         time = float(fields[0].strip())
-                        thrust = float(fields[0].strip())
-                        self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust})
+                        thrust = float(fields[1].strip())
+                        self.engine.thrustcurve.append({'t': time, 'thrust': thrust})
 
-        self.engine['Comments'] = comments
+        self.engine.comments = comments
+        return self.engine
 
 
 class RockSimEngine(FilelikeLoader):
