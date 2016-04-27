@@ -22,7 +22,7 @@ class FilelikeLoader(object):
             self._load(filelike)
         else:
             with open(filelike) as fh:
-                self._load(fh)
+                return self._load(fh)
 
 
 class RaspEngine(FilelikeLoader):
@@ -93,7 +93,7 @@ class RockSimEngine(FilelikeLoader):
         {'name': u"Name", 'key': 'code', 'type': str},
         {'name': u"Diameter", 'key': 'dia', 'type': float, 'convert': 1e-3},
         {'name': u"Exit diameter", 'key': 'exitDia', 'type': float, 'convert': 1e-3},
-        {'name': u"Initial Weight", 'key': 'initWt', 'type': float, 'convert': 1e-3},
+        {'name': u"Initial weight", 'key': 'initWt', 'type': float, 'convert': 1e-3},
         {'name': u"Mass fraction", 'key': 'massFrac', 'type': float},
         {'name': u"Manufacturer", 'key': 'mfg', 'type': str},
         {'name': u"Peak thrust", 'key': 'peakThrust', 'type': float},
@@ -103,33 +103,49 @@ class RockSimEngine(FilelikeLoader):
     ]
 
     def __init__(self):
-        self.engine = {}
+        self.engine = rdoc.Engine("Imported RockSim Engine")
 
     def _load(self, filehandle):
         root = ET.fromstring(filehandle.read())
-        engine = root[0][0]
+        rse = root[0][0]
+        rse_dict = {}
 
         for definition in self.rse_engine_defs:
             if definition['type'] is float:
                 # grab number out of XML
-                val = float(engine.get(definition['key']))
+                val = float(rse.get(definition['key']))
                 # convert to MKS
                 val = val * definition.get('convert', 1)  # default to 1 for no conversion factor
-                self.engine[definition['name']] = val
+                rse_dict[definition['name']] = val
             else:
-                self.engine[definition['name']] = engine.get(definition['key'])
+                rse_dict[definition['name']] = rse.get(definition['key'])
 
-        for element in engine:
+        # Build rdoc engine from rse defs
+        self.engine.name = rse_dict["Name"]
+        self.engine.manufacturer = rse_dict["Manufacturer"]
+
+        # we don't know the mixture ratio, just set total propellent mass directly
+        self.engine.m_prop = rse_dict["Propellent weight"]
+
+        # Assuming simple solid motor, there is one "tank", it's the casing.
+        self.engine.tanks.append({
+            "mass": rse_dict["Initial weight"] - rse_dict["Propellent weight"],
+            "length": rse_dict["Length"],
+            "diameter": rse_dict["Diameter"],
+        })
+
+        for element in rse:
             if element.tag == "comments":
-                self.engine["Comments"] = element.text
+                self.engine.comments = element.text
             if element.tag == "data":
-                self.engine["Thrustcurve"] = []
                 for datapoint in element:
                     time = float(datapoint.get('t'))
                     thrust = float(datapoint.get('f'))
                     mass = float(datapoint.get('m')) / 1000.0  # convert to kilograms
                     cg = float(datapoint.get('cg')) / 1000.0  # convert to meters
-                    self.engine["Thrustcurve"].append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
+                    self.engine.thrustcurve.append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
+
+        return self.engine
 
 
 class Openrocket(object):

@@ -31,25 +31,24 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(len(ork.rocket['stages']), 1)
 
     def test_read_RockSimEng(self):
-        rse = loaders.RockSimEngine()
-        rse.load('tests/data/motor_f10.rse')
-
-        # print(json.dumps(rse.engine, indent=4, separators=(',', ': ')))
+        rse_loader = loaders.RockSimEngine()
+        rse = rse_loader.load('tests/data/motor_f10.rse')
 
         # Some expected traits for this file
-        self.assertEqual(rse.engine['Name'], "F10")
-        self.assertEqual(rse.engine['Manufacturer'], "Apogee")
-        self.assertEqual(len(rse.engine['Thrustcurve']), 28)
-        self.assertAlmostEqual(rse.engine['Average thrust'], 10.706)
-        self.assertAlmostEqual(rse.engine['Burn time'], 7.13)
-        self.assertAlmostEqual(rse.engine['Propellent weight'], 0.0407)
-        self.assertAlmostEqual(rse.engine['Initial Weight'], 0.0841)
-        self.assertAlmostEqual(rse.engine['Diameter'], 0.029)
-        self.assertAlmostEqual(rse.engine['Total impulse'], 76.335)
-        self.assertAlmostEqual(rse.engine['Isp'], 191.25)
-        self.assertAlmostEqual(rse.engine['Length'], 0.093)
-        self.assertAlmostEqual(rse.engine['Peak thrust'], 28.22)
-        self.assertAlmostEqual(rse.engine['Mass fraction'], 48.39)
+        self.assertEqual(rse.name, "F10")
+        self.assertEqual(rse.manufacturer, "Apogee")
+        self.assertEqual(len(rse.thrustcurve), 28)
+        self.assertAlmostEqual(rse.thrust_avg, 10.706, places=3)
+        self.assertAlmostEqual(rse.I_total, 76.335, places=3)
+        self.assertAlmostEqual(rse.t_burn, 7.13)
+        self.assertAlmostEqual(rse.m_prop, 0.0407)
+        self.assertAlmostEqual(rse.m_init, 0.0841)
+        self.assertAlmostEqual(rse.diameter, 0.029)
+        self.assertAlmostEqual(rse.I_total, 76.335, places=3)
+        self.assertAlmostEqual(rse.Isp, 191.25, places=2)
+        self.assertAlmostEqual(rse.length, 0.093)
+        self.assertAlmostEqual(rse.thrust_peak, 28.22)
+        self.assertAlmostEqual(rse.m_frac, 48.39, places=2)
 
     def test_read_RaspEng(self):
         eng = loaders.RaspEngine()
