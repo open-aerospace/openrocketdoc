@@ -20,10 +20,41 @@ class TestWriters(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_write_raspengine(self):
+    def test_write_blank_raspengine(self):
         engine = rdoc.Engine("test engine")
+        str_file = writers.RaspEngine().dump(engine)
 
-        self.assertEqual(engine.name, "test engine")
+        # smoketest
+        self.assertGreater(len(str_file), 10)
+
+    def test_write_simple_raspengine(self):
+        engine = rdoc.Engine("test engine")
+        engine.manufacturer = "Open Aerospace"
+        engine.length = 0.1
+        engine.diameter = 0.2
+        engine.Isp = 169
+        engine.m_prop = 1.0
+        engine.thrust_avg = 1000
+        str_file = writers.RaspEngine().dump(engine)
+
+        # smoke test
+        self.assertGreater(len(str_file), 10)
+
+        # re-read into loader, it should still parse
+        eng_loader = loaders.RaspEngine()
+        reloaded_motor = eng_loader.load(str_file)
+        self.assertGreater(len(reloaded_motor.comments), 0)
+        self.assertEqual(reloaded_motor.name, "test-engine")
+        self.assertEqual(reloaded_motor.manufacturer, "Open-Aerospace")
+        self.assertAlmostEqual(reloaded_motor.diameter, 0.2)
+        self.assertAlmostEqual(reloaded_motor.length, 0.1)
+        self.assertAlmostEqual(reloaded_motor.m_prop, 1.0)
+        self.assertAlmostEqual(reloaded_motor.m_init, 1.0)
+        self.assertAlmostEqual(reloaded_motor.thrust_avg, 1000.0, places=1)
+        self.assertAlmostEqual(reloaded_motor.I_total, 1105.0, places=0)
+        self.assertAlmostEqual(reloaded_motor.t_burn, 1.105)
+        self.assertAlmostEqual(reloaded_motor.thrust_peak, 1000.0)
+        self.assertAlmostEqual(reloaded_motor.m_frac, 100.00, places=2)
 
     def test_rewrite_raspengine(self):
         eng_loader = loaders.RaspEngine()

@@ -112,6 +112,20 @@ class Engine(object):
     def __repr__(self):
         return '<openrocketdoc.document.Engine "%s">' % self.name
 
+    def thrust(self, t):
+        if not self.thrustcurve:
+            return self.thrust_avg
+
+    def make_thrustcurve(self, points=3):
+        tc = []
+        if not self.thrustcurve:
+            t_inc = self.t_burn / float(points)
+            for i in range(points):
+                t = i * t_inc
+                tc.append({'t': t, 'thrust': self.thrust(0)})
+
+        return tc
+
     def get_length(self):
         if self._length is not None:
             return self._length
@@ -136,7 +150,11 @@ class Engine(object):
         self._diameter = val
 
     def get_isp(self):
-        return self.I_total/(self.m_prop * 9.80665)
+        if self._Isp is not None:
+            return self._Isp
+        if self.m_prop > 0:
+            return self.I_total/(self.m_prop * 9.80665)
+        return 0
 
     def set_isp(self, val):
         self._Isp = val
@@ -160,7 +178,7 @@ class Engine(object):
         # if we know the burntime and total impulse then we can compute
         # otherwise return the value stored in _thrust_avg
         # other-otherwise give up (return 0)
-        if self.t_burn <= 0:
+        if not self.thrustcurve:
             if self._thrust_avg is not None:
                 return self._thrust_avg
             return 0
@@ -183,9 +201,13 @@ class Engine(object):
                 itot += (x_1 - x) * (f_x1 + f_x)
             return itot / 2.0
 
-        # else try the override value, else give up (return 0)
+        # else try the override value
         if self._I_total is not None:
             return self._I_total
+
+        # compute from ISP and mass
+        if self._Isp is not None:
+            return self.m_prop * self.V_e
         return 0
 
     def set_I_total(self, val):
@@ -195,6 +217,12 @@ class Engine(object):
         # if we have a thrust curve, compute directly
         if self.thrustcurve:
             return self.thrustcurve[-1]['t']
+
+        # compute from average thrust, ISP and mass
+        if self.V_e > 0:
+            mdot = self.thrust_avg / (self.V_e)
+            return self.m_prop / mdot
+
         # else try the override value, else give up (return 0)
         if self._t_burn is not None:
             return self._t_burn
@@ -220,6 +248,12 @@ class Engine(object):
     def set_m_frac(self, val):
         self._m_frac = val
 
+    def get_ve(self):
+        return self.Isp * 9.80665
+
+    def set_ve(self, val):
+        self._Isp = val / 9.80665
+
     length = property(get_length, set_length)
     diameter = property(get_diameter, set_diameter)
     Isp = property(get_isp, set_isp)
@@ -229,6 +263,7 @@ class Engine(object):
     t_burn = property(get_t_burn, set_t_burn)
     thrust_peak = property(get_thrust_peak, set_thrust_peak)
     m_frac = property(get_m_frac, set_m_frac)
+    V_e = property(get_ve, set_ve)
 
     @property
     def m_init(self):
