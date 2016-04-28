@@ -18,11 +18,20 @@ class FilelikeLoader(object):
         :param filelike filelike: File handle or str filename to open and parse
         """
 
-        if hasattr(filelike, 'read') and hasattr(filelike, 'readlines'):
-            self._load(filelike)
+        if hasattr(filelike, 'read'):
+            # it's probably a file handler, or something like that
+            return self._load(filelike.read())
+        elif type(filelike) is str and len(filelike) > 255:
+            # it's maybe a str containing the file contents?
+            return self._load(filelike)
         else:
-            with open(filelike) as fh:
-                return self._load(fh)
+            # maybe a filename?
+            try:
+                with open(filelike, 'r') as fh:
+                    return self._load(fh.read())
+            except IOError:
+                # or not
+                return self._load(filelike)
 
 
 class RaspEngine(FilelikeLoader):
@@ -32,13 +41,15 @@ class RaspEngine(FilelikeLoader):
     def __init__(self):
         self.engine = rdoc.Engine("Imported RASP Egine")
 
-    def _load(self, filehandle):
+    def _load(self, file_str):
         comments = ""
         start_data = False  # flag to throw after we finish reading the header
-        for line in filehandle.readlines():
+        for line in file_str.split('\n'):
+            if len(line) < 1:
+                continue  # blank line
             if line[0] == ';':
                 if not start_data:
-                    comments += line[1:]
+                    comments += line[1:] + "\n"
             else:
                 if not start_data:
                     # This is the first data line, has metadata
@@ -98,8 +109,8 @@ class RockSimEngine(FilelikeLoader):
     def __init__(self):
         self.engine = rdoc.Engine("Imported RockSim Engine")
 
-    def _load(self, filehandle):
-        root = ET.fromstring(filehandle.read())
+    def _load(self, filestr):
+        root = ET.fromstring(filestr)
         rse = root[0][0]
         rse_dict = {}
 
