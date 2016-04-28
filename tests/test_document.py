@@ -75,6 +75,34 @@ class TestOpenrocketdoc(unittest.TestCase):
         engine.manufacturer = "python"
         self.assertEqual(engine.manufacturer, "python")
 
+    def test_engine_isp(self):
+        engine = document.Engine("test Name")
+
+        self.assertEqual(engine.Isp, 0)
+
+        engine.Isp = 169
+        self.assertAlmostEqual(engine.Isp, 169)
+
+    def test_engine_Itot(self):
+        engine = document.Engine("test Name")
+
+        self.assertEqual(engine.I_total, 0)
+
+        engine.thrustcurve.append({'t': 0, 'thrust': 500})
+        engine.thrustcurve.append({'t': 1, 'thrust': 500})
+
+        self.assertAlmostEqual(engine.I_total, 500)
+
+    def test_engine_avgthrust(self):
+        engine = document.Engine("test Name")
+
+        self.assertEqual(engine.thrust_avg, 0)
+
+        engine.thrustcurve.append({'t': 0, 'thrust': 500})
+        engine.thrustcurve.append({'t': 1, 'thrust': 500})
+
+        self.assertAlmostEqual(engine.thrust_avg, 500)
+
     def tearDown(self):
         pass
 
