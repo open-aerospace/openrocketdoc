@@ -20,6 +20,21 @@ class TestWriters(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_write_document_smoke(self):
+        rocket = rdoc.Rocket("Rocket")
+        stage0 = rdoc.Stage("Sustainer")
+        stage0.components = [
+            rdoc.Nosecone(rdoc.Noseshape.VONKARMAN),
+            rdoc.Bodytube("body"),
+        ]
+        rocket.stages = [stage0]
+        str_file = writers.Document().dump(rocket)
+
+        # print("Output:")
+        # print(str_file)
+
+        self.assertGreater(len(str_file), 10)
+
     def test_write_blank_raspEngine(self):
         engine = rdoc.Engine("test engine")
         str_file = writers.RaspEngine().dump(engine)

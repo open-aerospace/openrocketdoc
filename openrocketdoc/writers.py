@@ -1,8 +1,47 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+from openrocketdoc import document as rdoc
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
+from yaml import dump as yamldump
+
+
+class Document(object):
+    """Write Open Rocket Doc
+    """
+
+    def __init__(self):
+        pass
+
+    def dump(self, ordoc):
+        """Return a string yaml formated native Open Rocket Doc
+        """
+
+        # We want some control over what is printed
+        # (not a naive dump of everything in every object)
+        # So we build a dictionary first
+
+        doc = {}
+
+        # rocket top level
+        if type(ordoc) is rdoc.Rocket:
+            doc['rocket'] = {'name': ordoc.name}
+            doc['rocket']['stages'] = []
+            for stage in ordoc.stages:
+                s = {'name': stage.name}
+                s['components'] = []
+                for component in stage.components:
+                    c = {'name': component.name}
+                    c['type'] = component.__class__.__name__
+                    c['length'] = component.length
+                    if type(component) is rdoc.Nosecone:
+                        c['shape'] = component.shape.name
+
+                    s['components'].append(c)
+                doc['rocket']['stages'].append(s)
+
+        return yamldump(doc, default_flow_style=False)
 
 
 class RaspEngine(object):
