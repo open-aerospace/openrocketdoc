@@ -145,8 +145,8 @@ class RockSimEngine(FilelikeLoader):
                 for datapoint in element:
                     time = float(datapoint.get('t'))
                     thrust = float(datapoint.get('f'))
-                    mass = float(datapoint.get('m')) / 1000.0  # convert to kilograms
-                    cg = float(datapoint.get('cg')) / 1000.0  # convert to meters
+                    mass = float(datapoint.get('m', 0)) / 1000.0  # convert to kilograms
+                    cg = float(datapoint.get('cg', 0)) / 1000.0  # convert to meters
                     self.engine.thrustcurve.append({'t': time, 'thrust': thrust, 'mass': mass, 'cg': cg})
 
         return self.engine

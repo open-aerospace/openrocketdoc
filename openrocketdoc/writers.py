@@ -1,16 +1,26 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
+import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
 
 
 class RaspEngine(object):
     """Write a RASP engine file format
+
+    Members:
     """
 
     def __init__(self):
         pass
 
     def dump(self, engine):
+        """Return a str of the file output
+
+        :param openrocketdoc.document.Engine engine: The OpenRocketDoc engine to write
+        :returns: (str) formated file
+
+        """
 
         # comments
         doc = ";"
@@ -36,3 +46,71 @@ class RaspEngine(object):
             doc += "%0.3f %0.3f\n" % (element['t'], element['thrust'])
 
         return doc
+
+
+class RockSimEngine(object):
+    """RockSim Engine file format writter
+    """
+
+    def __init__(self):
+        pass
+
+    def dump(self, engine):
+        """Return a str of the file
+
+        :param openrocketdoc.document.Engine engine: The OpenRocketDoc engine to write
+        :returns: (str) formated file
+        """
+
+        doc = ET.Element('engine-database')
+
+        eng_list = ET.SubElement(doc, 'engine-list')
+
+        # Engine metadata
+        eng = ET.SubElement(eng_list, 'engine')
+        eng.attrib['code'] = engine.name
+        eng.attrib['mfg'] = engine.manufacturer
+        eng.attrib['len'] = "%0.0f" % (engine.length * 1000.0)     # to mm
+        eng.attrib['dia'] = "%0.0f" % (engine.diameter * 1000.0)   # to mm
+        eng.attrib['Isp'] = "%0.1f" % engine.Isp
+        eng.attrib['Itot'] = "%0.3f" % engine.I_total
+        eng.attrib['avgThrust'] = "%0.1f" % engine.thrust_avg
+        eng.attrib['peakThrust'] = "%0.1f" % engine.thrust_peak
+        eng.attrib['burn-time'] = "%0.2f" % engine.t_burn
+        eng.attrib['initWt'] = "%0.1f" % (engine.m_init * 1000.0)  # to g
+        eng.attrib['propWt'] = "%0.1f" % (engine.m_prop * 1000.0)  # to g
+        eng.attrib['massFrac'] = "%0.0f" % engine.m_frac
+
+        # TODO: Needs adding
+        eng.attrib['exitDia'] = "%0.2f" % 0
+        eng.attrib['throatDia'] = "0."
+        eng.attrib['Type'] = "single-use"
+        eng.attrib['delays'] = "2,4,6,8"
+        eng.attrib['auto-calc-cg'] = "1"
+        eng.attrib['auto-calc-mass'] = "1"
+        eng.attrib['tDiv'] = "10"
+        eng.attrib['tFix'] = "1"
+        eng.attrib['tStep'] = "-1."
+        eng.attrib['FDiv'] = "10"
+        eng.attrib['FFix'] = "1"
+        eng.attrib['FStep'] = "-1."
+        eng.attrib['cgDiv'] = "10"
+        eng.attrib['cgFix'] = "1"
+        eng.attrib['cgStep'] = "-1."
+        eng.attrib['mDiv'] = "10"
+        eng.attrib['mFix'] = "1"
+        eng.attrib['mStep'] = "-1."
+
+        comments = ET.SubElement(eng, 'comments')
+        comments.text = engine.comments
+
+        data = ET.SubElement(eng, 'data')
+
+        for element in engine.make_thrustcurve():
+            eng_data = ET.SubElement(data, 'eng-data')
+            eng_data.attrib['t'] = "%0.5f" % element['t']
+            eng_data.attrib['f'] = "%0.5f" % element['thrust']
+
+        # pretty print
+        xmldoc = minidom.parseString(ET.tostring(doc, encoding="UTF-8"))
+        return xmldoc.toprettyxml(indent="  ")

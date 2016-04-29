@@ -123,7 +123,8 @@ class Engine(object):
             for i in range(points):
                 t = i * t_inc
                 tc.append({'t': t, 'thrust': self.thrust(0)})
-
+        else:
+            tc = self.thrustcurve
         return tc
 
     def get_length(self):
@@ -243,7 +244,9 @@ class Engine(object):
         self._thrust_peak = val
 
     def get_m_frac(self):
-        return (self.m_prop / self.m_init) * 100.0
+        if self.m_init > 0:
+            return (self.m_prop / self.m_init) * 100.0
+        return 0
 
     def set_m_frac(self, val):
         self._m_frac = val
