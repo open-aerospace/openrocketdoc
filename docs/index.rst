@@ -16,6 +16,7 @@ Contents:
    usage
    document
    loaders
+   writers
    contributing
    authors
    history

@@ -32,3 +32,12 @@ Nosecone
 .. autoclass:: openrocketdoc.document.Nosecone
     :members:
     :inherited-members:
+
+Engine
+======
+
+.. autoclass:: openrocketdoc.document.Engine
+    :members:
+    :inherited-members:
+
+
