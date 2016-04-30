@@ -35,6 +35,16 @@ class TestWriters(unittest.TestCase):
 
         self.assertGreater(len(str_file), 10)
 
+    def test_convert_ork(self):
+        ork = loaders.Openrocket()
+        rocket = ork.load('tests/data/example_simple_1.ork')
+        str_file = writers.Document().dump(rocket)
+
+        # print("Output:")
+        # print(str_file)
+
+        self.assertGreater(len(str_file), 10)
+
     def test_write_blank_raspEngine(self):
         engine = rdoc.Engine("test engine")
         str_file = writers.RaspEngine().dump(engine)

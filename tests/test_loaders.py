@@ -19,13 +19,15 @@ class TestLoaders(unittest.TestCase):
         pass
 
     def test_read_openrocket_14_zip(self):
-        ork = loaders.Openrocket()
-        ork.load('tests/data/example_simple_1.ork')
+        ork = loaders.Openrocket().load('tests/data/example_simple_1.ork')
 
         # Expected traits for this file:
-        self.assertEqual(ork.or_version, '1.4')
-        self.assertEqual(ork.rocket['name'], 'Rocket')
-        self.assertEqual(len(ork.rocket['stages']), 1)
+        self.assertEqual(ork.name, 'Rocket')
+        self.assertEqual(len(ork.stages), 1)
+        self.assertEqual(ork.stages[0].name, "Sustainer")
+        self.assertEqual(ork.stages[0].components[0].name, "Nosecone")
+        self.assertAlmostEqual(ork.stages[0].components[0].length, 0.15)
+        self.assertAlmostEqual(ork.stages[0].components[1].length, 0.3)
 
     def test_read_RockSimEng(self):
         rse_loader = loaders.RockSimEngine()

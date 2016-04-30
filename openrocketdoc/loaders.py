@@ -165,43 +165,73 @@ class Openrocket(object):
 
     """
 
-    # list of OpenRocket parts we care about
-    part_types = [
-        'nosecone',
-        'bodytube',
-        'trapezoidfinset',
-        'masscomponent',
-        'streamer',
-        'centeringring',
-        'engineblock',
-    ]
-
     def __init__(self):
         pass
+
+    def _load_nosecone(tree):
+        # defaults:
+        shape = rdoc.Noseshape.CONE
+        # shapeparameter = 0
+        length = 0
+        # diameter = 0
+        thickness = 0
+
+        # Read data
+        for desc in tree:
+
+            if desc.tag == 'shape':
+                shape_str = desc.text
+                if 'ogive' in shape_str.lower():
+                    pass  # TODO: Ogive
+                elif 'cone' in shape_str.lower():
+                    pass  # TODO: cone
+
+            if desc.tag is 'shapeparameter':
+                pass  # TODO: set shapeparameter
+
+            if desc.tag == 'length':
+                length = float(desc.text)
+
+            if desc.tag == 'thickness':
+                thickness = float(desc.text)
+
+            if desc.tag == 'aftradius':
+                pass  # TODO: diameter
+
+        nose = rdoc.Nosecone(shape)
+        nose.length = length
+        nose.thickness = thickness
+
+        return nose
+
+    def _load_bodytube(tree):
+        tube = rdoc.Bodytube('bodytube')
+
+        # Read data
+        for tag in tree:
+
+            if tag.tag == 'name':
+                tube.name = tag.text
+
+            if tag.tag == 'length':
+                tube.length = float(tag.text)
+
+        return tube
 
     def _subcomponent_walk(self, tree):
         """My mom always said, never loop when you can recurse"""
 
         for subcomponent in tree:
-            component = {}
-            if subcomponent.tag in self.part_types:
-                component['type'] = subcomponent.tag
+            # We'll only decode things we know about
+            if subcomponent.tag in self.part_types.keys():
+
+                component = self.part_types[subcomponent.tag](subcomponent)
+
+                """
                 for meta in subcomponent:
                     if meta.tag == 'subcomponents':
                         component['parts'] = [sub for sub in self._subcomponent_walk(meta)]
-                if subcomponent.tag == 'nosecone':
-                    component['data'] = rdoc.Nosecone(rdoc.Noseshape.CONE)
-                    for desc in subcomponent:
-                        if desc.tag == 'name':
-                            component['data'].name = desc.text
-                        if desc.tag == 'length':
-                            component['data'].length = float(desc.text)
-                        if desc.tag == 'shape':
-                            component['data'].shape = desc.text
-                        if desc.tag == 'thickness':
-                            component['data'].thickness = desc.text
-
-                component['data'] = component.get('data', rdoc.Component("name")).__dict__
+                """
                 yield component
             elif subcomponent.tag == 'subcomponents':
                 yield [sub for sub in self._subcomponent_walk(subcomponent)]
@@ -217,20 +247,43 @@ class Openrocket(object):
         # Walk tree, there should be a 'rocket' and 'simulation tags'. We only
         # care about 'rocket'. After that there is a little metadata and then
         # components.
-        stages = []
-        for base in root:
-            if base.tag == 'rocket':
-                for orkrocket in base:
+        for element in root:
+            if element.tag == 'rocket':
+
+                # We found a rocket! Create a document
+                ordoc = rdoc.Rocket("Imported OpenRocket File")  # default name
+
+                for orkrocket in element:
                     if orkrocket.tag == 'name':
-                        rocket_name = orkrocket.text
+                        # This rocket has a name
+                        ordoc.name = orkrocket.text
+
                     if orkrocket.tag == 'subcomponents':
+                        # This rocket has stages
                         for orkstage in orkrocket:
                             if orkstage.tag == 'stage':
-                                name = "stage {0}".format(len(stages))
-                                for _tag in orkstage:
-                                    if _tag.tag == 'name':
-                                        name = _tag.text
-                                stage = {'name': name, 'parts': [part for part in self._subcomponent_walk(orkstage)]}
-                            stages.append(stage)
+                                # Create a stage, default name is stage number
+                                stage = rdoc.Stage("stage {0}".format(len(ordoc.stages)))
 
-        self.rocket = {'name': rocket_name, 'stages': stages}
+                                for stage_parts in orkstage:
+                                    if stage_parts.tag == 'name':
+                                        stage.name = stage_parts.text
+                                    if stage_parts.tag == 'subcomponents':
+                                        # Recurse down through all components
+                                        stage.components = [part for part in self._subcomponent_walk(stage_parts)]
+
+                                # Append to rocket
+                                ordoc.stages.append(stage)
+
+        return ordoc
+
+    # list of OpenRocket parts we care about
+    part_types = {
+        'nosecone': _load_nosecone,
+        'bodytube': _load_bodytube,
+        # 'trapezoidfinset',
+        # 'masscomponent',
+        # 'streamer',
+        # 'centeringring',
+        # 'engineblock',
+    }
