@@ -36,6 +36,23 @@ Nosecone
     :inherited-members:
     :show-inheritance:
 
+Bodytube
+--------
+
+.. autoclass:: openrocketdoc.document.Bodytube
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+Mass
+----
+
+.. autoclass:: openrocketdoc.document.Mass
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+
 Engine
 ======
 
