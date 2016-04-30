@@ -23,8 +23,8 @@ Stage
 A stage is a collection of components
 
 
-Components
-==========
+Components:
+===========
 
 Types of components available to describe a rocket stage:
 
@@ -35,6 +35,10 @@ Nosecone
     :members:
     :inherited-members:
     :show-inheritance:
+
+.. autoclass:: openrocketdoc.document.Noseshape
+    :members:
+    :undoc-members:
 
 Bodytube
 --------
@@ -48,6 +52,22 @@ Mass
 ----
 
 .. autoclass:: openrocketdoc.document.Mass
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+Fin
+---
+
+.. autoclass:: openrocketdoc.document.Fin
+    :members:
+    :inherited-members:
+    :show-inheritance:
+
+Finset
+------
+
+.. autoclass:: openrocketdoc.document.Finset
     :members:
     :inherited-members:
     :show-inheritance:

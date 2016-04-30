@@ -27,8 +27,14 @@ class Document(object):
             c['length'] = component.length
             c['shape'] = component.shape.name
 
-        elif  type(component) is rdoc.Bodytube:
+        elif type(component) is rdoc.Bodytube:
             c['length'] = component.length
+
+        elif type(component) is rdoc.Fin:
+            c['root_chord'] = component.root
+            c['tip_chord'] = component.tip
+            c['span'] = component.span
+            c['sweepangle'] = component.sweepangle
 
         # recursion
         if component.components:

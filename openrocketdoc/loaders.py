@@ -229,6 +229,36 @@ class Openrocket(object):
 
         return mass
 
+    def _load_fins(tree):
+        fins = rdoc.Fin('fin')
+
+        return fins
+
+    def _load_finset(tree):
+        fin = rdoc.Fin('Fin')
+        number_of_fins = 0
+        name = "Finset"
+
+        for element in tree:
+
+            # Elements to read:
+            if element.tag == 'name':
+                name = element.text
+            if element.tag == 'rootchord':
+                fin.root = float(element.text)
+            if element.tag == 'tipchord':
+                fin.tip = float(element.text)
+            if element.tag == 'height':
+                fin.span = float(element.text)
+            if element.tag == 'sweeplength':
+                fin.sweeplength = float(element.text)
+            if element.tag == 'fincount':
+                number_of_fins = int(element.text)
+
+        finset = rdoc.Finset(name, fin, number_of_fins)
+
+        return finset
+
     def _subcomponent_walk(self, tree):
         """My mom always said, never loop when you can recurse"""
 
@@ -292,7 +322,7 @@ class Openrocket(object):
         'nosecone': _load_nosecone,
         'bodytube': _load_bodytube,
         'masscomponent': _load_mass,
-        # 'trapezoidfinset',
+        'trapezoidfinset': _load_finset,
         # 'streamer',
         # 'centeringring',
         # 'engineblock',

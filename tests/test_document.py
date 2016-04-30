@@ -45,7 +45,7 @@ class TestOpenrocketdoc(unittest.TestCase):
         stage1 = document.Stage("Booster")
         stage1.components = [
             document.Bodytube("body", mass=4.87),
-            document.Fin(mass=0.1),
+            document.Fin('fin', mass=0.1),
         ]
 
         rocket = document.Rocket("Rocket")
@@ -54,7 +54,7 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertEqual(29.77, rocket.mass)
 
     def test_fins(self):
-        fin = document.Fin()
+        fin = document.Fin('fin')
         self.assertEqual(0, fin.mass)
 
     def test_engine_length(self):

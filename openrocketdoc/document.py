@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
+import copy
+
+#: A shape enum for kinds of nosecones
 Noseshape = Enum('Noseshape', 'CONE VONKARMAN')
 
 
@@ -67,7 +70,7 @@ class Mass(Component):
 class Nosecone(Component):
     """Nose of the rocket. There can only be one per rocket
 
-    :param str shape: Shape of the nosecone
+    :param Noseshape shape: Shape of the nosecone
 
     """
 
@@ -87,8 +90,31 @@ class Bodytube(Component):
 class Fin(Component):
     """A single rocket fin"""
 
-    def __init__(self, **kwargs):
-        super(Fin, self).__init__("Fin", **kwargs)
+    def __init__(self, name, **kwargs):
+        super(Fin, self).__init__(name, **kwargs)
+
+        self.root = 0
+        self.tip = 0
+        self.span = 0
+        self.sweep = None
+        self.sweepangle = 0
+
+
+class Finset(Component):
+    """A set of identical fins, set symetrically around the vehicle.
+
+    :param str name: Name of the compenent
+    :param Fin fin: A single Fin object to be repeated as part of the set
+    :param int number_of_fins: Number of fins in the set
+    """
+
+    def __init__(self, name, fin, number_of_fins, **kwargs):
+        super(Finset, self).__init__(name, **kwargs)
+
+        for i in range(number_of_fins):
+            fin_copy = copy.deepcopy(fin)
+            fin_copy.name = "Fin %d" % (i + 1)
+            self.components.append(fin_copy)
 
 
 class Engine(object):
