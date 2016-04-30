@@ -2,9 +2,18 @@
 from enum import Enum
 import copy
 
-#: A shape enum for kinds of nosecones
-Noseshape = Enum('Noseshape', 'CONE VONKARMAN')
+class Noseshape(Enum):
+    """Enum defining possible shapse of a nosecone.
+    """
 
+    CONE = 1
+    """A simple cone.
+    """
+
+    VONKARMAN = 2
+    """The Von Karman nosecone is a kind of optimzed nosecone shape. It's
+    formed by a Haack series (C = 0) giving minimum drag for the given length and diameter.
+    """
 
 class Rocket(object):
     """A top level Rocket object.
