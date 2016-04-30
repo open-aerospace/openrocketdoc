@@ -3,17 +3,64 @@ from enum import Enum
 import copy
 
 class Noseshape(Enum):
-    """Enum defining possible shapse of a nosecone.
+    """Enum defining possible shapes of a nosecone.
     """
 
     CONE = 1
     """A simple cone.
     """
 
-    VONKARMAN = 2
+    SPHERE_BLUNTED_CONE = 2
+    """A Cone with a spherically blunt tip
+    """
+
+    BICONIC = 3
+    """A Cone with a conically blunted tip
+    """
+
+    TANGENT_OGIVE = 4
+    """A nosecone defined as tangent (to body) set of ogives
+    """
+
+    SECANT_OGIVE = 5
+    """An ovgive nose not tangent to body. 
+    """
+
+    SPHERE_BLUNTED_OGIVE = 6
+    """A tangent ogive cone with a spherically blunted tip
+    """
+
+    ELLIPTICAL = 7
+    """A nose that is one half of an ellipse
+    """
+
+    PARABOLIC = 8
+    """Similar to elliptical nose, but made of a parabola rather then ellipse
+    """
+
+    VONKARMAN = 9
     """The Von Karman nosecone is a kind of optimzed nosecone shape. It's
     formed by a Haack series (C = 0) giving minimum drag for the given length and diameter.
     """
+
+    POWER_SERIES = 10
+    """Cone edges are defined by a set of polynomial equations.
+
+    For n = 0..1: y = R(x/L)^n
+
+    * n = 1 is cone
+    * n = 0.75 for a 3/4 power
+    * n = 0.5 for a 1/2 power (parabola)
+    * n = 0 for a cylinder
+    """
+
+    HAACK_SERIES = 11
+    """Cone edges are defined by minimal-drag Sears–Haack body with constant C
+
+    * C = 1/3 for LV-Haack
+    * C = 0 for LD-Haack, defined as Von Karman
+    """
+
 
 class Rocket(object):
     """A top level Rocket object.
@@ -56,11 +103,16 @@ class Component(object):
     def __init__(self, name, mass=0.0, length=0.0):
         self.name = name
         #: Dry mass of the component
-        self.mass = mass
+        self._mass = mass
         self.length = length
 
         #: List of sub components
         self.components = []
+
+    @property
+    def mass(self):
+        """Get the total **dry mass** of this component, including all subcomponents"""
+        return self._mass + sum([c.mass for c in self.components])
 
 
 class Mass(Component):
@@ -90,7 +142,10 @@ class Nosecone(Component):
 
 
 class Bodytube(Component):
-    """docstring for Bodytube"""
+    """A cylindrical section of the outer body of the rocket.
+
+    :param str name: Name of the component
+    """
 
     def __init__(self, name, **kwargs):
         super(Bodytube, self).__init__(name, **kwargs)

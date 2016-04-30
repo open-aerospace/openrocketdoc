@@ -34,11 +34,11 @@ Nosecone
 .. autoclass:: openrocketdoc.document.Nosecone
     :members:
     :inherited-members:
-    :show-inheritance:
+    :undoc-members:
 
 .. autoclass:: openrocketdoc.document.Noseshape
     :members:
-    :undoc-members:
+
 
 Bodytube
 --------
@@ -46,7 +46,6 @@ Bodytube
 .. autoclass:: openrocketdoc.document.Bodytube
     :members:
     :inherited-members:
-    :show-inheritance:
 
 Mass
 ----
@@ -54,7 +53,6 @@ Mass
 .. autoclass:: openrocketdoc.document.Mass
     :members:
     :inherited-members:
-    :show-inheritance:
 
 Fin
 ---
@@ -62,7 +60,6 @@ Fin
 .. autoclass:: openrocketdoc.document.Fin
     :members:
     :inherited-members:
-    :show-inheritance:
 
 Finset
 ------
@@ -70,7 +67,6 @@ Finset
 .. autoclass:: openrocketdoc.document.Finset
     :members:
     :inherited-members:
-    :show-inheritance:
 
 
 Engine
@@ -79,4 +75,4 @@ Engine
 .. autoclass:: openrocketdoc.document.Engine
     :members:
     :inherited-members:
-    :show-inheritance:
+
