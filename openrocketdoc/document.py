@@ -47,6 +47,22 @@ class Component(object):
         self.mass = mass
         self.length = length
 
+        #: List of sub components
+        self.components = []
+
+
+class Mass(Component):
+    """Generic mass compenent. This is a catch-all for internal structure that
+    contributes to the mass model of the rocket but doesn't serve a specific
+    purpose to be modeled.
+
+    :param str name: name of the mass
+
+    """
+
+    def __init__(self, name, **kwargs):
+        super(Mass, self).__init__(name, **kwargs)
+
 
 class Nosecone(Component):
     """Nose of the rocket. There can only be one per rocket

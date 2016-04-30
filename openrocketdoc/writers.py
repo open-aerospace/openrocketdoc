@@ -14,6 +14,30 @@ class Document(object):
     def __init__(self):
         pass
 
+    def _component_dict(self, component):
+        """For recursivly building a tree of compenents.
+        """
+
+        # All must have name and type
+        c = {'name': component.name}
+        c['type'] = component.__class__.__name__
+
+        # Type spefific:
+        if type(component) is rdoc.Nosecone:
+            c['length'] = component.length
+            c['shape'] = component.shape.name
+
+        elif  type(component) is rdoc.Bodytube:
+            c['length'] = component.length
+
+        # recursion
+        if component.components:
+            c['components'] = []
+            for subcomponent in component.components:
+                c['components'].append(self._component_dict(subcomponent))
+
+        return c
+
     def dump(self, ordoc):
         """Return a string yaml formated native Open Rocket Doc
         """
@@ -32,13 +56,7 @@ class Document(object):
                 s = {'name': stage.name}
                 s['components'] = []
                 for component in stage.components:
-                    c = {'name': component.name}
-                    c['type'] = component.__class__.__name__
-                    c['length'] = component.length
-                    if type(component) is rdoc.Nosecone:
-                        c['shape'] = component.shape.name
-
-                    s['components'].append(c)
+                    s['components'].append(self._component_dict(component))
                 doc['rocket']['stages'].append(s)
 
         return yamldump(doc, default_flow_style=False)

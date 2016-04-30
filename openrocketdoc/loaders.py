@@ -218,6 +218,17 @@ class Openrocket(object):
 
         return tube
 
+    def _load_mass(tree):
+        mass = rdoc.Mass('mass')
+
+        # Read data
+        for tag in tree:
+
+            if tag.tag == 'name':
+                mass.name = tag.text
+
+        return mass
+
     def _subcomponent_walk(self, tree):
         """My mom always said, never loop when you can recurse"""
 
@@ -227,11 +238,10 @@ class Openrocket(object):
 
                 component = self.part_types[subcomponent.tag](subcomponent)
 
-                """
-                for meta in subcomponent:
-                    if meta.tag == 'subcomponents':
-                        component['parts'] = [sub for sub in self._subcomponent_walk(meta)]
-                """
+                for element in subcomponent:
+                    if element.tag == 'subcomponents':
+                        component.components = [sub for sub in self._subcomponent_walk(element)]
+
                 yield component
             elif subcomponent.tag == 'subcomponents':
                 yield [sub for sub in self._subcomponent_walk(subcomponent)]
@@ -281,8 +291,8 @@ class Openrocket(object):
     part_types = {
         'nosecone': _load_nosecone,
         'bodytube': _load_bodytube,
+        'masscomponent': _load_mass,
         # 'trapezoidfinset',
-        # 'masscomponent',
         # 'streamer',
         # 'centeringring',
         # 'engineblock',

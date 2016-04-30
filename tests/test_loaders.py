@@ -11,6 +11,7 @@ Tests for `loaders` module.
 from __future__ import print_function
 import unittest
 from openrocketdoc import loaders
+# from openrocketdoc import writers
 
 
 class TestLoaders(unittest.TestCase):
@@ -20,6 +21,8 @@ class TestLoaders(unittest.TestCase):
 
     def test_read_openrocket_14_zip(self):
         ork = loaders.Openrocket().load('tests/data/example_simple_1.ork')
+
+        # print(writers.Document().dump(ork))
 
         # Expected traits for this file:
         self.assertEqual(ork.name, 'Rocket')
