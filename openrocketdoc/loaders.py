@@ -202,6 +202,14 @@ class Openrocket(object):
                 color = (r, g, b)
             if element.tag == 'linestyle':
                 or_tags.append("linestyle:"+element.text)
+            if element.tag == 'aftshoulderradius':
+                or_tags.append("aftshoulderradius:"+element.text)
+            if element.tag == 'aftshoulderlength':
+                or_tags.append("aftshoulderlength:"+element.text)
+            if element.tag == 'aftshoulderthickness':
+                or_tags.append("aftshoulderthickness:"+element.text)
+            if element.tag == 'aftshouldercapped':
+                or_tags.append("aftshouldercapped:"+element.text)
 
         nose = rdoc.Nosecone(shape, mass, length)
         nose.thickness = thickness
