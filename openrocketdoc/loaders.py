@@ -175,6 +175,7 @@ class Openrocket(object):
         thickness = 0
         diameter = 0
         mass = 0
+        surface = None
         color = None
         or_tags = []
 
@@ -192,6 +193,9 @@ class Openrocket(object):
                 length = float(element.text)
             if element.tag == 'thickness':
                 thickness = float(element.text)
+            if element.tag == 'finish':
+                if element.text == 'normal':
+                    surface = 60
             if element.tag == 'aftradius':
                 if 'auto' not in element.text:
                     diameter = float(element.text) * 2
@@ -216,6 +220,8 @@ class Openrocket(object):
         nose.diameter = diameter
         if color is not None:
             nose.color = color
+        if surface is not None:
+            nose.surface_roughness = surface
 
         for tag in or_tags:
             nose.add_class_tag('OpenRocket', tag)

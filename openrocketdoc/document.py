@@ -194,9 +194,20 @@ class Nosecone(Component):
         super(Nosecone, self).__init__("Nosecone", length=length, mass=mass, **kwargs)
         self.shape = shape
         self.thickness = 0
+        self._roughness = 0
 
     def __repr__(self):
         return "<openrocketdoc.document.Nosecone (%0.2f kg)>" % (self.mass)
+
+    @property
+    def surface_roughness(self):
+        """The surface roughness of the Nose (in microns)
+        """
+        return self._roughness
+
+    @surface_roughness.setter
+    def surface_roughness(self, r):
+        self._roughness = r
 
 
 class Bodytube(Component):
