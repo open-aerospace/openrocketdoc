@@ -30,6 +30,7 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(ork.stages[0].name, "Sustainer")
         self.assertEqual(ork.stages[0].components[0].name, "Nosecone")
         self.assertAlmostEqual(ork.stages[0].components[0].length, 0.15)
+        self.assertEqual(ork.stages[0].components[0].color, (165, 165, 165))
         self.assertAlmostEqual(ork.stages[0].components[1].length, 0.3)
 
     def test_read_RockSimEng(self):

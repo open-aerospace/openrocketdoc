@@ -174,34 +174,37 @@ class Openrocket(object):
         length = 0
         thickness = 0
         diameter = 0
+        color = None
 
         # Read data
-        for desc in tree:
-
-            if desc.tag == 'shape':
-                shape_str = desc.text
+        for element in tree:
+            if element.tag == 'shape':
+                shape_str = element.text
                 if 'ogive' in shape_str.lower():
                     shape = rdoc.Noseshape.TANGENT_OGIVE
                 elif 'cone' in shape_str.lower():
                     shape = rdoc.Noseshape.CONE
-
-            if desc.tag is 'shapeparameter':
+            if element.tag is 'shapeparameter':
                 pass  # TODO: set shapeparameter
-
-            if desc.tag == 'length':
-                length = float(desc.text)
-
-            if desc.tag == 'thickness':
-                thickness = float(desc.text)
-
-            if desc.tag == 'aftradius':
-                if 'auto' not in desc.text:
-                    diameter = float(desc.text) * 2
+            if element.tag == 'length':
+                length = float(element.text)
+            if element.tag == 'thickness':
+                thickness = float(element.text)
+            if element.tag == 'aftradius':
+                if 'auto' not in element.text:
+                    diameter = float(element.text) * 2
+            if element.tag == 'color':
+                r = int(element.get('red', 0))
+                g = int(element.get('green', 0))
+                b = int(element.get('blue', 0))
+                color = (r, g, b)
 
         nose = rdoc.Nosecone(shape)
         nose.length = length
         nose.thickness = thickness
         nose.diameter = diameter
+        if color is not None:
+            nose.color = color
 
         return nose
 
@@ -209,12 +212,16 @@ class Openrocket(object):
         tube = rdoc.Bodytube('bodytube')
 
         # Read data
-        for tag in tree:
-
-            if tag.tag == 'name':
-                tube.name = tag.text
-            if tag.tag == 'length':
-                tube.length = float(tag.text)
+        for element in tree:
+            if element.tag == 'name':
+                tube.name = element.text
+            if element.tag == 'length':
+                tube.length = float(element.text)
+            if element.tag == 'color':
+                r = int(element.get('red', 0))
+                g = int(element.get('green', 0))
+                b = int(element.get('blue', 0))
+                tube.color = (r, g, b)
 
         return tube
 
@@ -223,8 +230,6 @@ class Openrocket(object):
 
         # Read data
         for element in tree:
-            # print(element)
-
             if element.tag == 'name':
                 mass.name = element.text
             if element.tag == 'mass':
@@ -233,6 +238,11 @@ class Openrocket(object):
                 mass.center = float(element.text)
             if element.tag == 'packedlength':
                 mass.length = float(element.text)
+            if element.tag == 'color':
+                r = int(element.get('red', 0))
+                g = int(element.get('green', 0))
+                b = int(element.get('blue', 0))
+                mass.color = (r, g, b)
 
         return mass
 
@@ -247,8 +257,6 @@ class Openrocket(object):
         name = "Finset"
 
         for element in tree:
-
-            # Elements to read:
             if element.tag == 'name':
                 name = element.text
             if element.tag == 'rootchord':
@@ -261,6 +269,11 @@ class Openrocket(object):
                 fin.sweeplength = float(element.text)
             if element.tag == 'fincount':
                 number_of_fins = int(element.text)
+            if element.tag == 'color':
+                r = int(element.get('red', 0))
+                g = int(element.get('green', 0))
+                b = int(element.get('blue', 0))
+                fin.color = (r, g, b)
 
         finset = rdoc.Finset(name, fin, number_of_fins)
 
