@@ -126,6 +126,12 @@ class Component(object):
         self._mass = float(m)
 
     @property
+    def component_mass(self):
+        """Get the **dry mass** of this component.
+        """
+        return self._mass
+
+    @property
     def color(self):
         """Get the color (if defined) of this component.
         """
