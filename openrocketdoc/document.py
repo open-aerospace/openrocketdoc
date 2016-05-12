@@ -99,11 +99,11 @@ class Stage(object):
 
 
 class Component(object):
-    """A Component is a piece of the rocket like a fin or noesecone."""
+    """A Component is a piece of the rocket like a fin or nosecone.
+    """
 
     def __init__(self, name, mass=0.0, length=0.0, diameter=0.0):
         self.name = name
-        #: Dry mass of the component
         self._mass = mass
         self.length = length
         self.diameter = diameter
@@ -111,6 +111,9 @@ class Component(object):
 
         #: List of sub components
         self.components = []
+
+        #: List of optional tags
+        self.tags = []
 
     @property
     def mass(self):
@@ -140,8 +143,7 @@ class Mass(Component):
     contributes to the mass model of the rocket but doesn't serve a specific
     purpose to be modeled.
 
-    :param str name: name of the mass
-
+    :param `str` name: name of the mass
     """
 
     def __init__(self, name, **kwargs):
@@ -151,14 +153,28 @@ class Mass(Component):
 class Nosecone(Component):
     """Nose of the rocket. There can only be one per rocket
 
-    :param Noseshape shape: Shape of the nosecone
+    :param `Noseshape` shape: Shape of the nosecone
+    :param `float [kg]` mass: Dry mass of the nosecone
+    :param `float [m]` length: Tip to base (not including internal structure) length of the nosecone
+    :\**kwargs:
+        * **[m] diameter** (`float`) diameter at the base
 
+    :example:
+
+    >>> from openrocketdoc.document import *
+    >>> Nosecone(Noseshape.CONE, 0.7, 1.2, diameter=0.254)
+    <openrocketdoc.document.Nosecone (0.70 kg)>
+
+    **Members:**
     """
 
-    def __init__(self, shape, **kwargs):
-        super(Nosecone, self).__init__("Nosecone", **kwargs)
+    def __init__(self, shape, mass, length, **kwargs):
+        super(Nosecone, self).__init__("Nosecone", length=length, mass=mass, **kwargs)
         self.shape = shape
         self.thickness = 0
+
+    def __repr__(self):
+        return "<openrocketdoc.document.Nosecone (%0.2f kg)>" % (self.mass)
 
 
 class Bodytube(Component):

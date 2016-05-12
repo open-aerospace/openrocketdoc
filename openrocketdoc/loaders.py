@@ -174,6 +174,7 @@ class Openrocket(object):
         length = 0
         thickness = 0
         diameter = 0
+        mass = 0
         color = None
 
         # Read data
@@ -199,8 +200,7 @@ class Openrocket(object):
                 b = int(element.get('blue', 0))
                 color = (r, g, b)
 
-        nose = rdoc.Nosecone(shape)
-        nose.length = length
+        nose = rdoc.Nosecone(shape, mass, length)
         nose.thickness = thickness
         nose.diameter = diameter
         if color is not None:

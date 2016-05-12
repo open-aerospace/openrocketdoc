@@ -21,7 +21,7 @@ class TestOpenrocketdoc(unittest.TestCase):
         rocket = document.Rocket("Rocket")
         stage0 = document.Stage("Booster")
         stage0.components = [
-            document.Nosecone(document.Noseshape.VONKARMAN),
+            document.Nosecone(document.Noseshape.VONKARMAN, 0.7, 1.2),
             document.Bodytube("body"),
         ]
         rocket.stages = [stage0]
@@ -29,7 +29,7 @@ class TestOpenrocketdoc(unittest.TestCase):
     def test_stage_mass_sum(self):
         stage0 = document.Stage("Booster")
         stage0.components = [
-            document.Nosecone(document.Noseshape.CONE, mass=0.7),
+            document.Nosecone(document.Noseshape.CONE, 0.7, 1.4),
             document.Bodytube("body"),
             document.Bodytube("body", mass=24.1),
         ]
@@ -38,7 +38,7 @@ class TestOpenrocketdoc(unittest.TestCase):
     def test_rocket_mass_sum(self):
         stage0 = document.Stage("Booster")
         stage0.components = [
-            document.Nosecone("", mass=0.7),
+            document.Nosecone("", 0.7, 1.2),
             document.Bodytube("body"),
             document.Bodytube("body", mass=24.1),
         ]
