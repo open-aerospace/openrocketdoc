@@ -2,6 +2,7 @@
 from enum import Enum
 import copy
 
+
 class Noseshape(Enum):
     """Enum defining possible shapes of a nosecone.
     """
@@ -23,7 +24,7 @@ class Noseshape(Enum):
     """
 
     SECANT_OGIVE = 5
-    """An ovgive nose not tangent to body. 
+    """An ovgive nose not tangent to body
     """
 
     SPHERE_BLUNTED_OGIVE = 6
@@ -100,11 +101,12 @@ class Stage(object):
 class Component(object):
     """A Component is a piece of the rocket like a fin or noesecone."""
 
-    def __init__(self, name, mass=0.0, length=0.0):
+    def __init__(self, name, mass=0.0, length=0.0, diameter=0.0):
         self.name = name
         #: Dry mass of the component
         self._mass = mass
         self.length = length
+        self.diameter = diameter
 
         #: List of sub components
         self.components = []

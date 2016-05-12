@@ -171,10 +171,9 @@ class Openrocket(object):
     def _load_nosecone(tree):
         # defaults:
         shape = rdoc.Noseshape.CONE
-        # shapeparameter = 0
         length = 0
-        # diameter = 0
         thickness = 0
+        diameter = 0
 
         # Read data
         for desc in tree:
@@ -182,9 +181,9 @@ class Openrocket(object):
             if desc.tag == 'shape':
                 shape_str = desc.text
                 if 'ogive' in shape_str.lower():
-                    pass  # TODO: Ogive
+                    shape = rdoc.Noseshape.TANGENT_OGIVE
                 elif 'cone' in shape_str.lower():
-                    pass  # TODO: cone
+                    shape = rdoc.Noseshape.CONE
 
             if desc.tag is 'shapeparameter':
                 pass  # TODO: set shapeparameter
@@ -196,11 +195,13 @@ class Openrocket(object):
                 thickness = float(desc.text)
 
             if desc.tag == 'aftradius':
-                pass  # TODO: diameter
+                if 'auto' not in desc.text:
+                    diameter = float(desc.text) * 2
 
         nose = rdoc.Nosecone(shape)
         nose.length = length
         nose.thickness = thickness
+        nose.diameter = diameter
 
         return nose
 
@@ -212,7 +213,6 @@ class Openrocket(object):
 
             if tag.tag == 'name':
                 tube.name = tag.text
-
             if tag.tag == 'length':
                 tube.length = float(tag.text)
 
@@ -222,10 +222,17 @@ class Openrocket(object):
         mass = rdoc.Mass('mass')
 
         # Read data
-        for tag in tree:
+        for element in tree:
+            # print(element)
 
-            if tag.tag == 'name':
-                mass.name = tag.text
+            if element.tag == 'name':
+                mass.name = element.text
+            if element.tag == 'mass':
+                mass._mass = float(element.text)
+            if element.tag == 'position':
+                mass.center = float(element.text)
+            if element.tag == 'packedlength':
+                mass.length = float(element.text)
 
         return mass
 

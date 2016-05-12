@@ -26,6 +26,7 @@ class Document(object):
         if type(component) is rdoc.Nosecone:
             c['length'] = component.length
             c['shape'] = component.shape.name
+            c['diameter'] = component.diameter
 
         elif type(component) is rdoc.Bodytube:
             c['length'] = component.length
@@ -35,6 +36,10 @@ class Document(object):
             c['tip_chord'] = component.tip
             c['span'] = component.span
             c['sweepangle'] = component.sweepangle
+
+        elif type(component) is rdoc.Mass:
+            c['mass'] = component.mass
+            c['length'] = component.length
 
         # recursion
         if component.components:
