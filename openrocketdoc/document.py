@@ -115,6 +115,22 @@ class Component(object):
         #: List of optional tags
         self.tags = []
 
+    def add_class_tag(self, newclass, newtag):
+        """Add a new tag that is part of a tag collection (class)
+
+        :param str newclass: class that the tag is a member of
+        :param str tag: the tag to add
+
+        """
+
+        for tag in self.tags:
+            if type(tag) is dict:
+                if tag['class'] == newclass:
+                    tag['tags'].append(newtag)
+                    return
+
+        self.tags.append({'class': newclass, 'tags': [newtag]})
+
     @property
     def mass(self):
         """Get the total **dry mass** of this component, including all subcomponents.

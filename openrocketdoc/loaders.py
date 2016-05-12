@@ -176,6 +176,7 @@ class Openrocket(object):
         diameter = 0
         mass = 0
         color = None
+        or_tags = []
 
         # Read data
         for element in tree:
@@ -199,12 +200,17 @@ class Openrocket(object):
                 g = int(element.get('green', 0))
                 b = int(element.get('blue', 0))
                 color = (r, g, b)
+            if element.tag == 'linestyle':
+                or_tags.append("linestyle:"+element.text)
 
         nose = rdoc.Nosecone(shape, mass, length)
         nose.thickness = thickness
         nose.diameter = diameter
         if color is not None:
             nose.color = color
+
+        for tag in or_tags:
+            nose.add_class_tag('OpenRocket', tag)
 
         return nose
 
