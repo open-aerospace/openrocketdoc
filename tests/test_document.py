@@ -57,6 +57,23 @@ class TestOpenrocketdoc(unittest.TestCase):
         fin = document.Fin('fin')
         self.assertEqual(0, fin.mass)
 
+    def test_no_color(self):
+        tube = document.Bodytube("body", mass=24.1)
+
+        # No color defined
+        self.assertEqual(tube.color, None)
+
+    def test_color(self):
+        tube = document.Bodytube("body", mass=24.1)
+
+        # As string:
+        tube.color = "Brown"
+        self.assertEqual(tube.color, "Brown")
+
+        # As tuple:
+        tube.color = (240, 12, 0)
+        self.assertEqual(tube.color, (240, 12, 0))
+
     def test_engine_length(self):
         engine = document.Engine("test")
 

@@ -107,6 +107,7 @@ class Component(object):
         self._mass = mass
         self.length = length
         self.diameter = diameter
+        self._color = None
 
         #: List of sub components
         self.components = []
@@ -115,6 +116,18 @@ class Component(object):
     def mass(self):
         """Get the total **dry mass** of this component, including all subcomponents"""
         return self._mass + sum([c.mass for c in self.components])
+
+    @property
+    def color(self):
+        """Get the color (if defined) of this component.
+        """
+        return self._color
+
+    @color.setter
+    def color(self, c):
+        """Set the color of this component.
+        """
+        self._color = c
 
 
 class Mass(Component):
