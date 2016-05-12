@@ -10,6 +10,7 @@ Tests for `loaders` module.
 
 from __future__ import print_function
 import unittest
+from openrocketdoc import document
 from openrocketdoc import loaders
 # from openrocketdoc import writers
 
@@ -28,10 +29,27 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(ork.name, 'Rocket')
         self.assertEqual(len(ork.stages), 1)
         self.assertEqual(ork.stages[0].name, "Sustainer")
-        self.assertEqual(ork.stages[0].components[0].name, "Nosecone")
-        self.assertAlmostEqual(ork.stages[0].components[0].length, 0.15)
-        self.assertEqual(ork.stages[0].components[0].color, (165, 165, 165))
-        self.assertAlmostEqual(ork.stages[0].components[1].length, 0.3)
+        self.assertEqual(len(ork.stages[0].components), 2)
+
+        # Nosecone:
+        nose = ork.stages[0].components[0]
+        self.assertEqual(nose.name, "Nosecone")  # hardcoded
+        self.assertAlmostEqual(nose.shape.value, document.Noseshape.TANGENT_OGIVE.value)
+        self.assertAlmostEqual(nose.shape_parameter, 1.0)
+        self.assertAlmostEqual(nose.mass, 0.05)
+        self.assertAlmostEqual(nose.length, 0.15)
+        self.assertAlmostEqual(nose.thickness, 0.001)
+        # TODO: self.assertAlmostEqual(nose.diameter, 0.05)
+        self.assertAlmostEqual(nose.surface_roughness, 60)
+        self.assertEqual(nose.color, (165, 165, 165))
+        self.assertEqual(len(nose.tags), 1)
+        self.assertEqual(len(nose.tags[0]['tags']), 5)
+
+        # Body:
+        body = ork.stages[0].components[1]
+        self.assertEqual(body.name, "Body tube")
+        self.assertAlmostEqual(body.length, 0.3)
+        self.assertEqual(body.color, None)
 
     def test_read_RockSimEng(self):
         rse_loader = loaders.RockSimEngine()

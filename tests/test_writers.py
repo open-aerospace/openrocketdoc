@@ -24,7 +24,7 @@ class TestWriters(unittest.TestCase):
         rocket = rdoc.Rocket("Rocket")
         stage0 = rdoc.Stage("Sustainer")
         stage0.components = [
-            rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 0.2, 1.0),
+            rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 1, 0.2, 1.0),
             rdoc.Bodytube("body"),
         ]
         rocket.stages = [stage0]

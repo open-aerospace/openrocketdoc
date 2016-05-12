@@ -170,61 +170,43 @@ class Openrocket(object):
 
     def _load_nosecone(tree):
         # defaults:
-        shape = rdoc.Noseshape.CONE
-        length = 0
-        thickness = 0
-        diameter = 0
-        mass = 0
-        surface = None
-        color = None
-        or_tags = []
+        nose = rdoc.Nosecone(rdoc.Noseshape.CONE, 0, 0.0, 0.0)
 
         # Read data
         for element in tree:
             if element.tag == 'shape':
                 shape_str = element.text
                 if 'ogive' in shape_str.lower():
-                    shape = rdoc.Noseshape.TANGENT_OGIVE
+                    nose.shape = rdoc.Noseshape.TANGENT_OGIVE
                 elif 'cone' in shape_str.lower():
-                    shape = rdoc.Noseshape.CONE
-            if element.tag is 'shapeparameter':
-                pass  # TODO: set shapeparameter
+                    nose.shape = rdoc.Noseshape.CONE
+            if element.tag == 'shapeparameter':
+                nose.shape_parameter = float(element.text)
             if element.tag == 'length':
-                length = float(element.text)
+                nose.length = float(element.text)
             if element.tag == 'thickness':
-                thickness = float(element.text)
+                nose.thickness = float(element.text)
             if element.tag == 'finish':
                 if element.text == 'normal':
-                    surface = 60
+                    nose.surface_roughness = 60
             if element.tag == 'aftradius':
                 if 'auto' not in element.text:
-                    diameter = float(element.text) * 2
+                    nose.diameter = float(element.text) * 2
             if element.tag == 'color':
                 r = int(element.get('red', 0))
                 g = int(element.get('green', 0))
                 b = int(element.get('blue', 0))
-                color = (r, g, b)
+                nose.color = (r, g, b)
             if element.tag == 'linestyle':
-                or_tags.append("linestyle:"+element.text)
+                nose.add_class_tag("OpenRocket", "linestyle:"+element.text)
             if element.tag == 'aftshoulderradius':
-                or_tags.append("aftshoulderradius:"+element.text)
+                nose.add_class_tag("OpenRocket", "aftshoulderradius:"+element.text)
             if element.tag == 'aftshoulderlength':
-                or_tags.append("aftshoulderlength:"+element.text)
+                nose.add_class_tag("OpenRocket", "aftshoulderlength:"+element.text)
             if element.tag == 'aftshoulderthickness':
-                or_tags.append("aftshoulderthickness:"+element.text)
+                nose.add_class_tag("OpenRocket", "aftshoulderthickness:"+element.text)
             if element.tag == 'aftshouldercapped':
-                or_tags.append("aftshouldercapped:"+element.text)
-
-        nose = rdoc.Nosecone(shape, mass, length)
-        nose.thickness = thickness
-        nose.diameter = diameter
-        if color is not None:
-            nose.color = color
-        if surface is not None:
-            nose.surface_roughness = surface
-
-        for tag in or_tags:
-            nose.add_class_tag('OpenRocket', tag)
+                nose.add_class_tag("OpenRocket", "aftshouldercapped:"+element.text)
 
         return nose
 

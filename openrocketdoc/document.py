@@ -176,6 +176,8 @@ class Nosecone(Component):
     """Nose of the rocket. There can only be one per rocket
 
     :param `Noseshape` shape: Shape of the nosecone
+    :param `float` shape_parameter: Many nosecone types need a unitless number --
+                                   to describe their construction. See `Noseshape` for details
     :param `float [kg]` mass: Dry mass of the nosecone
     :param `float [m]` length: Tip to base (not including internal structure) length of the nosecone
     :\**kwargs:
@@ -190,9 +192,10 @@ class Nosecone(Component):
     **Members:**
     """
 
-    def __init__(self, shape, mass, length, **kwargs):
+    def __init__(self, shape, shape_parameter, mass, length, **kwargs):
         super(Nosecone, self).__init__("Nosecone", length=length, mass=mass, **kwargs)
         self.shape = shape
+        self.shape_parameter = shape_parameter
         self.thickness = 0
         self._roughness = 0
 
