@@ -114,8 +114,13 @@ class Component(object):
 
     @property
     def mass(self):
-        """Get the total **dry mass** of this component, including all subcomponents"""
+        """Get the total **dry mass** of this component, including all subcomponents.
+        """
         return self._mass + sum([c.mass for c in self.components])
+
+    @mass.setter
+    def mass(self, m):
+        self._mass = float(m)
 
     @property
     def color(self):
