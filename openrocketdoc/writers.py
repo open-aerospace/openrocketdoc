@@ -22,11 +22,6 @@ class Document(object):
         c = {'name': component.name}
         c['type'] = component.__class__.__name__
 
-        # All components have mass, length, diameter
-        c['mass'] = component.component_mass
-        c['length'] = component.length
-        c['diameter'] = component.diameter
-
         # All components have optional tags
         c['tags'] = component.tags
 
@@ -36,15 +31,35 @@ class Document(object):
             c['shape_parameter'] = component.shape_parameter
             c['thickness'] = component.thickness
             c['surface'] = component.surface_roughness
+            c['mass'] = component.component_mass
+            c['length'] = component.length
+            c['diameter'] = component.diameter
+            if component.color:
+                c['color'] = '['+str(component.color[0])+','+str(component.color[1])+','+str(component.color[2])+']'
+
+        elif type(component) is rdoc.Bodytube:
+            c['mass'] = component.component_mass
+            c['length'] = component.length
+            c['diameter'] = component.diameter
+            c['surface'] = component.surface_roughness
+            c['thickness'] = component.thickness
+            if component.color:
+                c['color'] = '['+str(component.color[0])+','+str(component.color[1])+','+str(component.color[2])+']'
+
+        elif type(component) is rdoc.Finset:
+            c['fin'] = self._component_dict(component.components[0])
+            c['num_of_fins'] = len(component.components)
 
         elif type(component) is rdoc.Fin:
             c['root_chord'] = component.root
             c['tip_chord'] = component.tip
             c['span'] = component.span
             c['sweepangle'] = component.sweepangle
+            c['mass'] = component.component_mass
 
         # recursion
-        if component.components:
+        # However, a finset describes one fin only, no need to list them redundantly
+        if component.components and type(component) is not rdoc.Finset:
             c['components'] = []
             for subcomponent in component.components:
                 c['components'].append(self._component_dict(subcomponent))
