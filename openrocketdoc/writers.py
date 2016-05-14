@@ -15,31 +15,33 @@ class Document(object):
         pass
 
     def _component_dict(self, component):
-        """For recursivly building a tree of compenents.
+        """For recursively building a tree of components.
         """
 
         # All must have name and type
         c = {'name': component.name}
         c['type'] = component.__class__.__name__
 
-        # Type spefific:
-        if type(component) is rdoc.Nosecone:
-            c['length'] = component.length
-            c['shape'] = component.shape.name
-            c['diameter'] = component.diameter
+        # All components have mass, length, diameter
+        c['mass'] = component.component_mass
+        c['length'] = component.length
+        c['diameter'] = component.diameter
 
-        elif type(component) is rdoc.Bodytube:
-            c['length'] = component.length
+        # All components have optional tags
+        c['tags'] = component.tags
+
+        # Type specific writers:
+        if type(component) is rdoc.Nosecone:
+            c['shape'] = component.shape.name
+            c['shape_parameter'] = component.shape_parameter
+            c['thickness'] = component.thickness
+            c['surface'] = component.surface_roughness
 
         elif type(component) is rdoc.Fin:
             c['root_chord'] = component.root
             c['tip_chord'] = component.tip
             c['span'] = component.span
             c['sweepangle'] = component.sweepangle
-
-        elif type(component) is rdoc.Mass:
-            c['mass'] = component.mass
-            c['length'] = component.length
 
         # recursion
         if component.components:

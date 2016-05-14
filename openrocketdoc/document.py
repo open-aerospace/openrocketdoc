@@ -133,7 +133,7 @@ class Component(object):
 
     @property
     def mass(self):
-        """Get the total **dry mass** of this component, including all subcomponents.
+        """Get the total *dry mass* of this component, **including all subcomponents**.
         """
         return self._mass + sum([c.mass for c in self.components])
 
@@ -143,7 +143,7 @@ class Component(object):
 
     @property
     def component_mass(self):
-        """Get the **dry mass** of this component.
+        """Get the *dry mass* of just this component.
         """
         return self._mass
 

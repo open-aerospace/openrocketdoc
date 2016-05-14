@@ -37,6 +37,7 @@ class TestLoaders(unittest.TestCase):
         self.assertAlmostEqual(nose.shape.value, document.Noseshape.TANGENT_OGIVE.value)
         self.assertAlmostEqual(nose.shape_parameter, 1.0)
         self.assertAlmostEqual(nose.mass, 0.05)
+        # TODO: self.assertAlmostEqual(nose.component_mass, 0.05)
         self.assertAlmostEqual(nose.length, 0.15)
         self.assertAlmostEqual(nose.thickness, 0.001)
         # TODO: self.assertAlmostEqual(nose.diameter, 0.05)
