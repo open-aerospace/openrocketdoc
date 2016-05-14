@@ -164,13 +164,34 @@ class Component(object):
 class Mass(Component):
     """Generic mass component. This is a catch-all for internal structure that
     contributes to the mass model of the rocket but doesn't serve a specific
-    purpose to be modeled.
+    purpose to be modeled. Often you know some internal detail like a flange or
+    flight computer that is heavy, but it doesn't contribute to the
+    aerodynamics. When in doubt use this. Give it a descriptive name!
+
+    Defining a Mass component requires a name and a mass. Many optional
+    arguments can be set that are used to compute, for example, density.
 
     :param `str` name: name of this mass
+    :param `float [kg]` mass: mass of the component
+    :\**kwargs:
+        * **[m] length** (`float`) overall length of the mass
+        * **[m] diameter** (`float`) greatest diameter of the mass
+
+    :example:
+
+    >>> from openrocketdoc.document import *
+    >>> Mass("Flight Computer", 0.0215)
+    <openrocketdoc.document.Mass "Flight Computer" (0.02 kg)>
+
+    **Members:**
+
     """
 
-    def __init__(self, name, **kwargs):
-        super(Mass, self).__init__(name, **kwargs)
+    def __init__(self, name, mass, **kwargs):
+        super(Mass, self).__init__(name, mass=mass, **kwargs)
+
+    def __repr__(self):
+        return "<openrocketdoc.document.Mass \"%s\" (%0.2f kg)>" % (self.name, self.mass)
 
 
 class Nosecone(Component):

@@ -276,23 +276,20 @@ class Openrocket(object):
         return tube
 
     def _load_mass(self, tree):
-        mass = rdoc.Mass('mass')
+        mass = rdoc.Mass('mass', 0)
 
         # Read data
         for element in tree:
             if element.tag == 'name':
                 mass.name = element.text
             if element.tag == 'mass':
-                mass._mass = float(element.text)
+                mass.mass = float(element.text)
             if element.tag == 'position':
                 mass.center = float(element.text)
             if element.tag == 'packedlength':
                 mass.length = float(element.text)
             if element.tag == 'color':
-                r = int(element.get('red', 0))
-                g = int(element.get('green', 0))
-                b = int(element.get('blue', 0))
-                mass.color = (r, g, b)
+                mass.color = self._read_color(element)
 
         return mass
 
