@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 import copy
+from math import pi
 
 
 class Noseshape(Enum):
@@ -221,6 +222,41 @@ class Bodytube(Component):
 
     def __init__(self, name, **kwargs):
         super(Bodytube, self).__init__(name, **kwargs)
+        self._roughness = 0
+        self.thickness = 0
+        self._density = None
+
+    @property
+    def surface_roughness(self):
+        """The surface roughness of the Body tube (in microns)
+        """
+        return self._roughness
+
+    @surface_roughness.setter
+    def surface_roughness(self, r):
+        self._roughness = r
+
+    @property
+    def surface_area(self):
+        """Surface area (skin of the vehicle)
+        """
+        return pi * self.diameter * self.length
+
+    @property
+    def density(self):
+        """The average material density of the tube
+        """
+        if self._density is not None and self._mass == 0:
+            return self._density
+        if self.thickness > 0:
+            r1 = self.diameter / 2.0
+            r2 = r1 - self.thickness
+            return self.component_mass / (pi * self.length * (r1**2 + r2**2))
+        return 0
+
+    @density.setter
+    def density(self, d):
+        self._density = d
 
 
 class Fin(Component):

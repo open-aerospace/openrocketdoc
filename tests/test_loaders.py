@@ -37,20 +37,26 @@ class TestLoaders(unittest.TestCase):
         self.assertAlmostEqual(nose.shape.value, document.Noseshape.TANGENT_OGIVE.value)
         self.assertAlmostEqual(nose.shape_parameter, 1.0)
         self.assertAlmostEqual(nose.mass, 0.05)
-        # TODO: self.assertAlmostEqual(nose.component_mass, 0.05)
+        # TODO: self.assertAlmostEqual(nose.component_mass, 0.019, places=3)
         self.assertAlmostEqual(nose.length, 0.15)
         self.assertAlmostEqual(nose.thickness, 0.001)
-        # TODO: self.assertAlmostEqual(nose.diameter, 0.05)
+        self.assertAlmostEqual(nose.diameter, 0.05)
         self.assertAlmostEqual(nose.surface_roughness, 60)
         self.assertEqual(nose.color, (165, 165, 165))
         self.assertEqual(len(nose.tags), 1)
         self.assertEqual(len(nose.tags[0]['tags']), 5)
+        # TODO: self.assertEqual(len(nose.components), 2)
 
         # Body:
         body = ork.stages[0].components[1]
         self.assertEqual(body.name, "Body tube")
         self.assertAlmostEqual(body.length, 0.3)
         self.assertEqual(body.color, None)
+        self.assertAlmostEqual(body.surface_roughness, 60)
+        self.assertAlmostEqual(body.thickness, 0.002)
+        self.assertAlmostEqual(body.diameter, 0.05)
+        self.assertAlmostEqual(body.component_mass, 0.086, places=3)
+        # TODO: self.assertAlmostEqual(body.mass, 0.05)
 
     def test_read_RockSimEng(self):
         rse_loader = loaders.RockSimEngine()

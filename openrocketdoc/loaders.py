@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 from zipfile import ZipFile
+from math import pi
 import xml.etree.ElementTree as ET
 import openrocketdoc.document as rdoc
 
@@ -177,6 +178,25 @@ class Openrocket(object):
             # 'engineblock',
         }
 
+        # Component radius the string 'auto' except for one place. We'll use
+        # to track the radius as we read the file.
+        self.radius = None
+
+    def _read_surface(self, surface):
+        """Translate OpenRocket's surface finish strings to a number,
+        surface roughness in microns.
+        """
+        if surface == 'normal':
+            return 60
+
+    def _read_color(self, node):
+        """Translate OpenRocket's color XML element node to a RGB tuple
+        """
+        r = int(node.get('red', 0))
+        g = int(node.get('green', 0))
+        b = int(node.get('blue', 0))
+        return (r, g, b)
+
     def _load_nosecone(self, tree):
         # defaults:
         nose = rdoc.Nosecone(rdoc.Noseshape.CONE, 0, 0.0, 0.0)
@@ -196,26 +216,31 @@ class Openrocket(object):
             if element.tag == 'thickness':
                 nose.thickness = float(element.text)
             if element.tag == 'finish':
-                if element.text == 'normal':
-                    nose.surface_roughness = 60
+                nose.surface_roughness = self._read_surface(element.text)
             if element.tag == 'aftradius':
                 if 'auto' not in element.text:
-                    nose.diameter = float(element.text) * 2
+                    self.radius = float(element.text)
             if element.tag == 'color':
-                r = int(element.get('red', 0))
-                g = int(element.get('green', 0))
-                b = int(element.get('blue', 0))
-                nose.color = (r, g, b)
+                nose.color = self._read_color(element)
             if element.tag == 'linestyle':
                 nose.add_class_tag("OpenRocket", "linestyle:"+element.text)
             if element.tag == 'aftshoulderradius':
+                if self.radius is None:
+                    self.radius = 0
+                self.radius += float(element.text)
                 nose.add_class_tag("OpenRocket", "aftshoulderradius:"+element.text)
             if element.tag == 'aftshoulderlength':
                 nose.add_class_tag("OpenRocket", "aftshoulderlength:"+element.text)
             if element.tag == 'aftshoulderthickness':
+                if self.radius is None:
+                    self.radius = 0
+                self.radius += (float(element.text) * 2.0)
                 nose.add_class_tag("OpenRocket", "aftshoulderthickness:"+element.text)
             if element.tag == 'aftshouldercapped':
                 nose.add_class_tag("OpenRocket", "aftshouldercapped:"+element.text)
+
+        if self.radius is not None:
+            nose.diameter = self.radius * 2.0
 
         return nose
 
@@ -228,11 +253,25 @@ class Openrocket(object):
                 tube.name = element.text
             if element.tag == 'length':
                 tube.length = float(element.text)
+            if element.tag == 'thickness':
+                tube.thickness = float(element.text)
+            if element.tag == 'finish':
+                tube.surface_roughness = self._read_surface(element.text)
+            if element.tag == 'material':
+                tube.density = float(element.get('density', 0))
             if element.tag == 'color':
-                r = int(element.get('red', 0))
-                g = int(element.get('green', 0))
-                b = int(element.get('blue', 0))
-                tube.color = (r, g, b)
+                tube.color = self._read_color(element)
+            if element.tag == 'radius':
+                if 'auto' not in element.text:
+                    self.radius = float(element.text)
+
+        if self.radius is not None:
+            tube.diameter = self.radius * 2.0
+
+        # Compute mass:
+        r1 = self.radius
+        r2 = r1 - tube.thickness
+        tube.mass = tube.density * (pi * tube.length * (r1**2 - r2**2))
 
         return tube
 
