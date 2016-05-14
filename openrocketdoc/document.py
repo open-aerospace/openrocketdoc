@@ -359,6 +359,9 @@ class Engine(object):
     Test if the class is constrained (that is, enough information is provided to
     fully solve a thrustcurve) using Engine.constrained (returns a boolean)
 
+    :param str name: Name of this engine.
+
+    **Members:**
     """
 
     def __init__(self, name):
@@ -400,7 +403,12 @@ class Engine(object):
             tc = self.thrustcurve
         return tc
 
-    def get_length(self):
+    @property
+    def length(self):
+        """**[m]** Length of the engine, be that the actual length of a self-contained
+        solid motor, or the whole system length of a liquid fuel system tanks
+        and all.
+        """
         if self._length is not None:
             return self._length
 
@@ -408,10 +416,14 @@ class Engine(object):
         l = sum([tank['length'] for tank in self.tanks])
         return l
 
-    def set_length(self, l):
+    @length.setter
+    def length(self, l):
         self._length = l
 
-    def get_diameter(self):
+    @property
+    def diameter(self):
+        """**[m]** Diameter of the engine system
+        """
         if self._diameter is not None:
             return self._diameter
 
@@ -420,20 +432,31 @@ class Engine(object):
             return max([tank['diameter'] for tank in self.tanks])
         return 0
 
-    def set_diameter(self, val):
+    @diameter.setter
+    def diameter(self, val):
         self._diameter = val
 
-    def get_isp(self):
+    @property
+    def Isp(self):
+        """**[s]** Average Specific Impulse (Isp) of the engine. Either computed from a
+        thrust curve or can be set directly and used to compute theoretical
+        performance numbers based on chemistry.
+        """
         if self._Isp is not None:
             return self._Isp
         if self.m_prop > 0:
             return self.I_total/(self.m_prop * 9.80665)
         return 0
 
-    def set_isp(self, val):
+    @Isp.setter
+    def Isp(self, val):
         self._Isp = val
 
-    def get_m_prop(self):
+    @property
+    def m_prop(self):
+        """**[kg]** Mass of the propellent in a loaded engine. This is total mass of
+        the fuel and oxidiser.
+        """
         if type(self._m_fuel) is float and type(self._m_ox) is float:
             return self._m_fuel + self._m_ox
         if self._m_fuel is None and self._m_ox is None:
@@ -443,12 +466,18 @@ class Engine(object):
         if self._m_ox is None:
             return self._m_fuel
 
-    def set_m_prop(self, val):
+    @m_prop.setter
+    def m_prop(self, val):
         # we must not know much about the system
         self._m_fuel = val / 2.0
         self._m_ox = val / 2.0
 
-    def get_thrust_avg(self):
+    @property
+    def thrust_avg(self):
+        """**[N]** Average thrust of the motor over the length of it's nominal burn.
+        Either computed from a thrust curve, or can be set directly to use in
+        computing desired performance.
+        """
         # if we know the burntime and total impulse then we can compute
         # otherwise return the value stored in _thrust_avg
         # other-otherwise give up (return 0)
@@ -458,11 +487,17 @@ class Engine(object):
             return 0
         return self.I_total / self.t_burn
 
-    def set_thrust_avg(self, val):
+    @thrust_avg.setter
+    def thrust_avg(self, val):
         # set this directly if a thrustcurve isn't available
         self._thrust_avg = val
 
-    def get_I_total(self):
+    @property
+    def I_total(self):
+        """**[N·s]** Total impulse of the engine over a nominal burn. Either computer
+        from a thrust curve, or can be set directly to use in computing
+        desired performance.
+        """
         # if we have a thrust curve, compute directly
         if self.thrustcurve:
             # Trapezoidal rule numeric ingratiation
@@ -484,10 +519,17 @@ class Engine(object):
             return self.m_prop * self.V_e
         return 0
 
-    def set_I_total(self, val):
+    @I_total.setter
+    def I_total(self, val):
         self._I_total = val
 
-    def get_t_burn(self):
+    @property
+    def t_burn(self):
+        """**[s]** Burn time. The time that it takes to burn all the propellent in a
+        nominal burn. Either computed from a thrust curve or can be set directly for
+        computing desired performance.
+        """
+
         # if we have a thrust curve, compute directly
         if self.thrustcurve:
             return self.thrustcurve[-1]['t']
@@ -502,10 +544,14 @@ class Engine(object):
             return self._t_burn
         return 0
 
-    def set_t_burn(self, val):
+    @t_burn.setter
+    def t_burn(self, val):
         self._t_burn = val
 
-    def get_thrust_peak(self):
+    @property
+    def thrust_peak(self):
+        """**[N]** Peak thrust during a nominal burn.
+        """
         if self.thrustcurve:
             return max([t['thrust'] for t in self.thrustcurve])
 
@@ -513,41 +559,48 @@ class Engine(object):
             return self._thrust_peak
         return 0
 
-    def set_thrust_peak(self, val):
+    @thrust_peak.setter
+    def thrust_peak(self, val):
         self._thrust_peak = val
 
-    def get_m_frac(self):
+    @property
+    def m_frac(self):
+        """[unitless] Mass fraction of the engine system. The ratio of the
+        loaded mass of the engine system and the empty weight. Often an
+        important figure of merit in designing a rocket.
+        """
         if self.m_init > 0:
             return (self.m_prop / self.m_init) * 100.0
         return 0
 
-    def set_m_frac(self, val):
+    @m_frac.setter
+    def m_frac(self, val):
         self._m_frac = val
 
-    def get_ve(self):
+    @property
+    def V_e(self):
+        """**[m/s]** Effective velocity (average) of the exhaust gasses of the
+        engine.
+        """
         return self.Isp * 9.80665
 
-    def set_ve(self, val):
+    @V_e.setter
+    def V_e(self, val):
         self._Isp = val / 9.80665
-
-    length = property(get_length, set_length)
-    diameter = property(get_diameter, set_diameter)
-    Isp = property(get_isp, set_isp)
-    m_prop = property(get_m_prop, set_m_prop)
-    thrust_avg = property(get_thrust_avg, set_thrust_avg)
-    I_total = property(get_I_total, set_I_total)
-    t_burn = property(get_t_burn, set_t_burn)
-    thrust_peak = property(get_thrust_peak, set_thrust_peak)
-    m_frac = property(get_m_frac, set_m_frac)
-    V_e = property(get_ve, set_ve)
 
     @property
     def m_init(self):
+        """**[kg]** Initial weight of the engine system, including propellent.
+        """
         m_tanks = sum([tank['mass'] for tank in self.tanks])
         return self.m_prop + m_tanks + self._m_system
 
     @property
     def constrained(self):
+        """Is the system fully described?
+
+        :rtype: boolean
+        """
         if self.I_total > 0:
             return True
         return False
