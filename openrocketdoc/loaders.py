@@ -166,9 +166,18 @@ class Openrocket(object):
     """
 
     def __init__(self):
-        pass
+        # list of OpenRocket parts we care about
+        self.part_types = {
+            'nosecone': self._load_nosecone,
+            'bodytube': self._load_bodytube,
+            'masscomponent': self._load_mass,
+            'trapezoidfinset': self._load_finset,
+            # 'streamer',
+            # 'centeringring',
+            # 'engineblock',
+        }
 
-    def _load_nosecone(tree):
+    def _load_nosecone(self, tree):
         # defaults:
         nose = rdoc.Nosecone(rdoc.Noseshape.CONE, 0, 0.0, 0.0)
 
@@ -210,7 +219,7 @@ class Openrocket(object):
 
         return nose
 
-    def _load_bodytube(tree):
+    def _load_bodytube(self, tree):
         tube = rdoc.Bodytube('bodytube')
 
         # Read data
@@ -227,7 +236,7 @@ class Openrocket(object):
 
         return tube
 
-    def _load_mass(tree):
+    def _load_mass(self, tree):
         mass = rdoc.Mass('mass')
 
         # Read data
@@ -248,12 +257,12 @@ class Openrocket(object):
 
         return mass
 
-    def _load_fins(tree):
+    def _load_fins(self, tree):
         fins = rdoc.Fin('fin')
 
         return fins
 
-    def _load_finset(tree):
+    def _load_finset(self, tree):
         fin = rdoc.Fin('Fin')
         number_of_fins = 0
         name = "Finset"
@@ -338,14 +347,3 @@ class Openrocket(object):
                                 ordoc.stages.append(stage)
 
         return ordoc
-
-    # list of OpenRocket parts we care about
-    part_types = {
-        'nosecone': _load_nosecone,
-        'bodytube': _load_bodytube,
-        'masscomponent': _load_mass,
-        'trapezoidfinset': _load_finset,
-        # 'streamer',
-        # 'centeringring',
-        # 'engineblock',
-    }
