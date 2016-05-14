@@ -162,11 +162,11 @@ class Component(object):
 
 
 class Mass(Component):
-    """Generic mass compenent. This is a catch-all for internal structure that
+    """Generic mass component. This is a catch-all for internal structure that
     contributes to the mass model of the rocket but doesn't serve a specific
     purpose to be modeled.
 
-    :param `str` name: name of the mass
+    :param `str` name: name of this mass
     """
 
     def __init__(self, name, **kwargs):
@@ -174,11 +174,25 @@ class Mass(Component):
 
 
 class Nosecone(Component):
-    """Nose of the rocket. There can only be one per rocket
+    """Nose of the rocket. Nosecones come in many shapes. See the
+    :class:`.Noseshape` for nosecone shapes that can be described by this
+    module.
+
+    In general a Nosecone is the first component in the top stage. It's defined
+    by a "shape", like a cone or an ogive, and an optional shape parameter used
+    to further define the exact shape. The very tip of the Nosecone is used as
+    the reference location (0 coordinate) for the rest of the rocket.
+
+    Defining a Nosecone requires a shape, shape parameter, mass, and length. 0
+    is a valid number if mass or length is not known yet, though most
+    properties of the nose will not be computed in that case. Diameter is an
+    optional parameter, and is often not set directly because it depends on
+    another part of the rocket (e.g, the overall radius of the vehicle being
+    modeled, input later).
 
     :param `Noseshape` shape: Shape of the nosecone
     :param `float` shape_parameter: Many nosecone types need a unitless number --
-                                   to describe their construction. See `Noseshape` for details
+                                   to describe their construction. See :class:`.Noseshape` for details
     :param `float [kg]` mass: Dry mass of the nosecone
     :param `float [m]` length: Tip to base (not including internal structure) length of the nosecone
     :\**kwargs:
@@ -216,6 +230,15 @@ class Nosecone(Component):
 
 class Bodytube(Component):
     """A cylindrical section of the outer body of the rocket.
+
+    The main part of a rocket is going to be a long cylindrical tube.
+
+    A name, the mass and length are required. 0 is a valid number if mass or
+    length is not known yet, though most properties of the component will not
+    be computed in that case. Diameter is an optional parameter, and is often
+    not set directly because it depends on another part of the rocket (e.g, the
+    overall radius of the vehicle being modeled, input later).
+
 
     :param str name: Name of the component
     :param `float [kg]` mass: Dry mass of this section of body
