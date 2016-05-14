@@ -245,7 +245,7 @@ class Openrocket(object):
         return nose
 
     def _load_bodytube(self, tree):
-        tube = rdoc.Bodytube('bodytube')
+        tube = rdoc.Bodytube('bodytube', 0, 0)
 
         # Read data
         for element in tree:

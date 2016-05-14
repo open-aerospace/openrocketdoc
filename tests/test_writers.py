@@ -25,7 +25,7 @@ class TestWriters(unittest.TestCase):
         stage0 = rdoc.Stage("Sustainer")
         stage0.components = [
             rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 1, 0.2, 1.0),
-            rdoc.Bodytube("body"),
+            rdoc.Bodytube("body", 1, 0.2),
         ]
         rocket.stages = [stage0]
         str_file = writers.Document().dump(rocket)

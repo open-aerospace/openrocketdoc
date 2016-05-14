@@ -218,13 +218,28 @@ class Bodytube(Component):
     """A cylindrical section of the outer body of the rocket.
 
     :param str name: Name of the component
+    :param `float [kg]` mass: Dry mass of this section of body
+    :param `float [m]` length: Length of this section of body
+    :\**kwargs:
+        * **[m] diameter** (`float`) diameter at the base
+
+    :example:
+
+    >>> from openrocketdoc.document import *
+    >>> Bodytube("My Tube", 1.2, 0.538)
+    <openrocketdoc.document.Bodytube "My Tube" (1.20 kg)>
+
+    **Members:**
     """
 
-    def __init__(self, name, **kwargs):
-        super(Bodytube, self).__init__(name, **kwargs)
+    def __init__(self, name, mass, length, **kwargs):
+        super(Bodytube, self).__init__(name, mass=mass, length=length, **kwargs)
         self._roughness = 0
         self.thickness = 0
         self._density = None
+
+    def __repr__(self):
+        return "<openrocketdoc.document.Bodytube \"%s\" (%0.2f kg)>" % (self.name, self.mass)
 
     @property
     def surface_roughness(self):

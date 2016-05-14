@@ -22,7 +22,7 @@ class TestOpenrocketdoc(unittest.TestCase):
         stage0 = document.Stage("Booster")
         stage0.components = [
             document.Nosecone(document.Noseshape.VONKARMAN, 1, 0.7, 1.2),
-            document.Bodytube("body"),
+            document.Bodytube("body", 1.2, 0.5),
         ]
         rocket.stages = [stage0]
 
@@ -30,8 +30,8 @@ class TestOpenrocketdoc(unittest.TestCase):
         stage0 = document.Stage("Booster")
         stage0.components = [
             document.Nosecone(document.Noseshape.CONE, 0, 0.7, 1.4),
-            document.Bodytube("body"),
-            document.Bodytube("body", mass=24.1),
+            document.Bodytube("body", 0, 1),
+            document.Bodytube("body", 24.1, 1),
         ]
         self.assertEqual(24.8, stage0.mass)
 
@@ -39,12 +39,12 @@ class TestOpenrocketdoc(unittest.TestCase):
         stage0 = document.Stage("Booster")
         stage0.components = [
             document.Nosecone("", 1, 0.7, 1.2),
-            document.Bodytube("body"),
-            document.Bodytube("body", mass=24.1),
+            document.Bodytube("body", 0, 1),
+            document.Bodytube("body", 24.1, 1),
         ]
         stage1 = document.Stage("Booster")
         stage1.components = [
-            document.Bodytube("body", mass=4.87),
+            document.Bodytube("body", 4.87, 1),
             document.Fin('fin', mass=0.1),
         ]
 
@@ -58,13 +58,13 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertEqual(0, fin.mass)
 
     def test_no_color(self):
-        tube = document.Bodytube("body", mass=24.1)
+        tube = document.Bodytube("body", 24.1, 1)
 
         # No color defined
         self.assertEqual(tube.color, None)
 
     def test_color(self):
-        tube = document.Bodytube("body", mass=24.1)
+        tube = document.Bodytube("body", 24.1, 1)
 
         # As string:
         tube.color = "Brown"
