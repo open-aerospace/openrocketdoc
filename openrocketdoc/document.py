@@ -397,14 +397,23 @@ class Fin(Component):
             return self._sweep
         return self.span * tan(radians(self._sweepangle))
 
+    @sweep.setter
+    def sweep(self, s):
+        self._sweep = s
+
     @property
     def sweepangle(self):
-        """**[m]** Angle the leading edge of the fin makes with respect to the
+        """**[°]** Angle the leading edge of the fin makes with respect to the
         body of the rocket.
         """
         if self._sweep is not None:
             return degrees(atan(self._sweep / self.span))
         return self._sweepangle
+
+    @sweepangle.setter
+    def sweepangle(self, s):
+        self._sweep = None
+        self._sweepangle = s
 
 
 class Finset(Component):
