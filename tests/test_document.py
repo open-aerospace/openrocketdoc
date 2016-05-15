@@ -45,7 +45,7 @@ class TestOpenrocketdoc(unittest.TestCase):
         stage1 = document.Stage("Booster")
         stage1.components = [
             document.Bodytube("body", 4.87, 1),
-            document.Fin('fin', mass=0.1),
+            document.Fin('fin', 1, 1, 1, sweepangle=45.0, mass=0.1),
         ]
 
         rocket = document.Rocket("Rocket")
@@ -54,8 +54,12 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertEqual(29.77, rocket.mass)
 
     def test_fins(self):
-        fin = document.Fin('fin')
+        fin = document.Fin('fin', 1, 1, 1, sweep=0.234)
         self.assertEqual(0, fin.mass)
+        self.assertAlmostEqual(fin.root, 1.0)
+        self.assertAlmostEqual(fin.tip, 1.0)
+        self.assertAlmostEqual(fin.span, 1.0)
+        # TODO: self.assertAlmostEqual(fin.sweepangle, 1.0)
 
     def test_no_color(self):
         tube = document.Bodytube("body", 24.1, 1)

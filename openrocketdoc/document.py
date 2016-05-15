@@ -335,33 +335,116 @@ class Bodytube(Component):
 
 
 class Fin(Component):
-    """A single rocket fin"""
+    """A single fin.
 
-    def __init__(self, name, **kwargs):
-        super(Fin, self).__init__(name, **kwargs)
+    Almost all sounding rockets have a set of fins near the base of the
+    vehicle. This class represents a single fin. If there are multiple
+    symmetric fins, an :class:`.Finset` can be used to handle replication.
 
-        self.root = 0
-        self.tip = 0
-        self.span = 0
-        self.sweep = None
-        self.sweepangle = 0
+    Fins are assumed to be trapezoidal (Truncated delta wings). To define a fin
+    you need to know the length of several chords. The Fin takes the Root
+    Chord, Tip Chord and span (height) of the fin.
+
+    The fin sweep can either be defined as a distance (from the start of the
+    fin to the beginning of the tip) or as the angle the leading edge of the
+    fin makes with respect to the body of the rocket. Do not set both of these
+    at the same time, rather set the one convenient for you.
+
+    :param `str` name: The name of this fin
+    :param `float [m]` root: Length of the Root Chord
+    :param `float [m]` tip: Length of the Tip Chord
+    :param `float [m]` span: Length of height of the fin away from the rocket
+                             body
+    :param `float [m]` sweep: (Optional) Distance from the start of the
+                              fin to the beginning of the tip
+    :param `float [°]` sweepangle: (Optional) Angle the leading edge of the
+                                   fin makes with respect to the body of the
+                                   rocket.
+
+    :example:
+
+    >>> from openrocketdoc.document import *
+    >>> Fin("My Fin", 0.5, 0.24, 0.4, sweepangle=45.0)
+    <openrocketdoc.document.Fin "My Fin">
+
+    **Members:**
+    """
+
+    def __init__(self, name, root, tip, span, sweep=None, sweepangle=0, **kwargs):
+        super(Fin, self).__init__(name, length=root, **kwargs)
+
+        self.root = root
+        self.tip = tip
+        self.span = span
+        self._sweep = sweep
+        self._sweepangle = sweepangle
+
+    def __repr__(self):
+        return "<openrocketdoc.document.Fin \"%s\">" % (self.name)
+
+    @property
+    def sweepangle(self):
+        return self._sweepangle
 
 
 class Finset(Component):
-    """A set of identical fins, set symetrically around the vehicle.
+    """A set of identical fins, set symmetrically around the vehicle.
 
-    :param str name: Name of the compenent
-    :param Fin fin: A single Fin object to be repeated as part of the set
-    :param int number_of_fins: Number of fins in the set
+    For convince and "Don't Repeat Yourself" sake, a identical, symmetric set
+    of fins can be defined as a single "finset". Build a single :class:`.Fin`
+    object, and pass that to the constructor of this class along with the
+    number of fins, and the full finset is built for you.
+
+    :param `str` name: Name of the component
+    :param `Fin` fin: A single Fin object to be repeated as part of the set
+    :param `int` number_of_fins: Number of fins in the set
+
+    :example:
+
+    >>> from openrocketdoc.document import *
+    >>> a_fin = Fin("My Fin", 0.5, 0.24, 0.4, sweepangle=45.0)
+    >>> Finset("Fins", a_fin, 3)
+    <openrocketdoc.document.Finset "Fins" (3 fins)>
+
+    **Members:**
     """
 
     def __init__(self, name, fin, number_of_fins, **kwargs):
         super(Finset, self).__init__(name, **kwargs)
 
-        for i in range(number_of_fins):
-            fin_copy = copy.deepcopy(fin)
+        self._fin = fin
+        self.number_of_fins = number_of_fins
+
+    def __repr__(self):
+        return "<openrocketdoc.document.Finset \"%s\" (%d fins)>" % (self.name, self.number_of_fins)
+
+    @property
+    def number_of_fins(self):
+        """The number of fins in the finset.
+        """
+        return len(self.components)
+
+    @number_of_fins.setter
+    def number_of_fins(self, n):
+        self.components = []
+
+        # Build a copy of the fin object
+        for i in range(n):
+            fin_copy = copy.deepcopy(self._fin)
             fin_copy.name = "Fin %d" % (i + 1)
             self.components.append(fin_copy)
+
+    @property
+    def fin(self):
+        """A single fin prototype. Update this to update all fins to a new fin object.
+        """
+        return self._fin
+
+    @fin.setter
+    def fin(self, fin):
+        self._fin = fin
+        # rebuild finset
+        self.number_of_fins = len(self.components)
 
 
 class Engine(object):

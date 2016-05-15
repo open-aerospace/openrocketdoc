@@ -336,9 +336,9 @@ class Openrocket(object):
         return fins
 
     def _load_finset(self, tree):
-        fin = rdoc.Fin('Fin')
+        fin = rdoc.Fin('Fin', 0, 0, 0)
+        name = "Fins"
         number_of_fins = 0
-        name = "Finset"
 
         for element in tree:
             if element.tag == 'name':
@@ -351,13 +351,14 @@ class Openrocket(object):
                 fin.span = float(element.text)
             if element.tag == 'sweeplength':
                 fin.sweeplength = float(element.text)
+            if element.tag == 'material':
+                fin.material_name = element.text
+            if element.tag == 'thickness':
+                fin.thickness = float(element.text)
             if element.tag == 'fincount':
                 number_of_fins = int(element.text)
             if element.tag == 'color':
-                r = int(element.get('red', 0))
-                g = int(element.get('green', 0))
-                b = int(element.get('blue', 0))
-                fin.color = (r, g, b)
+                fin.color = self._read_color(element)
 
         finset = rdoc.Finset(name, fin, number_of_fins)
 

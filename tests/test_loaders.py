@@ -36,9 +36,9 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(nose.name, "Nosecone")  # hardcoded
         self.assertAlmostEqual(nose.shape.value, document.Noseshape.TANGENT_OGIVE.value)
         self.assertAlmostEqual(nose.shape_parameter, 1.0)
-        self.assertAlmostEqual(nose.mass, 0.05)
         self.assertEqual(nose.material_name, "Polystyrene")
         # TODO: self.assertAlmostEqual(nose.component_mass, 0.019, places=3)
+        # TODO: self.assertAlmostEqual(nose.mass, 0.0019 + 0.002 + 0.05)
         self.assertAlmostEqual(nose.length, 0.15)
         self.assertAlmostEqual(nose.thickness, 0.001)
         self.assertAlmostEqual(nose.diameter, 0.05)
@@ -55,6 +55,7 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(streamer.color, (255, 0, 0))
         self.assertAlmostEqual(streamer.length, 0.025)
         self.assertAlmostEqual(streamer.diameter, 0.025)
+        # TODO: self.assertAlmostEqual(streamer.mass, 0.002)
 
         # Mass inside nosecone
         mass = nose.components[1]
@@ -74,7 +75,13 @@ class TestLoaders(unittest.TestCase):
         self.assertAlmostEqual(body.thickness, 0.002)
         self.assertAlmostEqual(body.diameter, 0.05)
         self.assertAlmostEqual(body.component_mass, 0.086, places=3)
-        # TODO: self.assertAlmostEqual(body.mass, 0.05)
+        # TODO: self.assertAlmostEqual(body.mass, 0.086 + 0.059 +?)
+        # TODO: self.assertEqual(len(body.components), 3)
+
+        # Finset in Body:
+        finset = body.components[0]
+        self.assertEqual(type(finset), document.Finset)
+        self.assertEqual(finset.number_of_fins, 3)
 
     def test_read_RockSimEng(self):
         rse_loader = loaders.RockSimEngine()
