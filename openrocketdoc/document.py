@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 import copy
-from math import pi
+from math import pi, atan, tan, radians, degrees
 
 
 class Noseshape(Enum):
@@ -370,12 +370,18 @@ class Fin(Component):
     **Members:**
     """
 
-    def __init__(self, name, root, tip, span, sweep=None, sweepangle=0, **kwargs):
+    def __init__(self, name, root, tip, span, sweep=None, sweepangle=45.0, **kwargs):
         super(Fin, self).__init__(name, length=root, **kwargs)
 
         self.root = root
+        """**[m]** The Root Chord of the Fin"""
+
         self.tip = tip
+        """**[m]** The Tip Chord of the Fin"""
+
         self.span = span
+        """**[m]** Height of the fin away from the rocket body"""
+
         self._sweep = sweep
         self._sweepangle = sweepangle
 
@@ -383,7 +389,21 @@ class Fin(Component):
         return "<openrocketdoc.document.Fin \"%s\">" % (self.name)
 
     @property
+    def sweep(self):
+        """**[m]** The Distance from the start of the fin to the beginning of
+        the tip.
+        """
+        if self._sweep is not None:
+            return self._sweep
+        return self.span * tan(radians(self._sweepangle))
+
+    @property
     def sweepangle(self):
+        """**[m]** Angle the leading edge of the fin makes with respect to the
+        body of the rocket.
+        """
+        if self._sweep is not None:
+            return degrees(atan(self._sweep / self.span))
         return self._sweepangle
 
 

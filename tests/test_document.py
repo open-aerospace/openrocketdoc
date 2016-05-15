@@ -59,7 +59,8 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertAlmostEqual(fin.root, 1.0)
         self.assertAlmostEqual(fin.tip, 1.0)
         self.assertAlmostEqual(fin.span, 1.0)
-        # TODO: self.assertAlmostEqual(fin.sweepangle, 1.0)
+        self.assertAlmostEqual(fin.sweep, 0.234)
+        self.assertAlmostEqual(fin.sweepangle, 13.170241897951414)
 
     def test_no_color(self):
         tube = document.Bodytube("body", 24.1, 1)
