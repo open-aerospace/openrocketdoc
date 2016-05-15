@@ -37,6 +37,7 @@ class TestLoaders(unittest.TestCase):
         self.assertAlmostEqual(nose.shape.value, document.Noseshape.TANGENT_OGIVE.value)
         self.assertAlmostEqual(nose.shape_parameter, 1.0)
         self.assertAlmostEqual(nose.mass, 0.05)
+        self.assertEqual(nose.material_name, "Polystyrene")
         # TODO: self.assertAlmostEqual(nose.component_mass, 0.019, places=3)
         self.assertAlmostEqual(nose.length, 0.15)
         self.assertAlmostEqual(nose.thickness, 0.001)
@@ -45,11 +46,28 @@ class TestLoaders(unittest.TestCase):
         self.assertEqual(nose.color, (165, 165, 165))
         self.assertEqual(len(nose.tags), 1)
         self.assertEqual(len(nose.tags[0]['tags']), 5)
-        # TODO: self.assertEqual(len(nose.components), 2)
+        self.assertEqual(len(nose.components), 2)
+
+        # Streamer inside nosecone
+        streamer = nose.components[0]
+        self.assertEqual(type(streamer), document.Mass)
+        self.assertEqual(streamer.name, "Streamer")
+        self.assertEqual(streamer.color, (255, 0, 0))
+        self.assertAlmostEqual(streamer.length, 0.025)
+        self.assertAlmostEqual(streamer.diameter, 0.025)
+
+        # Mass inside nosecone
+        mass = nose.components[1]
+        self.assertEqual(type(mass), document.Mass)
+        self.assertEqual(mass.name, "Mass component")
+        self.assertAlmostEqual(mass.mass, 0.05)
+        self.assertAlmostEqual(mass.length, 0.01)
+        self.assertAlmostEqual(mass.diameter, 0.01)
 
         # Body:
         body = ork.stages[0].components[1]
         self.assertEqual(body.name, "Body tube")
+        self.assertEqual(body.material_name, "Kraft phenolic")
         self.assertAlmostEqual(body.length, 0.3)
         self.assertEqual(body.color, None)
         self.assertAlmostEqual(body.surface_roughness, 60)

@@ -103,12 +103,13 @@ class Component(object):
     """A Component is a piece of the rocket like a fin or nosecone.
     """
 
-    def __init__(self, name, mass=0.0, length=0.0, diameter=0.0):
+    def __init__(self, name, mass=0.0, length=0.0, diameter=0.0, material_name=""):
         self.name = name
         self._mass = mass
         self.length = length
         self.diameter = diameter
         self._color = None
+        self._material_name = material_name
 
         #: List of sub components
         self.components = []
@@ -160,6 +161,18 @@ class Component(object):
         """
         self._color = c
 
+    @property
+    def material_name(self):
+        """The name of the main material this component is made of.
+        Example: "Aluminium" or "440 Stainless". This is not used directly,
+        but rather is for descriptive purposes.
+        """
+        return self._material_name
+
+    @material_name.setter
+    def material_name(self, name):
+        self._material_name = name
+
 
 class Mass(Component):
     """Generic mass component. This is a catch-all for internal structure that
@@ -176,6 +189,7 @@ class Mass(Component):
     :\**kwargs:
         * **[m] length** (`float`) overall length of the mass
         * **[m] diameter** (`float`) greatest diameter of the mass
+        * **material_name** (`str`) name of the main material this component is made of.
 
     :example:
 
@@ -218,6 +232,7 @@ class Nosecone(Component):
     :param `float [m]` length: Tip to base (not including internal structure) length of the nosecone
     :\**kwargs:
         * **[m] diameter** (`float`) diameter at the base
+        * **material_name** (`str`) name of the main material this component is made of.
 
     :example:
 
@@ -266,6 +281,7 @@ class Bodytube(Component):
     :param `float [m]` length: Length of this section of body
     :\**kwargs:
         * **[m] diameter** (`float`) diameter at the base
+        * **material_name** (`str`) name of the main material this component is made of.
 
     :example:
 

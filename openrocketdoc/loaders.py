@@ -173,7 +173,7 @@ class Openrocket(object):
             'bodytube': self._load_bodytube,
             'masscomponent': self._load_mass,
             'trapezoidfinset': self._load_finset,
-            # 'streamer',
+            'streamer': self._load_streamer,
             # 'centeringring',
             # 'engineblock',
         }
@@ -220,6 +220,9 @@ class Openrocket(object):
             if element.tag == 'aftradius':
                 if 'auto' not in element.text:
                     self.radius = float(element.text)
+            if element.tag == 'material':
+                nose.material_name = element.text
+                nose.density = float(element.get('density', 0))
             if element.tag == 'color':
                 nose.color = self._read_color(element)
             if element.tag == 'linestyle':
@@ -258,6 +261,7 @@ class Openrocket(object):
             if element.tag == 'finish':
                 tube.surface_roughness = self._read_surface(element.text)
             if element.tag == 'material':
+                tube.material_name = element.text
                 tube.density = float(element.get('density', 0))
             if element.tag == 'color':
                 tube.color = self._read_color(element)
@@ -276,9 +280,11 @@ class Openrocket(object):
         return tube
 
     def _load_mass(self, tree):
+        """Read a <masscomponent> tag from an OpenRocket document. Correlates
+        to a openrocketdoc.document.Mass type.
+        """
         mass = rdoc.Mass('mass', 0)
 
-        # Read data
         for element in tree:
             if element.tag == 'name':
                 mass.name = element.text
@@ -288,8 +294,39 @@ class Openrocket(object):
                 mass.center = float(element.text)
             if element.tag == 'packedlength':
                 mass.length = float(element.text)
+            if element.tag == 'packedradius':
+                mass.diameter = 2 * float(element.text)
             if element.tag == 'color':
                 mass.color = self._read_color(element)
+
+        # Record the original OpenRocket type as a tag
+        mass.add_class_tag("OpenRocket", "type:masscomponent")
+
+        return mass
+
+    def _load_streamer(self, tree):
+        """Read a <streamer> tag from an OpenRocket document. We'll treat this
+        as an openrocketdoc.document.Mass.
+        """
+
+        mass = rdoc.Mass('mass', 0)
+
+        for element in tree:
+            if element.tag == 'name':
+                mass.name = element.text
+            if element.tag == 'position':
+                mass.center = float(element.text)
+            if element.tag == 'packedlength':
+                mass.length = float(element.text)
+            if element.tag == 'packedradius':
+                mass.diameter = 2 * float(element.text)
+            if element.tag == 'color':
+                mass.color = self._read_color(element)
+            if element.tag == 'linestyle':
+                mass.add_class_tag("OpenRocket", "linestyle:"+element.text)
+
+        # Record the original OpenRocket type as a tag
+        mass.add_class_tag("OpenRocket", "type:streamer")
 
         return mass
 
