@@ -65,37 +65,44 @@ class Noseshape(Enum):
 
 
 class Rocket(object):
-    """A top level Rocket object.
+    """Top level of an Open Rocket Document. A Rocket is made of stages.
 
-    :param str name: Name of the rocket
+    :param `str` name: Name of the rocket
 
+    **Members:**
     """
 
     def __init__(self, name):
         self.name = name
-        #: List of stages that make up the rocket
+        """Name of this rocket"""
+
         self.stages = []
+        """List of stages that makes up the rocket."""
 
     @property
     def mass(self):
-        """Get the total **dry mass** of the rocket"""
+        """**[kg]** Get the total *dry* mass of the rocket"""
         return sum(stage.mass for stage in self.stages)
 
 
 class Stage(object):
     """One Stage of a Rocket.
 
-    :param str name: Name of a stage
+    :param `str` name: Name of the stage.
 
+    **Members:**
     """
+
     def __init__(self, name):
         self.name = name
-        #: List of components (nose, body, fins, etc.) that make up stage
+        """Name of the stage."""
+
         self.components = []
+        """A list of components that make up the stage."""
 
     @property
     def mass(self):
-        """Get the total **dry mass** of this stage"""
+        """**[kg]** Get the total *dry* mass of this stage"""
         return sum(c.mass for c in self.components)
 
 
@@ -105,17 +112,23 @@ class Component(object):
 
     def __init__(self, name, mass=0.0, length=0.0, diameter=0.0, material_name=""):
         self.name = name
-        self._mass = mass
+        """Name"""
+
         self.length = length
+        """**[m]** Length"""
+
         self.diameter = diameter
+        """**[m]** Diameter"""
+
+        self._mass = mass
         self._color = None
         self._material_name = material_name
 
-        #: List of sub components
         self.components = []
+        """List of components inside this component."""
 
-        #: List of optional tags
         self.tags = []
+        """A list of tags that may describe this component."""
 
     def add_class_tag(self, newclass, newtag):
         """Add a new tag that is part of a tag collection (class)
@@ -135,7 +148,8 @@ class Component(object):
 
     @property
     def mass(self):
-        """Get the total *dry mass* of this component, **including all subcomponents**.
+        """**[kg]** The total *dry mass* of this component, **including all
+        subcomponents**.
         """
         return self._mass + sum([c.mass for c in self.components])
 
@@ -145,13 +159,13 @@ class Component(object):
 
     @property
     def component_mass(self):
-        """Get the *dry mass* of just this component.
+        """**[kg]** The *dry mass* of just this component.
         """
         return self._mass
 
     @property
     def color(self):
-        """Get the color (if defined) of this component.
+        """The color (if defined) of this component.
         """
         return self._color
 
@@ -255,7 +269,7 @@ class Nosecone(Component):
 
     @property
     def surface_roughness(self):
-        """The surface roughness of the Nose (in microns)
+        """**[μm]** The surface roughness of the Nose
         """
         return self._roughness
 
@@ -303,7 +317,7 @@ class Bodytube(Component):
 
     @property
     def surface_roughness(self):
-        """The surface roughness of the Body tube (in microns)
+        """**[μm]** The surface roughness of the Body tube.
         """
         return self._roughness
 
@@ -313,13 +327,13 @@ class Bodytube(Component):
 
     @property
     def surface_area(self):
-        """Surface area (skin of the vehicle)
+        """**[m²]** Surface area (skin of the vehicle)
         """
         return pi * self.diameter * self.length
 
     @property
     def density(self):
-        """The average material density of the tube
+        """**[kg/m³]** The average material density of the tube
         """
         if self._density is not None and self._mass == 0:
             return self._density
