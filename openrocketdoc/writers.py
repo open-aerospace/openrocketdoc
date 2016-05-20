@@ -6,6 +6,9 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 from yaml import dump as yamldump
 
+N2LBF = 0.224809
+KG2LB = 2.20462
+
 
 class Document(object):
     """Write Open Rocket Doc
@@ -90,6 +93,66 @@ class Document(object):
         return yamldump(doc, default_flow_style=False)
 
 
+class JSBSimEngine(object):
+    """JSBSim Engine format
+
+    **Memebers:**
+    """
+
+    @classmethod
+    def dump(cls, engine):
+        """Return a `str` representation of the file.
+
+        :param `Engine` engine: The OpenRocketDoc engine to convert
+        :returns: `str` formated file
+        """
+
+        doc = ET.Element('rocket_engine')
+        doc.attrib['name'] = engine.name
+
+        isp = ET.SubElement(doc, 'isp')
+        isp.text = "%0.1f" % engine.Isp
+
+        # TODO: What to do about motor build-up time?
+        builduptime = ET.SubElement(doc, 'builduptime')
+        builduptime.text = "0.1"
+
+        thrust_table = ET.SubElement(doc, 'thrust_table')
+        thrust_table.attrib['name'] = "propulsion/thrust_prop_remain"  # apparently the only option?
+        thrust_table.attrib['type'] = "internal"
+
+        tableData = ET.SubElement(thrust_table, 'tableData')
+        tableData.text = "\n"
+
+        if not engine.thrustcurve:
+            thrustcurve = engine.make_thrustcurve()
+        else:
+            thrustcurve = engine.thrustcurve
+
+        # First data point is at t=0, 0 prop burnt
+        tableData.text += " %0.3f %0.3f\n" % (0.0, thrustcurve[0]['thrust'] * N2LBF)
+
+        # Compute propellent burn, _first_ result will be at t = i+1
+        itot = 0
+        for i, t in enumerate(thrustcurve[:-1]):
+            x = t['t']
+            x_1 = thrustcurve[i+1]['t']
+            f_x = t['thrust']
+            f_x1 = thrustcurve[i+1]['thrust']
+            itot += (x_1 - x) * (f_x1 + f_x)
+
+            mass = ((itot/2.0)/engine.V_e) * KG2LB
+            thrust = f_x1 * N2LBF
+
+            tableData.text += " %0.3f %0.3f\n" % (mass, thrust)
+
+        tableData.text += "    "
+
+        # pretty print
+        xmldoc = minidom.parseString(ET.tostring(doc, encoding="UTF-8"))
+        return xmldoc.toprettyxml(indent="  ")
+
+
 class RaspEngine(object):
     """Write a RASP engine file format
 
@@ -166,7 +229,7 @@ class RockSimEngine(object):
         eng.attrib['propWt'] = "%0.1f" % (engine.m_prop * 1000.0)  # to g
         eng.attrib['massFrac'] = "%0.0f" % engine.m_frac
 
-        # TODO: Needs adding
+        # TODO: These all need adding tp the doc:
         eng.attrib['exitDia'] = "%0.2f" % 0
         eng.attrib['throatDia'] = "0."
         eng.attrib['Type'] = "single-use"

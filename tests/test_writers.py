@@ -59,6 +59,26 @@ class TestWriters(unittest.TestCase):
         # smoketest
         self.assertGreater(len(str_file), 50)
 
+    def test_write_simple_JSBSimEngine(self):
+        engine = rdoc.Engine("test engine")
+        engine.manufacturer = "Open Aerospace"
+        engine.length = 0.1
+        engine.diameter = 0.2
+        engine.Isp = 169
+        engine.m_prop = 1.0
+        engine.thrust_avg = 1000
+        str_file = writers.JSBSimEngine.dump(engine)
+
+        # smoke test
+        self.assertGreater(len(str_file), 50)
+
+    def test_RockSim_to_JSBSimEngine(self):
+        engine = loaders.RockSimEngine().load('tests/data/motor_N2501.rse')
+        str_file = writers.JSBSimEngine.dump(engine)
+
+        # smoke test
+        self.assertGreater(len(str_file), 50)
+
     def test_write_simple_rocksimEngine(self):
         engine = rdoc.Engine("test engine")
         engine.manufacturer = "Open Aerospace"
