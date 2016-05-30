@@ -158,6 +158,7 @@ class JSBSimAircraft(object):
         #######################################################################
         mass_balance = ET.SubElement(doc, 'mass_balance')
 
+        position = 0
         for component in ordoc.stages[0].components:
             if type(component) == rdoc.Bodytube:
 
@@ -183,9 +184,12 @@ class JSBSimAircraft(object):
                 # And a Location
                 location = ET.SubElement(pointmass, 'location')
                 location.attrib['unit'] = "M"
-                ET.SubElement(location, 'x').text = "0.0"
+                ET.SubElement(location, 'x').text = "%0.4f" % (position + (component.length/2.0))
                 ET.SubElement(location, 'y').text = "0.0"
                 ET.SubElement(location, 'z').text = "0.0"
+
+            # Keep running tabs on the distance from nosecone
+            position += component.length
 
         # PROPULSION
         #######################################################################
