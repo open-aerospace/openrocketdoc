@@ -93,6 +93,121 @@ class Document(object):
         return yamldump(doc, default_flow_style=False)
 
 
+class JSBSimAircraft(object):
+    """JSBSim Aircraft format
+
+    **Memebers:**
+    """
+
+    @classmethod
+    def dump(cls, ordoc):
+        """Return a `str` representation of the file.
+
+        :param ordoc: The OpenRocketDoc file to convert
+        :returns: `str` formated file
+        """
+
+        doc = ET.Element('fdm_config')
+        doc.attrib['name'] = ordoc.name
+        doc.attrib['version'] = "2.0"
+        doc.attrib['xmlns:xsi'] = "http://www.w3.org/2001/XMLSchema-instance"
+        doc.attrib['xsi:noNamespaceSchemaLocation'] = "http://jsbsim.sourceforge.net/JSBSim.xsd"
+        doc.attrib['release'] = "ALPHA"
+
+        ET.SubElement(doc, 'fileheader')
+
+        # METRICS
+        #######################################################################
+        metrics = ET.SubElement(doc, 'metrics')
+        wingarea = ET.SubElement(metrics, 'wingarea')
+        wingarea.attrib['unit'] = "M2"
+        wingarea.text = "0.0"
+
+        wingspan = ET.SubElement(metrics, 'wingspan')
+        wingspan.attrib['unit'] = "M"
+        wingspan.text = "0.0"
+
+        chord = ET.SubElement(metrics, 'chord')
+        chord.attrib['unit'] = "M"
+        chord.text = "0.0"
+
+        htailarea = ET.SubElement(metrics, 'htailarea')
+        htailarea.attrib['unit'] = "M2"
+        htailarea.text = "0.0"
+
+        htailarm = ET.SubElement(metrics, 'htailarm')
+        htailarm.attrib['unit'] = "M"
+        htailarm.text = "0.0"
+
+        vtailarea = ET.SubElement(metrics, 'vtailarea')
+        vtailarea.attrib['unit'] = "M2"
+        vtailarea.text = "0.0"
+
+        vtailarm = ET.SubElement(metrics, 'vtailarm')
+        vtailarm.attrib['unit'] = "M"
+        vtailarm.text = "0.0"
+
+        location_cp = ET.SubElement(metrics, 'location')
+        location_cp.attrib['name'] = "AERORP"
+        location_cp.attrib['unit'] = "M"
+        ET.SubElement(location_cp, 'x').text = "0.0"
+        ET.SubElement(location_cp, 'y').text = "0.0"
+        ET.SubElement(location_cp, 'z').text = "0.0"
+
+        # MASS BALANCE
+        #######################################################################
+        mass_balance = ET.SubElement(doc, 'mass_balance')
+
+        for component in ordoc.stages[0].components:
+            if type(component) == rdoc.Bodytube:
+
+                # New pointmass
+                pointmass = ET.SubElement(mass_balance, 'pointmass')
+                pointmass.attrib['name'] = component.name
+
+                # Has a Form
+                form = ET.SubElement(pointmass, 'form')
+                form.attrib['shape'] = "tube"
+                radius = ET.SubElement(form, 'radius')
+                radius.attrib['unit'] = "M"
+                radius.text = "%0.4f" % (component.diameter/2.0)
+                length = ET.SubElement(form, 'length')
+                length.attrib['unit'] = "M"
+                length.text = "%0.4f" % component.length
+
+                # And a Mass
+                weight = ET.SubElement(pointmass, 'weight')
+                weight.attrib['unit'] = "KG"
+                weight.text = "%0.4f" % component.component_mass
+
+                # And a Location
+                location = ET.SubElement(pointmass, 'location')
+                location.attrib['unit'] = "M"
+                ET.SubElement(location, 'x').text = "0.0"
+                ET.SubElement(location, 'y').text = "0.0"
+                ET.SubElement(location, 'z').text = "0.0"
+
+        # PROPULSION
+        #######################################################################
+        ET.SubElement(doc, 'propulsion')
+
+        # AERODYNAMICS
+        #######################################################################
+        ET.SubElement(doc, 'aerodynamics')
+
+        # ground_reactions
+        #######################################################################
+        ET.SubElement(doc, 'ground_reactions')
+
+        # SYSTEM
+        #######################################################################
+        ET.SubElement(doc, 'system')
+
+        # pretty print
+        xmldoc = minidom.parseString(ET.tostring(doc, encoding="UTF-8"))
+        return xmldoc.toprettyxml(indent="  ")
+
+
 class JSBSimEngine(object):
     """JSBSim Engine format
 

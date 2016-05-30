@@ -72,6 +72,27 @@ class TestWriters(unittest.TestCase):
         # smoke test
         self.assertGreater(len(str_file), 50)
 
+    def test_write_simple_JSBSimAircraft(self):
+        rocket = rdoc.Rocket("Rocket")
+        stage0 = rdoc.Stage("Sustainer")
+        stage0.components = [
+            rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 1, 0.2, 1.0),
+            rdoc.Bodytube("body", 1, 0.2, diameter=0.33),
+        ]
+        rocket.stages = [stage0]
+        str_file = writers.JSBSimAircraft.dump(rocket)
+
+        # smoke test
+        self.assertGreater(len(str_file), 150)
+
+    def test_OpenRocket_2_JSBSimAircraft(self):
+        ork = loaders.Openrocket()
+        rocket = ork.load('tests/data/example_simple_1.ork')
+        str_file = writers.JSBSimAircraft.dump(rocket)
+
+        # smoke test
+        self.assertGreater(len(str_file), 150)
+
     def test_RockSim_to_JSBSimEngine(self):
         engine = loaders.RockSimEngine().load('tests/data/motor_N2501.rse')
         str_file = writers.JSBSimEngine.dump(engine)
