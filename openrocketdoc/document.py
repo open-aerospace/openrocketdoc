@@ -599,8 +599,16 @@ class Engine(object):
         """**[kg]** Mass of the propellent in a loaded engine. This is total mass of
         the fuel and oxidiser.
         """
+
+        # Trivial case, we already know the exact mass
         if type(self._m_fuel) is float and type(self._m_ox) is float:
             return self._m_fuel + self._m_ox
+
+        # We might know enough to compute:
+        if self._Isp is not None and self._thrust_avg is not None and self._t_burn is not None:
+            mdot = self._thrust_avg / (self.V_e)
+            return mdot * self._t_burn
+
         if self._m_fuel is None and self._m_ox is None:
             return 0
         if self._m_fuel is None:
@@ -699,6 +707,10 @@ class Engine(object):
 
         if self._thrust_peak is not None:
             return self._thrust_peak
+
+        if self._thrust_avg is not None:
+            return self._thrust_avg
+
         return 0
 
     @thrust_peak.setter
