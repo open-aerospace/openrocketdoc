@@ -89,6 +89,28 @@ class TestOpenrocketdoc(unittest.TestCase):
         engine.length = 25.4
         self.assertEqual(engine.length, 25.4)
 
+    def test_engine_t_burn(self):
+        engine = document.Engine("test Name")
+        engine.t_burn = 123.456
+        self.assertAlmostEqual(engine.t_burn, 123.456)
+
+    def test_engine_ve(self):
+        engine = document.Engine("test Name")
+        engine.Isp = 123
+        self.assertAlmostEqual(engine.V_e, 1206.21795)
+
+    def test_engine_simple_0(self):
+        engine = document.Engine("test Name")
+
+        # minimum to set up real engine
+        engine.Isp = 123
+        engine.thrust_avg = 4567
+        engine.t_burn = 89
+
+        self.assertAlmostEqual(engine.Isp, 123)
+        self.assertAlmostEqual(engine.thrust_avg, 4567)
+        self.assertAlmostEqual(engine.t_burn, 89)
+
     def test_engine_name(self):
         engine = document.Engine("test Name")
         self.assertEqual(engine.name, "test Name")

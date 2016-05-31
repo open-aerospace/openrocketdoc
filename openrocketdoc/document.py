@@ -677,7 +677,7 @@ class Engine(object):
             return self.thrustcurve[-1]['t']
 
         # compute from average thrust, ISP and mass
-        if self.V_e > 0:
+        if self.V_e > 0 and self.m_prop > 0:
             mdot = self.thrust_avg / (self.V_e)
             return self.m_prop / mdot
 
