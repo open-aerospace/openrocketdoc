@@ -184,6 +184,8 @@ class JSBSimAircraft(object):
 
         ET.SubElement(doc, 'fileheader')
 
+        doc.append(ET.Comment("\n  Primary Metrics (Size of vehicle)\n  "))
+
         # METRICS
         #######################################################################
         metrics = ET.SubElement(doc, 'metrics')
@@ -221,6 +223,8 @@ class JSBSimAircraft(object):
         ET.SubElement(location_cp, 'x').text = "0.0"
         ET.SubElement(location_cp, 'y').text = "0.0"
         ET.SubElement(location_cp, 'z').text = "0.0"
+
+        doc.append(ET.Comment("\n  Mass Elements: describe dry mass of vehicle\n  "))
 
         # MASS BALANCE
         #######################################################################
@@ -264,9 +268,56 @@ class JSBSimAircraft(object):
             # Keep running tabs on the distance from nosecone
             position += component.length
 
+        doc.append(ET.Comment("\n  Propulsion: describe tanks, fuel and link to engine def files\n  "))
+
         # PROPULSION
         #######################################################################
-        ET.SubElement(doc, 'propulsion')
+        prop = ET.SubElement(doc, 'propulsion')
+        for component in ordoc.stages[0].components:
+            for subc in component.components:
+                if type(subc) == rdoc.Engine:
+
+                    tank = ET.SubElement(prop, 'tank')
+                    tank.attrib['type'] = "FUEL"
+                    location = ET.SubElement(tank, 'location')
+                    location.attrib['unit'] = "M"
+                    ET.SubElement(location, 'x').text = "0.0"
+                    ET.SubElement(location, 'y').text = "0.0"
+                    ET.SubElement(location, 'z').text = "0.0"
+                    radius = ET.SubElement(tank, 'radius')
+                    radius.attrib['unit'] = "M"
+                    radius.text = "0"
+                    grain_config = ET.SubElement(tank, 'grain_config')
+                    grain_config.attrib['type'] = "CYLINDRICAL"
+                    grain_length = ET.SubElement(grain_config, 'length')
+                    grain_length.attrib['unit'] = "M"
+                    grain_length.text = "0"
+                    grain_dia = ET.SubElement(grain_config, 'bore_diameter')
+                    grain_dia.attrib['unit'] = "M"
+                    grain_dia.text = "0"
+                    capacity = ET.SubElement(tank, 'capacity')
+                    capacity.attrib['unit'] = "KG"
+                    capacity.text = "0"
+                    contents = ET.SubElement(tank, 'contents')
+                    contents.attrib['unit'] = "KG"
+                    contents.text = "0"
+
+                    eng = ET.SubElement(prop, 'engine')
+                    eng.attrib['file'] = subc.name
+                    ET.SubElement(eng, 'feed').text = "0"
+                    eng_loc = ET.SubElement(eng, 'location')
+                    eng_loc.attrib['unit'] = "M"
+                    ET.SubElement(eng_loc, 'x').text = "0.0"
+                    ET.SubElement(eng_loc, 'y').text = "0.0"
+                    ET.SubElement(eng_loc, 'z').text = "0.0"
+                    thruster = ET.SubElement(eng, 'thruster')
+                    thruster.attrib['file'] = subc.name
+                    thrust_loc = ET.SubElement(thruster, 'location')
+                    thrust_loc.attrib['unit'] = "M"
+
+                    ET.SubElement(thrust_loc, 'x').text = "0.0"
+                    ET.SubElement(thrust_loc, 'y').text = "0.0"
+                    ET.SubElement(thrust_loc, 'z').text = "0.0"
 
         # AERODYNAMICS
         #######################################################################
@@ -322,7 +373,7 @@ class JSBSimEngine(object):
             thrustcurve = engine.thrustcurve
 
         # First data point is at t=0, 0 prop burnt
-        tableData.text += " %0.3f %0.3f\n" % (0.0, thrustcurve[0]['thrust'] * N2LBF)
+        tableData.text += "      %0.3f %0.3f\n" % (0.0, thrustcurve[0]['thrust'] * N2LBF)
 
         # Compute propellent burn, _first_ result will be at t = i+1
         itot = 0
@@ -336,7 +387,7 @@ class JSBSimEngine(object):
             mass = ((itot/2.0)/engine.V_e) * KG2LB
             thrust = f_x1 * N2LBF
 
-            tableData.text += " %0.3f %0.3f\n" % (mass, thrust)
+            tableData.text += "      %0.3f %0.3f\n" % (mass, thrust)
 
         tableData.text += "    "
 

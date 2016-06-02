@@ -86,18 +86,34 @@ class TestWriters(unittest.TestCase):
         engine.thrust_avg = 1000
         str_file = writers.JSBSimEngine.dump(engine)
 
+        # print(str_file)
+
         # smoke test
         self.assertGreater(len(str_file), 50)
 
     def test_write_simple_JSBSimAircraft(self):
         rocket = rdoc.Rocket("Rocket")
         stage0 = rdoc.Stage("Sustainer")
+
+        body = rdoc.Bodytube("body", 1, 0.2, diameter=0.33)
+        engine = rdoc.Engine("test engine")
+        engine.manufacturer = "Open Aerospace"
+        engine.length = 0.1
+        engine.diameter = 0.2
+        engine.Isp = 169
+        engine.m_prop = 1.0
+        engine.thrust_avg = 1000
+
+        body.components = [engine]
+
         stage0.components = [
             rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 1, 0.2, 1.0),
-            rdoc.Bodytube("body", 1, 0.2, diameter=0.33),
+            body
         ]
         rocket.stages = [stage0]
         str_file = writers.JSBSimAircraft.dump(rocket)
+
+        # print(str_file)
 
         # smoke test
         self.assertGreater(len(str_file), 150)
