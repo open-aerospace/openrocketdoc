@@ -93,10 +93,78 @@ class Document(object):
         return yamldump(doc, default_flow_style=False)
 
 
+class SVG(object):
+    """Draw an representation of a rocket as an SVG document
+
+    **Members:**
+    """
+
+    @classmethod
+    def dump(cls, ordoc):
+        """Return a `str` entire svg drawing of the rocket
+
+        :param ordoc: the OpenRocketDoc file to convert
+        :returns: `str` formated file
+        """
+
+        # SVG header
+        svg = ET.Element('svg')
+        svg.attrib['xmlns:dc'] = "http://purl.org/dc/elements/1.1/"
+        svg.attrib['xmlns:cc'] = "http://creativecommons.org/ns#"
+        svg.attrib['xmlns:rdf'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        svg.attrib['xmlns:svg'] = "http://www.w3.org/2000/svg"
+        svg.attrib['xmlns'] = "http://www.w3.org/2000/svg"
+        svg.attrib['version'] = "1.1"
+        svg.attrib['id'] = "svg2"
+
+        # Landscape A4 paper
+        svg.attrib['viewBox'] = "0 0 1052.3622047 744.09448819 "
+        svg.attrib['height'] = "210mm"
+        svg.attrib['width'] = "297mm"
+
+        # Group to draw in
+        drawing = ET.SubElement(svg, 'g')
+        drawing.attrib['id'] = "rocket"
+
+        position = 0
+        # Draw elements:
+        for component in ordoc.stages[0].components:
+
+            if type(component) == rdoc.Nosecone:
+                path = ET.SubElement(drawing, 'path')
+                path.attrib['id'] = "nose"
+
+                points = []
+                points.append((component.length, component.diameter / 2.0))
+                points.append((0, 0))
+                points.append((component.length, -component.diameter / 2.0))
+
+                path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (p[0], p[1]) for p in points])
+                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.005px;"
+                position += component.length
+
+            if type(component) == rdoc.Bodytube:
+                path = ET.SubElement(drawing, 'rect')
+                path.attrib['id'] = component.name
+                path.attrib['x'] = "%0.4f" % position
+                path.attrib['y'] = "%0.4f" % (-component.diameter / 2.0)
+                path.attrib['width'] = "%0.4f" % component.length
+                path.attrib['height'] = "%0.4f" % component.diameter
+                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.005px;"
+                position += component.length
+
+        scale = 900 / position
+        drawing.attrib['transform'] = "translate(75,372) scale(%0.1f,%0.1f)" % (scale, scale)
+
+        # pretty print
+        xmldoc = minidom.parseString(ET.tostring(svg, encoding="UTF-8"))
+        return xmldoc.toprettyxml(indent="  ")
+
+
 class JSBSimAircraft(object):
     """JSBSim Aircraft format
 
-    **Memebers:**
+    **Members:**
     """
 
     @classmethod

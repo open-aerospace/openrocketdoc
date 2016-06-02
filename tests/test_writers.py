@@ -45,6 +45,23 @@ class TestWriters(unittest.TestCase):
 
         self.assertGreater(len(str_file), 10)
 
+    def test_write_simple_svg(self):
+        rocket = rdoc.Rocket("Rocket")
+        stage0 = rdoc.Stage("Sustainer")
+        stage0.components = [
+            rdoc.Nosecone(rdoc.Noseshape.VONKARMAN, 1, 0.2, 1.0, diameter=0.2),
+            rdoc.Bodytube("body", 1, 1.2, diameter=0.2),
+        ]
+        rocket.stages = [stage0]
+        str_file = writers.SVG.dump(rocket)
+
+        # print("Output:")
+        # print(str_file)
+        # with open("testdraw.svg", "w") as testwrite:
+        #     testwrite.write(str_file)
+
+        self.assertGreater(len(str_file), 10)
+
     def test_write_blank_raspEngine(self):
         engine = rdoc.Engine("test engine")
         str_file = writers.RaspEngine().dump(engine)
