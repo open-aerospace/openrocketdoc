@@ -188,6 +188,11 @@ class JSBSimAircraft(object):
                 ET.SubElement(location, 'y').text = "0.0"
                 ET.SubElement(location, 'z').text = "0.0"
 
+                # What about stuff in this component
+                for subcomponent in component.components:
+                    if type(subcomponent) == rdoc.Mass:
+                        pointmass = ET.SubElement(mass_balance, 'pointmass')
+
             # Keep running tabs on the distance from nosecone
             position += component.length
 

@@ -89,7 +89,7 @@ class TestWriters(unittest.TestCase):
         ork = loaders.Openrocket()
         rocket = ork.load('tests/data/example_simple_1.ork')
         str_file = writers.JSBSimAircraft.dump(rocket)
-
+        # print(str_file)
         # smoke test
         self.assertGreater(len(str_file), 150)
 
