@@ -140,7 +140,7 @@ class SVG(object):
                 points.append((component.length, -component.diameter / 2.0))
 
                 path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (p[0], p[1]) for p in points])
-                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.005px;"
+                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
                 position += component.length
 
             if type(component) == rdoc.Bodytube:
@@ -150,7 +150,7 @@ class SVG(object):
                 path.attrib['y'] = "%0.4f" % (-component.diameter / 2.0)
                 path.attrib['width'] = "%0.4f" % component.length
                 path.attrib['height'] = "%0.4f" % component.diameter
-                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.005px;"
+                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
                 position += component.length
 
         scale = 900 / position
