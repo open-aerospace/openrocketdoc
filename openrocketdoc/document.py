@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from enum import Enum
 import copy
-from math import pi, atan, tan, radians, degrees
+from math import pi, atan, tan, radians, degrees, log
 
 
 class Noseshape(Enum):
@@ -664,9 +664,14 @@ class Engine(object):
         if self._I_total is not None:
             return self._I_total
 
+        # If we know thrust and time
+        if self.thrust_avg > 0 and self.t_burn > 0:
+            return self.thrust_avg * self.t_burn
+
         # compute from ISP and mass
         if self._Isp is not None:
             return self.m_prop * self.V_e
+
         return 0
 
     @I_total.setter
@@ -748,6 +753,35 @@ class Engine(object):
         """
         m_tanks = sum([tank['mass'] for tank in self.tanks])
         return self.m_prop + m_tanks + self._m_system
+
+    @property
+    def nar_code(self):
+        """The NAR code for a rocket motor is a letter code for the total
+        impulse.
+        """
+
+        if self.I_total <= 0:
+            return ''
+
+        # how many times we double 2.5 Ns
+        nar_i = int(log(self.I_total/2.5)/log(2))
+
+        # ASCII math :)
+        if nar_i < 26:
+            return chr(66 + nar_i)
+        return 'A' + chr(66 + nar_i - 26)
+
+    @property
+    def nar_percent(self):
+        """What percent of the NAR impulse class is the motor
+        """
+        nar_i = int(log(self.I_total/2.5)/log(2))
+
+        max_class = (2.5*2**(nar_i+1))
+        min_class = (2.5*2**nar_i)
+
+        nar_percent = (self.I_total - min_class)/(max_class - min_class)
+        return nar_percent * 100.0
 
     @property
     def constrained(self):

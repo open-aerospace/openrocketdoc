@@ -123,6 +123,70 @@ class TestOpenrocketdoc(unittest.TestCase):
         engine.manufacturer = "python"
         self.assertEqual(engine.manufacturer, "python")
 
+    def test_engine_nar_code(self):
+        # blank engine case
+        engine = document.Engine("test Name")
+        self.assertEqual(engine.nar_code, "")
+
+        # NAR B motor spec: 2.51 –- 5.00 Ns
+        # 0% B motor, it's almost zero
+        engine.thrust_avg = 2.501
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "B")
+        self.assertAlmostEqual(engine.nar_percent, 0, places=1)
+        # 50% B motor
+        engine.thrust_avg = 3.755
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "B")
+        self.assertAlmostEqual(engine.nar_percent, 50, places=0)
+        # 100% B motor, but it rounds up, that's okay I guess
+        engine.thrust_avg = 4.99999
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "B")
+        self.assertAlmostEqual(engine.nar_percent, 100, places=0)
+
+        # NAR N motor spec: 10,200 -- 20,500 Ns
+        # 0% N motor
+        engine.thrust_avg = 10200
+        engine.t_burn = 1
+        engine.nar_percent
+        self.assertEqual(engine.nar_code, "M")
+        self.assertAlmostEqual(engine.nar_percent, 99, places=0)
+        # 50% N motor
+        engine.thrust_avg = 10240 + 5150
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "N")
+        self.assertAlmostEqual(engine.nar_percent, 50, places=0)
+        # 100% N motor
+        engine.thrust_avg = 20450
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "N")
+        self.assertAlmostEqual(engine.nar_percent, 100, places=0)
+
+        # NAR Z motor spec: 41,900,000 -- 83,900,000 Ns
+        # 0% N motor
+        engine.thrust_avg = 41.9e6
+        engine.t_burn = 1
+        engine.nar_percent
+        self.assertEqual(engine.nar_code, "Y")
+        self.assertAlmostEqual(engine.nar_percent, 100, places=0)
+        # 50% N motor
+        engine.thrust_avg = 41.9e6 + 10e6
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "Z")
+        self.assertAlmostEqual(engine.nar_percent, 24, places=0)
+        # 100% N motor
+        engine.thrust_avg = 83.8e6
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "Z")
+        self.assertAlmostEqual(engine.nar_percent, 100, places=0)
+
+        # Greater than Z:
+        engine.thrust_avg = 500e6
+        engine.t_burn = 1
+        self.assertEqual(engine.nar_code, "AC")
+        self.assertAlmostEqual(engine.nar_percent, 49, places=0)
+
     def test_engine_isp(self):
         engine = document.Engine("test Name")
 
