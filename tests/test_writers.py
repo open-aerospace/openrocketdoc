@@ -111,6 +111,7 @@ class TestWriters(unittest.TestCase):
             body
         ]
         rocket.stages = [stage0]
+        rocket.aero_properties['CD'] = [(0.1, 0.8), (0.5, 0.6), (1.0, 0.8)]
         str_file = writers.JSBSimAircraft.dump(rocket)
 
         # print(str_file)

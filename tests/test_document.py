@@ -53,6 +53,14 @@ class TestOpenrocketdoc(unittest.TestCase):
 
         self.assertEqual(29.77, rocket.mass)
 
+    def test_rocket_aero_exist(self):
+        rocket = document.Rocket("Rocket")
+        self.assertEqual(rocket.aero_properties, {})
+
+        # add some properties
+        rocket.aero_properties['CD'] = [0.8]
+        self.assertEqual(rocket.aero_properties, {'CD': [0.8]})
+
     def test_rocket_length_sum_0(self):
         # just rocket
         rocket = document.Rocket("Rocket")

@@ -5,7 +5,9 @@ from openrocketdoc import document as rdoc
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 from yaml import dump as yamldump
+from math import pi
 
+# Unit conversions
 N2LBF = 0.224809
 KG2LB = 2.20462
 
@@ -184,35 +186,55 @@ class JSBSimAircraft(object):
 
         ET.SubElement(doc, 'fileheader')
 
-        doc.append(ET.Comment("\n  Primary Metrics (Size of vehicle)\n  "))
-
         # METRICS
         #######################################################################
+        doc.append(ET.Comment("\n\n  Primary Metrics (Ovearall size of vehicle)\n\n  "))
+
         metrics = ET.SubElement(doc, 'metrics')
         wingarea = ET.SubElement(metrics, 'wingarea')
         wingarea.attrib['unit'] = "M2"
-        wingarea.text = "0.0"
+
+        # Wing area is either something you know (e.g: using wind tunnel data)
+        # Or it's the cross sectional area of the rocket (area of a circle the
+        # diameter of the rocket)
+        if ordoc.aero_properties.get('area'):
+            wingarea.text = "%f" % ordoc.aero_properties.get('area')
+        else:
+            wingarea.text = "%0.4f" % (pi * (ordoc.diameter / 2.0)**2)
 
         wingspan = ET.SubElement(metrics, 'wingspan')
         wingspan.attrib['unit'] = "M"
-        wingspan.text = "0.0"
 
+        # Wing span is either something you know (e.g: using wind tunnel data)
+        # Or it's the diameter of the rocket (usually treated as the
+        # characteristic length)
+        wingspan.text = "0.0"
+        if ordoc.aero_properties.get('span'):
+            wingspan.text = "%f" % ordoc.aero_properties.get('span')
+        else:
+            wingspan.text = "%0.4f" % ordoc.diameter
+
+        # I don't know what this does
         chord = ET.SubElement(metrics, 'chord')
         chord.attrib['unit'] = "M"
         chord.text = "0.0"
 
+        # I don't know what this does
         htailarea = ET.SubElement(metrics, 'htailarea')
         htailarea.attrib['unit'] = "M2"
         htailarea.text = "0.0"
 
+        # I don't know what this does
         htailarm = ET.SubElement(metrics, 'htailarm')
         htailarm.attrib['unit'] = "M"
         htailarm.text = "0.0"
 
+        # I don't know what this does
         vtailarea = ET.SubElement(metrics, 'vtailarea')
         vtailarea.attrib['unit'] = "M2"
         vtailarea.text = "0.0"
 
+        # I don't know what this does
         vtailarm = ET.SubElement(metrics, 'vtailarm')
         vtailarm.attrib['unit'] = "M"
         vtailarm.text = "0.0"
@@ -220,14 +242,21 @@ class JSBSimAircraft(object):
         location_cp = ET.SubElement(metrics, 'location')
         location_cp.attrib['name'] = "AERORP"
         location_cp.attrib['unit'] = "M"
-        ET.SubElement(location_cp, 'x').text = "0.0"
+
+        # If we don't know the center of pressure, just put it at the back of
+        # the rocket so it's stable.
+        if ordoc.aero_properties.get('area'):
+            ET.SubElement(location_cp, 'x').text = "%f" % ordoc.aero_properties.get('CP')[0]
+        else:
+            ET.SubElement(location_cp, 'x').text = "%0.4f" % ordoc.length
+
         ET.SubElement(location_cp, 'y').text = "0.0"
         ET.SubElement(location_cp, 'z').text = "0.0"
 
-        doc.append(ET.Comment("\n  Mass Elements: describe dry mass of vehicle\n  "))
-
         # MASS BALANCE
         #######################################################################
+        doc.append(ET.Comment("\n\n  Mass Elements: describe dry mass of vehicle\n\n  "))
+
         mass_balance = ET.SubElement(doc, 'mass_balance')
 
         position = 0
@@ -326,14 +355,37 @@ class JSBSimAircraft(object):
         # AERODYNAMICS
         #######################################################################
         doc.append(ET.Comment("\n\n  Aerodynamics\n\n  "))
-        ET.SubElement(doc, 'aerodynamics')
+        aero = ET.SubElement(doc, 'aerodynamics')
 
-        # ground_reactions
-        #######################################################################
+        # Drag
+        drag_table = ordoc.aero_properties.get('CD', [])
+        if drag_table:
+            drag_axis = ET.SubElement(aero, 'axis')
+            drag_axis.attrib['name'] = "DRAG"
+
+            drag_function = ET.SubElement(drag_axis, 'function')
+            drag_function.attrib['name'] = "aero/force/drag"
+            ET.SubElement(drag_function, 'description').text = "Coefficient of Drag"
+
+            drag_prod = ET.SubElement(drag_function, 'product')
+            ET.SubElement(drag_prod, 'property').text = "aero/qbar-psf"
+            ET.SubElement(drag_prod, 'property').text = "metrics/Sw-sqft"
+
+            if len(drag_table) > 1:
+                drag_tab = ET.SubElement(drag_prod, 'table')
+                drag_tab.attrib['name'] = "aero/coefficient/CD_min"
+                ET.SubElement(drag_tab, 'independentVar').text = "velocities/mach"
+                drag_tabledata = ET.SubElement(drag_tab, 'tableData')
+                drag_tabledata.text = "\n"
+                for entry in drag_table:
+                    drag_tabledata.text += "%20.4f  %0.5f\n" % (entry[0], entry[1])
+                drag_tabledata.text += "            "
+            else:
+                ET.SubElement(drag_prod, 'value').text = "%f" % drag_table[0]
+
+        doc.append(ET.Comment("\n  Ground reactions and systems are not auto-generated.\n  "))
+
         ET.SubElement(doc, 'ground_reactions')
-
-        # SYSTEM
-        #######################################################################
         ET.SubElement(doc, 'system')
 
         # pretty print

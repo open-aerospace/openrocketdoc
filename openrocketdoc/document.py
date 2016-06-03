@@ -79,6 +79,9 @@ class Rocket(object):
         self.stages = []
         """List of stages that makes up the rocket."""
 
+        self.aero_properties = {}
+        """Dictionary of aerodynamic properties, like drag and lift coefficients"""
+
     @property
     def mass(self):
         """**[kg]** Get the total *dry* mass of the rocket"""
@@ -111,6 +114,15 @@ class Rocket(object):
         """**[m]** Get the total length of the rocket"""
         return sum(stage.length for stage in self.stages)
 
+    @property
+    def diameter(self):
+        """**[m]** Largest diameter of any stage on the rocket"""
+        d = 0
+        for stage in self.stages:
+            if stage.diameter > d:
+                d = stage.diameter
+        return d
+
 
 class Stage(object):
     """One Stage of a Rocket.
@@ -136,6 +148,15 @@ class Stage(object):
     def length(self):
         """**[m]** Get the total length of this stage"""
         return sum(c.length for c in self.components)
+
+    @property
+    def diameter(self):
+        """**[m]** Largest diameter of any top-level component of this stage"""
+        d = 0
+        for c in self.components:
+            if c.diameter > d:
+                d = c.diameter
+        return d
 
     @property
     def name_slug(self):
