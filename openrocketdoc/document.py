@@ -792,3 +792,34 @@ class Engine(object):
         if self.I_total > 0:
             return True
         return False
+
+    @property
+    def name_slug(self):
+        """Create a reusable slug from the engine name, useful for filenames
+        and the like.
+
+        :example:
+
+        >>> from openrocketdoc.document import *
+        >>> engine = Engine("My Rocket Motor 12")
+        >>> engine.name
+        My Rocket Motor 12
+        >>> engine.name_slug
+        my-rocket-motor-12
+        """
+
+        # lowercase and strip leading/trailing whitespace
+        n = self.name.lower().strip()
+
+        # filesystem illegal characters
+        for char in "*.\"/\\[]:;|=,":
+            n = n.replace(char, '')
+
+        if len(n) == 0:
+            return "engine"
+        n = n.replace(' ', '-')
+
+        if len(n) == 1:
+            if n == '-':
+                return "engine"
+        return n

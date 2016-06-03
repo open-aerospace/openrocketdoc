@@ -187,6 +187,40 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertEqual(engine.nar_code, "AC")
         self.assertAlmostEqual(engine.nar_percent, 49, places=0)
 
+    def test_engine_name_slug(self):
+
+        # replace spaces with dashes
+        engine = document.Engine("My Rocket Motor 12")
+        self.assertEqual(engine.name_slug, "my-rocket-motor-12")
+
+        # one word, not much to do
+        engine = document.Engine("Motor")
+        self.assertEqual(engine.name_slug, "motor")
+
+        # trailing space
+        engine = document.Engine("Motor ")
+        self.assertEqual(engine.name_slug, "motor")
+
+        # leading space
+        engine = document.Engine(" Motor")
+        self.assertEqual(engine.name_slug, "motor")
+
+        # blank name
+        engine = document.Engine("")
+        self.assertEqual(engine.name_slug, "engine")
+
+        # blank name
+        engine = document.Engine(" ")
+        self.assertEqual(engine.name_slug, "engine")
+
+        # blank name
+        engine = document.Engine("  ")
+        self.assertEqual(engine.name_slug, "engine")
+
+        # Illegal characters
+        engine = document.Engine("my **engIne: ")
+        self.assertEqual(engine.name_slug, "my-engine")
+
     def test_engine_isp(self):
         engine = document.Engine("test Name")
 
