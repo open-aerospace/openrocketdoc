@@ -702,9 +702,8 @@ class Engine(object):
             return self._m_fuel + self._m_ox
 
         # We might know enough to compute:
-        if self._Isp is not None and self._thrust_avg is not None and self._t_burn is not None:
-            mdot = self._thrust_avg / (self.V_e)
-            return mdot * self._t_burn
+        if self._Isp and self._thrust_avg:
+            return self.I_total / self.V_e
 
         if self._m_fuel is None and self._m_ox is None:
             return 0
@@ -762,11 +761,11 @@ class Engine(object):
             return self._I_total
 
         # If we know thrust and time
-        if self.thrust_avg > 0 and self.t_burn > 0:
-            return self.thrust_avg * self.t_burn
+        if self._thrust_avg and self._t_burn:
+            return self._thrust_avg * self._t_burn
 
         # compute from ISP and mass
-        if self._Isp is not None:
+        if self._Isp:
             return self.m_prop * self.V_e
 
         return 0
@@ -786,14 +785,15 @@ class Engine(object):
         if self.thrustcurve:
             return self.thrustcurve[-1]['t']
 
+        # else try the override value
+        if self._t_burn is not None:
+            return self._t_burn
+
         # compute from average thrust, ISP and mass
         if self.V_e > 0 and self.m_prop > 0:
             mdot = self.thrust_avg / (self.V_e)
             return self.m_prop / mdot
 
-        # else try the override value, else give up (return 0)
-        if self._t_burn is not None:
-            return self._t_burn
         return 0
 
     @t_burn.setter

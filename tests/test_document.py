@@ -159,6 +159,22 @@ class TestOpenrocketdoc(unittest.TestCase):
         self.assertAlmostEqual(engine.thrust_peak, 4567)
         self.assertAlmostEqual(engine.V_e, 1206.21795)
 
+    def test_engine_simple_1(self):
+        engine = document.Engine("test Name")
+
+        # minimum to set up real engine
+        engine.Isp = 123
+        engine.thrust_avg = 4567
+        engine.I_total = 15000
+
+        self.assertAlmostEqual(engine.Isp, 123)
+        self.assertAlmostEqual(engine.thrust_avg, 4567)
+        self.assertAlmostEqual(engine.I_total, 15000)
+        self.assertAlmostEqual(engine.m_prop, 12.435563572901)
+        self.assertAlmostEqual(engine.t_burn, 3.2844317932997593)
+        self.assertAlmostEqual(engine.thrust_peak, 4567)
+        self.assertAlmostEqual(engine.V_e, 1206.21795)
+
     def test_engine_name(self):
         engine = document.Engine("test Name")
         self.assertEqual(engine.name, "test Name")
