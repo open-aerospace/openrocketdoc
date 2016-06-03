@@ -268,11 +268,12 @@ class JSBSimAircraft(object):
             # Keep running tabs on the distance from nosecone
             position += component.length
 
-        doc.append(ET.Comment("\n  Propulsion: describe tanks, fuel and link to engine def files\n  "))
+        doc.append(ET.Comment("\n\n  Propulsion: describe tanks, fuel and link to engine def files\n\n  "))
 
         # PROPULSION
         #######################################################################
         prop = ET.SubElement(doc, 'propulsion')
+        position = 0
         for component in ordoc.stages[0].components:
             for subc in component.components:
                 if type(subc) == rdoc.Engine:
@@ -282,46 +283,49 @@ class JSBSimAircraft(object):
                     tank.attrib['type'] = "FUEL"
                     location = ET.SubElement(tank, 'location')
                     location.attrib['unit'] = "M"
-                    ET.SubElement(location, 'x').text = "0.0"
+                    ET.SubElement(location, 'x').text = "%0.4f" % (position + (engine.length / 2.0))
                     ET.SubElement(location, 'y').text = "0.0"
                     ET.SubElement(location, 'z').text = "0.0"
                     radius = ET.SubElement(tank, 'radius')
                     radius.attrib['unit'] = "M"
-                    radius.text = "0"
+                    radius.text = "%0.4f" % (engine.diameter / 2.0)
                     grain_config = ET.SubElement(tank, 'grain_config')
                     grain_config.attrib['type'] = "CYLINDRICAL"
                     grain_length = ET.SubElement(grain_config, 'length')
                     grain_length.attrib['unit'] = "M"
-                    grain_length.text = "0"
+                    grain_length.text = "%0.4f" % engine.length
                     grain_dia = ET.SubElement(grain_config, 'bore_diameter')
                     grain_dia.attrib['unit'] = "M"
                     grain_dia.text = "0"
                     capacity = ET.SubElement(tank, 'capacity')
                     capacity.attrib['unit'] = "KG"
-                    capacity.text = "0"
+                    capacity.text = "%0.4f" % engine.m_prop
                     contents = ET.SubElement(tank, 'contents')
                     contents.attrib['unit'] = "KG"
-                    contents.text = "0"
+                    contents.text = "%0.4f" % engine.m_prop
 
                     eng = ET.SubElement(prop, 'engine')
                     eng.attrib['file'] = engine.name_slug
                     ET.SubElement(eng, 'feed').text = "0"
                     eng_loc = ET.SubElement(eng, 'location')
                     eng_loc.attrib['unit'] = "M"
-                    ET.SubElement(eng_loc, 'x').text = "0.0"
+                    ET.SubElement(eng_loc, 'x').text = "%0.4f" % position
                     ET.SubElement(eng_loc, 'y').text = "0.0"
                     ET.SubElement(eng_loc, 'z').text = "0.0"
                     thruster = ET.SubElement(eng, 'thruster')
                     thruster.attrib['file'] = engine.name_slug + "_nozzle"
                     thrust_loc = ET.SubElement(thruster, 'location')
                     thrust_loc.attrib['unit'] = "M"
-
-                    ET.SubElement(thrust_loc, 'x').text = "0.0"
+                    ET.SubElement(thrust_loc, 'x').text = "%0.4f" % (position + engine.length)
                     ET.SubElement(thrust_loc, 'y').text = "0.0"
                     ET.SubElement(thrust_loc, 'z').text = "0.0"
 
+            # after we finish reading subcomponents, set position
+            position += component.length
+
         # AERODYNAMICS
         #######################################################################
+        doc.append(ET.Comment("\n\n  Aerodynamics\n\n  "))
         ET.SubElement(doc, 'aerodynamics')
 
         # ground_reactions
