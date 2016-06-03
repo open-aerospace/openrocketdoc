@@ -221,6 +221,24 @@ class TestOpenrocketdoc(unittest.TestCase):
         engine = document.Engine("my **engIne: ")
         self.assertEqual(engine.name_slug, "my-engine")
 
+    def test_component_name_slug(self):
+
+        # replace spaces with dashes
+        c = document.Bodytube("My Rocket Tube", 1, 1)
+        self.assertEqual(c.name_slug, "my-rocket-tube")
+
+    def test_rocket_name_slug(self):
+
+        # replace spaces with dashes
+        c = document.Rocket("My Rocket")
+        self.assertEqual(c.name_slug, "my-rocket")
+
+    def test_stage_name_slug(self):
+
+        # replace spaces with dashes
+        c = document.Stage("Stage-0")
+        self.assertEqual(c.name_slug, "stage-0")
+
     def test_engine_isp(self):
         engine = document.Engine("test Name")
 

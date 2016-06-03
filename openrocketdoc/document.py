@@ -84,6 +84,28 @@ class Rocket(object):
         """**[kg]** Get the total *dry* mass of the rocket"""
         return sum(stage.mass for stage in self.stages)
 
+    @property
+    def name_slug(self):
+        """Create a reusable slug from the engine name, useful for filenames
+        and the like.
+        """
+
+        # lowercase and strip leading/trailing whitespace
+        n = self.name.lower().strip()
+
+        # filesystem illegal characters
+        for char in "*.\"/\\[]:;|=,":
+            n = n.replace(char, '')
+
+        if len(n) == 0:
+            return "engine"
+        n = n.replace(' ', '-')
+
+        if len(n) == 1:
+            if n == '-':
+                return "engine"
+        return n
+
 
 class Stage(object):
     """One Stage of a Rocket.
@@ -104,6 +126,28 @@ class Stage(object):
     def mass(self):
         """**[kg]** Get the total *dry* mass of this stage"""
         return sum(c.mass for c in self.components)
+
+    @property
+    def name_slug(self):
+        """Create a reusable slug from the engine name, useful for filenames
+        and the like.
+        """
+
+        # lowercase and strip leading/trailing whitespace
+        n = self.name.lower().strip()
+
+        # filesystem illegal characters
+        for char in "*.\"/\\[]:;|=,":
+            n = n.replace(char, '')
+
+        if len(n) == 0:
+            return "engine"
+        n = n.replace(' ', '-')
+
+        if len(n) == 1:
+            if n == '-':
+                return "engine"
+        return n
 
 
 class Component(object):
@@ -186,6 +230,28 @@ class Component(object):
     @material_name.setter
     def material_name(self, name):
         self._material_name = name
+
+    @property
+    def name_slug(self):
+        """Create a reusable slug from the engine name, useful for filenames
+        and the like.
+        """
+
+        # lowercase and strip leading/trailing whitespace
+        n = self.name.lower().strip()
+
+        # filesystem illegal characters
+        for char in "*.\"/\\[]:;|=,":
+            n = n.replace(char, '')
+
+        if len(n) == 0:
+            return "engine"
+        n = n.replace(' ', '-')
+
+        if len(n) == 1:
+            if n == '-':
+                return "engine"
+        return n
 
 
 class Mass(Component):
