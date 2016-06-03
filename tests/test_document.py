@@ -53,6 +53,42 @@ class TestOpenrocketdoc(unittest.TestCase):
 
         self.assertEqual(29.77, rocket.mass)
 
+    def test_rocket_length_sum_0(self):
+        # just rocket
+        rocket = document.Rocket("Rocket")
+        self.assertEqual(rocket.length, 0)
+
+        # rocket and a stage
+        stage0 = document.Stage("sustainer")
+        rocket.stages = [stage0]
+        self.assertEqual(rocket.length, 0)
+
+        # zero length components in rocket
+        stage0.components = [
+            document.Nosecone("", 1, 0.7, 0),
+            document.Bodytube("body", 0, 0),
+            document.Bodytube("body", 24.1, 0)
+        ]
+        self.assertEqual(rocket.length, 0)
+
+    def test_rocket_length_sum(self):
+        stage0 = document.Stage("Booster")
+        stage0.components = [
+            document.Nosecone("", 1, 0.7, 1.2),
+            document.Bodytube("body", 0, 1),
+            document.Bodytube("body", 24.1, 1),
+        ]
+        stage1 = document.Stage("Booster")
+        stage1.components = [
+            document.Bodytube("body", 4.87, 1),
+            document.Fin('fin', 1, 1, 1, sweepangle=45.0, mass=0.1),
+        ]
+
+        rocket = document.Rocket("Rocket")
+        rocket.stages = [stage0, stage1]
+
+        self.assertAlmostEqual(rocket.length, 5.2)
+
     def test_fins(self):
         fin = document.Fin('fin', 1, 1, 1, sweep=0.234)
         self.assertEqual(0, fin.mass)

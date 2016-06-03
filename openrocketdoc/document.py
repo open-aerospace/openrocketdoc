@@ -106,6 +106,11 @@ class Rocket(object):
                 return "engine"
         return n
 
+    @property
+    def length(self):
+        """**[m]** Get the total length of the rocket"""
+        return sum(stage.length for stage in self.stages)
+
 
 class Stage(object):
     """One Stage of a Rocket.
@@ -126,6 +131,11 @@ class Stage(object):
     def mass(self):
         """**[kg]** Get the total *dry* mass of this stage"""
         return sum(c.mass for c in self.components)
+
+    @property
+    def length(self):
+        """**[m]** Get the total length of this stage"""
+        return sum(c.length for c in self.components)
 
     @property
     def name_slug(self):
