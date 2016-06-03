@@ -276,6 +276,7 @@ class JSBSimAircraft(object):
         for component in ordoc.stages[0].components:
             for subc in component.components:
                 if type(subc) == rdoc.Engine:
+                    engine = subc
 
                     tank = ET.SubElement(prop, 'tank')
                     tank.attrib['type'] = "FUEL"
@@ -303,7 +304,7 @@ class JSBSimAircraft(object):
                     contents.text = "0"
 
                     eng = ET.SubElement(prop, 'engine')
-                    eng.attrib['file'] = subc.name
+                    eng.attrib['file'] = engine.name_slug
                     ET.SubElement(eng, 'feed').text = "0"
                     eng_loc = ET.SubElement(eng, 'location')
                     eng_loc.attrib['unit'] = "M"
@@ -311,7 +312,7 @@ class JSBSimAircraft(object):
                     ET.SubElement(eng_loc, 'y').text = "0.0"
                     ET.SubElement(eng_loc, 'z').text = "0.0"
                     thruster = ET.SubElement(eng, 'thruster')
-                    thruster.attrib['file'] = subc.name
+                    thruster.attrib['file'] = engine.name_slug + "_nozzle"
                     thrust_loc = ET.SubElement(thruster, 'location')
                     thrust_loc.attrib['unit'] = "M"
 
