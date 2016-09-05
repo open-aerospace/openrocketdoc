@@ -148,14 +148,50 @@ class SVG(object):
         one.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
         ET.SubElement(one, 'tspan').text = unit_name
 
-        scalebar.attrib['transform'] = "translate(75,670)"
+        scalebar.attrib['transform'] = "translate(350,2200)"
 
     @classmethod
-    def dump(cls, ordoc, drawscale=True):
+    def _draw_border(cls, doc):
+        border = ET.SubElement(doc, 'g')
+        border.attrib['id'] = "border"
+
+        box = ET.SubElement(border, 'rect')
+        box.attrib['x'] = "50"
+        box.attrib['y'] = "50"
+        box.attrib['width'] = "3400"
+        box.attrib['height'] = "2350"
+        box.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+
+        for i, n in enumerate(["4", "3", "2", "1"]):
+            num = ET.SubElement(border, 'text')
+            num.attrib['x'] = "4"
+            num.attrib['y'] = "%0.5f" % (360 + i * 587)
+            num.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"
+            num.attrib['transform'] = "rotate(-90, 45, %0.5f)" % (360 + i * 587)
+            ET.SubElement(num, 'tspan').text = n
+
+            num = ET.SubElement(border, 'text')
+            num.attrib['x'] = "3455"
+            num.attrib['y'] = "%0.5f" % (366 + i * 587)
+            num.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"
+            ET.SubElement(num, 'tspan').text = n
+
+            if i > 2:
+                continue
+            line = ET.SubElement(border, 'path')
+            line.attrib['d'] = "M 0,{h} 50,{h}".format(h=(690 + i * 587))
+            line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+            line = ET.SubElement(border, 'path')
+            line.attrib['d'] = "M 3450,{h} 3500,{h}".format(h=(690 + i * 587))
+            line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+
+    @classmethod
+    def dump(cls, ordoc, drawscale=True, drawborder=True):
         """Return a `str` entire svg drawing of the rocket
 
         :param ordoc: the OpenRocketDoc file to convert
         :param bool drawscale: (optional) if true, draws a scale bar in the document.
+        :param bool drawborder: (optional) if true, draws an engineering border around the document.
         :returns: `str` SVG document
         """
 
@@ -182,6 +218,9 @@ class SVG(object):
         svg.attrib['viewBox'] = "0 0 3508 2480"  # 2480 x 3508 pixels (210mm X 297mm @ 300 dpi)
         svg.attrib['height'] = "210mm"
         svg.attrib['width'] = "297mm"
+
+        if drawborder:
+            cls._draw_border(svg)
 
         # Group to draw in
         drawing = ET.SubElement(svg, 'g')
@@ -216,7 +255,7 @@ class SVG(object):
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
                 position += component.length
 
-        drawing.attrib['transform'] = "translate(75,372)"
+        drawing.attrib['transform'] = "translate(350,700)"
 
         if drawscale:
             cls._draw_scale(svg, scalefactor)
