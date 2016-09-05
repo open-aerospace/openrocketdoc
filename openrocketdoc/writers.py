@@ -112,7 +112,39 @@ class SVG(object):
     """
 
     @classmethod
-    def dump(cls, ordoc):
+    def draw_scale(cls, doc, size):
+
+        scale = 900 / size
+
+        test_size = int(size)
+        if test_size < 0:
+            size = 0.1
+        else:
+            size = 0.1
+
+        scalebar = ET.SubElement(doc, 'g')
+        scalebar.attrib['id'] = "scalebar"
+
+        line = ET.SubElement(scalebar, 'path')
+        line.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (p[0], p[1]) for p in [(0, 0), (size, 0)]])
+        line.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
+
+        zero = ET.SubElement(scalebar, 'text')
+        zero.attrib['x'] = "0"
+        zero.attrib['y'] = "0.025"
+        zero.attrib['style'] = "font-style:normal;font-weight:normal;font-size:0.03px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        ET.SubElement(zero, 'tspan').text = "0"
+
+        one = ET.SubElement(scalebar, 'text')
+        one.attrib['x'] = "%0.5f" % size
+        one.attrib['y'] = "0.025"
+        one.attrib['style'] = "font-style:normal;font-weight:normal;font-size:0.03px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        ET.SubElement(one, 'tspan').text = "10 mm"
+
+        scalebar.attrib['transform'] = "translate(75,670) scale(%0.1f,%0.1f)" % (scale, scale)
+
+    @classmethod
+    def dump(cls, ordoc, drawscale=True):
         """Return a `str` entire svg drawing of the rocket
 
         :param ordoc: the OpenRocketDoc file to convert
@@ -167,6 +199,9 @@ class SVG(object):
 
         scale = 900 / position
         drawing.attrib['transform'] = "translate(75,372) scale(%0.1f,%0.1f)" % (scale, scale)
+
+        if drawscale:
+            cls.draw_scale(svg, position)
 
         # pretty print
         xmldoc = minidom.parseString(ET.tostring(svg, encoding="UTF-8"))
