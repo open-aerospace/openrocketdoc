@@ -111,50 +111,67 @@ class SVG(object):
     **Members:**
     """
 
+    MM2PX = 11.81  # 300 dpi
+
     @classmethod
-    def draw_scale(cls, doc, size):
+    def _draw_scale(cls, doc, scalefactor):
 
-        scale = 900 / size
+        # local convenience function to get units in px.
+        def scale(u):
+            mm = u * scalefactor * 1000
+            px = mm * cls.MM2PX
+            return px
 
-        test_size = int(size)
-        if test_size < 0:
-            size = 0.1
-        else:
-            size = 0.1
+        if scalefactor >= 0.5:
+            unit = 1.0
+            unit_name = "1 m"
+        elif scalefactor < 0.5:
+            unit = 0.1
+            unit_name = "10 cm"
 
         scalebar = ET.SubElement(doc, 'g')
         scalebar.attrib['id'] = "scalebar"
 
         line = ET.SubElement(scalebar, 'path')
-        line.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (p[0], p[1]) for p in [(0, 0), (size, 0)]])
-        line.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
+        line.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in [(0, 0), (unit, 0)]])
+        line.attrib['style'] = "fill:none;stroke:#000000;stroke-width:5px;"
 
         zero = ET.SubElement(scalebar, 'text')
         zero.attrib['x'] = "0"
-        zero.attrib['y'] = "0.025"
-        zero.attrib['style'] = "font-style:normal;font-weight:normal;font-size:0.03px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        zero.attrib['y'] = "65"
+        zero.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
         ET.SubElement(zero, 'tspan').text = "0"
 
         one = ET.SubElement(scalebar, 'text')
-        one.attrib['x'] = "%0.5f" % size
-        one.attrib['y'] = "0.025"
-        one.attrib['style'] = "font-style:normal;font-weight:normal;font-size:0.03px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
-        ET.SubElement(one, 'tspan').text = "10 mm"
+        one.attrib['x'] = "%0.5f" % scale(unit)
+        one.attrib['y'] = "65"
+        one.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        ET.SubElement(one, 'tspan').text = unit_name
 
-        scalebar.attrib['transform'] = "translate(75,670) scale(%0.1f,%0.1f)" % (scale, scale)
+        scalebar.attrib['transform'] = "translate(75,670)"
 
     @classmethod
     def dump(cls, ordoc, drawscale=True):
         """Return a `str` entire svg drawing of the rocket
 
         :param ordoc: the OpenRocketDoc file to convert
-        :returns: `str` formated file
+        :param bool drawscale: (optional) if true, draws a scale bar in the document.
+        :returns: `str` SVG document
         """
+
+        # Determine the scale:
+        length = ordoc.length
+        scalefactor = 0.230 / (length + 0.001)  # avoid divide by 0
+
+        # local convenience function to get units in px.
+        def scale(u):
+            mm = u * scalefactor * 1000
+            px = mm * cls.MM2PX
+            return px
 
         # SVG header
         svg = ET.Element('svg')
         svg.attrib['xmlns:dc'] = "http://purl.org/dc/elements/1.1/"
-        svg.attrib['xmlns:cc'] = "http://creativecommons.org/ns#"
         svg.attrib['xmlns:rdf'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
         svg.attrib['xmlns:svg'] = "http://www.w3.org/2000/svg"
         svg.attrib['xmlns'] = "http://www.w3.org/2000/svg"
@@ -162,7 +179,7 @@ class SVG(object):
         svg.attrib['id'] = "svg2"
 
         # Landscape A4 paper
-        svg.attrib['viewBox'] = "0 0 1052.3622047 744.09448819 "
+        svg.attrib['viewBox'] = "0 0 3508 2480"  # 2480 x 3508 pixels (210mm X 297mm @ 300 dpi)
         svg.attrib['height'] = "210mm"
         svg.attrib['width'] = "297mm"
 
@@ -174,6 +191,7 @@ class SVG(object):
         # Draw elements:
         for component in ordoc.stages[0].components:
 
+            # Nosecone ########################################################
             if type(component) == rdoc.Nosecone:
                 path = ET.SubElement(drawing, 'path')
                 path.attrib['id'] = "nose"
@@ -183,25 +201,25 @@ class SVG(object):
                 points.append((0, 0))
                 points.append((component.length, -component.diameter / 2.0))
 
-                path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (p[0], p[1]) for p in points])
-                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
+                path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
+                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
                 position += component.length
 
+            # Bodytube ########################################################
             if type(component) == rdoc.Bodytube:
                 path = ET.SubElement(drawing, 'rect')
                 path.attrib['id'] = component.name
-                path.attrib['x'] = "%0.4f" % position
-                path.attrib['y'] = "%0.4f" % (-component.diameter / 2.0)
-                path.attrib['width'] = "%0.4f" % component.length
-                path.attrib['height'] = "%0.4f" % component.diameter
-                path.attrib['style'] = "fill:none;stroke:#000000;stroke-width:0.001px;"
+                path.attrib['x'] = "%0.4f" % scale(position)
+                path.attrib['y'] = "%0.4f" % scale(-component.diameter / 2.0)
+                path.attrib['width'] = "%0.4f" % scale(component.length)
+                path.attrib['height'] = "%0.4f" % scale(component.diameter)
+                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
                 position += component.length
 
-        scale = 900 / position
-        drawing.attrib['transform'] = "translate(75,372) scale(%0.1f,%0.1f)" % (scale, scale)
+        drawing.attrib['transform'] = "translate(75,372)"
 
         if drawscale:
-            cls.draw_scale(svg, position)
+            cls._draw_scale(svg, scalefactor)
 
         # pretty print
         xmldoc = minidom.parseString(ET.tostring(svg, encoding="UTF-8"))
