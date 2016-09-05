@@ -28,14 +28,16 @@ class Document(object):
         c['type'] = component.__class__.__name__
 
         # All components have optional tags
-        c['tags'] = component.tags
+        if component.tags:
+            c['tags'] = component.tags
 
-        # Type specific writers:
         if type(component) is rdoc.Nosecone:
             c['shape'] = component.shape.name
             c['shape_parameter'] = component.shape_parameter
-            c['thickness'] = component.thickness
-            c['surface'] = component.surface_roughness
+            if component.thickness > 0:
+                c['thickness'] = component.thickness
+            if component.surface_roughness > 0:
+                c['surface'] = component.surface_roughness
             c['mass'] = component.component_mass
             c['length'] = component.length
             c['diameter'] = component.diameter
@@ -46,8 +48,10 @@ class Document(object):
             c['mass'] = component.component_mass
             c['length'] = component.length
             c['diameter'] = component.diameter
-            c['surface'] = component.surface_roughness
-            c['thickness'] = component.thickness
+            if component.thickness > 0:
+                c['thickness'] = component.thickness
+            if component.surface_roughness > 0:
+                c['surface'] = component.surface_roughness
             if component.color:
                 c['color'] = '['+str(component.color[0])+','+str(component.color[1])+','+str(component.color[2])+']'
 
@@ -84,6 +88,12 @@ class Document(object):
         # rocket top level
         if type(ordoc) is rdoc.Rocket:
             doc['rocket'] = {'name': ordoc.name}
+            if ordoc.description:
+                doc['rocket']['description'] = ordoc.description
+            if ordoc.manufacturer:
+                doc['rocket']['manufacturer'] = ordoc.manufacturer
+            doc['rocket']['aerodynamics'] = ordoc.aero_properties
+
             doc['rocket']['stages'] = []
             for stage in ordoc.stages:
                 s = {'name': stage.name}

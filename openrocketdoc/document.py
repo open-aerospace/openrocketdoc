@@ -82,6 +82,12 @@ class Rocket(object):
         self.aero_properties = {}
         """Dictionary of aerodynamic properties, like drag and lift coefficients"""
 
+        self.description = ""
+        """A description for this design."""
+
+        self.manufacturer = ""
+        """If applicable, a manufacturer or prime contractor"""
+
     @property
     def mass(self):
         """**[kg]** Get the total *dry* mass of the rocket"""
