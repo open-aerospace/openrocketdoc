@@ -255,6 +255,19 @@ class SVG(object):
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
                 position += component.length
 
+                path = ET.SubElement(drawing, 'circle')
+                path.attrib['cx'] = "800"
+                path.attrib['cy'] = "800"
+                path.attrib['r'] = "%0.5f" % scale(component.diameter / 2.0)
+                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+
+                path = ET.SubElement(drawing, 'circle')
+                path.attrib['cx'] = "800"
+                path.attrib['cy'] = "800"
+                path.attrib['r'] = "2"
+                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+
+
         drawing.attrib['transform'] = "translate(350,700)"
 
         if drawscale:
