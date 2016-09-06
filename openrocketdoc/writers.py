@@ -283,14 +283,24 @@ font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
             if type(component) == rdoc.Nosecone:
                 path = ET.SubElement(drawing, 'path')
                 path.attrib['id'] = "nose"
-
-                points = []
-                points.append((component.length, component.diameter / 2.0))
-                points.append((0, 0))
-                points.append((component.length, -component.diameter / 2.0))
-
-                path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+
+                if component.shape == rdoc.Noseshape.TANGENT_OGIVE:
+                    midpointx = component.length / 2.0
+                    midpointy = component.diameter / 4.0
+                    slope = -component.length / (component.diameter / 2.0)
+                    radius = -slope * midpointx + midpointy
+                    path.attrib['d'] = """M {length},{width} A {radius} {radius}, 0, 0, 1, 0 0\
+ A {radius} {radius}, 0, 0, 1, {length} -{width}""".format(length=scale(component.length),
+                                                           width=scale(component.diameter/2.0),
+                                                           radius=scale(radius))
+                else:
+                    points = []
+                    points.append((component.length, component.diameter / 2.0))
+                    points.append((0, 0))
+                    points.append((component.length, -component.diameter / 2.0))
+                    path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
+
                 position += component.length
 
             # Bodytube ########################################################
