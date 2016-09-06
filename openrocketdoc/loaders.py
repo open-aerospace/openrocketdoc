@@ -350,7 +350,7 @@ class Openrocket(object):
             if element.tag == 'height':
                 fin.span = float(element.text)
             if element.tag == 'sweeplength':
-                fin.sweeplength = float(element.text)
+                fin.sweep = float(element.text)
             if element.tag == 'material':
                 fin.material_name = element.text
             if element.tag == 'thickness':
