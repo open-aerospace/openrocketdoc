@@ -5,7 +5,7 @@ from openrocketdoc import document as rdoc
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 from yaml import dump as yamldump
-from math import pi, tan, radians
+from math import pi, tan, cos, radians
 
 # Unit conversions
 N2LBF = 0.224809
@@ -207,24 +207,26 @@ font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
 
         if type(component) == rdoc.Finset:
             fin = component.fin
-            start = position - fin.root
+            start = position - fin.root - 0.001
             base = -parent.diameter / 2.0
             for i in range(component.number_of_fins):
                 findraw = ET.SubElement(doc, 'path')
                 findraw.attrib['id'] = "Fin" + str(i+1)
-                findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:3px;"
+                findraw.attrib['style'] = "fill:#ffffff;stroke:#666666;stroke-width:4px;"
 
+                cosp = cos(i * (2*pi)/component.number_of_fins)
+                level = base * cosp
                 points = []
-                points.append((start, base))
-                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)), base - fin.span))
-                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)) + fin.tip, base - fin.span))
-                points.append((start + fin.root, base))
-
+                points.append((start, level))
+                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)), level - (fin.span * cosp)))
+                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)) + fin.tip, level - (fin.span * cosp)))
+                points.append((start + fin.root, level))
+                points.append((start, level))
                 findraw.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
 
                 findraw = ET.SubElement(doc, 'rect')
                 findraw.attrib['id'] = "Fin" + str(i+1) + "top"
-                findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:1px;"
+                findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:2px;"
                 findraw.attrib['x'] = "%0.4f" % (800 - scale(base))
                 findraw.attrib['y'] = "%0.4f" % (800 - 5)
                 findraw.attrib['width'] = "%0.4f" % scale(fin.span)
