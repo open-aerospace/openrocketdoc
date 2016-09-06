@@ -5,7 +5,7 @@ from openrocketdoc import document as rdoc
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 from yaml import dump as yamldump
-from math import pi
+from math import pi, tan, radians
 
 # Unit conversions
 N2LBF = 0.224809
@@ -139,13 +139,15 @@ class SVG(object):
         zero = ET.SubElement(scalebar, 'text')
         zero.attrib['x'] = "0"
         zero.attrib['y'] = "65"
-        zero.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        zero.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
         ET.SubElement(zero, 'tspan').text = "0"
 
         one = ET.SubElement(scalebar, 'text')
         one.attrib['x'] = "%0.5f" % scale(unit)
         one.attrib['y'] = "65"
-        one.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"
+        one.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
         ET.SubElement(one, 'tspan').text = unit_name
 
         scalebar.attrib['transform'] = "translate(350,2200)"
@@ -166,14 +168,16 @@ class SVG(object):
             num = ET.SubElement(border, 'text')
             num.attrib['x'] = "4"
             num.attrib['y'] = "%0.5f" % (360 + i * 587)
-            num.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"
+            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
             num.attrib['transform'] = "rotate(-90, 45, %0.5f)" % (360 + i * 587)
             ET.SubElement(num, 'tspan').text = n
 
             num = ET.SubElement(border, 'text')
             num.attrib['x'] = "3455"
             num.attrib['y'] = "%0.5f" % (366 + i * 587)
-            num.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"
+            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
             ET.SubElement(num, 'tspan').text = n
 
             if i > 2:
@@ -184,6 +188,51 @@ class SVG(object):
             line = ET.SubElement(border, 'path')
             line.attrib['d'] = "M 3450,{h} 3500,{h}".format(h=(690 + i * 587))
             line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+
+    @classmethod
+    def _draw_subcomponent(cls, doc, scalefactor, position, parent, component):
+        def scale(u):
+            mm = u * scalefactor * 1000
+            px = mm * cls.MM2PX
+            return px
+
+        if type(component) == rdoc.Mass:
+            path = ET.SubElement(doc, 'rect')
+            path.attrib['id'] = component.name
+            path.attrib['x'] = "%0.4f" % scale(position)
+            path.attrib['y'] = "%0.4f" % scale(-parent.diameter / 2.0)
+            path.attrib['width'] = "%0.4f" % scale(parent.diameter)
+            path.attrib['height'] = "%0.4f" % scale(parent.diameter)
+            path.attrib['style'] = "opacity:1;fill:#ccdddd;fill-opacity:1;stroke:#55bbbb;stroke-width:2px;"
+
+        if type(component) == rdoc.Finset:
+            fin = component.fin
+            start = position - fin.root
+            base = -parent.diameter / 2.0
+            for i in range(component.number_of_fins):
+                findraw = ET.SubElement(doc, 'path')
+                findraw.attrib['id'] = "Fin" + str(i+1)
+                findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:3px;"
+
+                points = []
+                points.append((start, base))
+                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)), base - fin.span))
+                points.append((start + fin.span/tan(radians(90 - fin.sweepangle)) + fin.tip, base - fin.span))
+                points.append((start + fin.root, base))
+
+                findraw.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
+
+                findraw = ET.SubElement(doc, 'rect')
+                findraw.attrib['id'] = "Fin" + str(i+1) + "top"
+                findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:1px;"
+                findraw.attrib['x'] = "%0.4f" % (800 - scale(base))
+                findraw.attrib['y'] = "%0.4f" % (800 - 5)
+                findraw.attrib['width'] = "%0.4f" % scale(fin.span)
+                findraw.attrib['height'] = "10"
+                findraw.attrib['transform'] = "rotate(%0.2f, 800, 800)" % (i * (360/component.number_of_fins))
+
+        for sub in component.components:
+            cls._draw_subcomponent(doc, scalefactor, position, component, sub)
 
     @classmethod
     def dump(cls, ordoc, drawscale=True, drawborder=True):
@@ -246,6 +295,7 @@ class SVG(object):
 
             # Bodytube ########################################################
             if type(component) == rdoc.Bodytube:
+                # horizontal tube
                 path = ET.SubElement(drawing, 'rect')
                 path.attrib['id'] = component.name
                 path.attrib['x'] = "%0.4f" % scale(position)
@@ -255,18 +305,20 @@ class SVG(object):
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
                 position += component.length
 
+                # top down view
                 path = ET.SubElement(drawing, 'circle')
                 path.attrib['cx'] = "800"
                 path.attrib['cy'] = "800"
                 path.attrib['r'] = "%0.5f" % scale(component.diameter / 2.0)
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
-
                 path = ET.SubElement(drawing, 'circle')
                 path.attrib['cx'] = "800"
                 path.attrib['cy'] = "800"
                 path.attrib['r'] = "2"
                 path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
 
+            for sub in component.components:
+                cls._draw_subcomponent(drawing, scalefactor, position, component, sub)
 
         drawing.attrib['transform'] = "translate(350,700)"
 
