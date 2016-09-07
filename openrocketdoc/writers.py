@@ -164,6 +164,16 @@ font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
         box.attrib['height'] = "2350"
         box.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
 
+        titleh = 500
+        titlew = 1400
+        title = ET.SubElement(border, 'rect')
+        title.attrib['x'] = "%d" % (3450 - titlew)
+        title.attrib['y'] = "%d" % (2400 - titleh)
+        title.attrib['width'] = "%d" % (titlew)
+        title.attrib['height'] = "%d" % (titleh)
+        title.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+
+
         for i, n in enumerate(["4", "3", "2", "1"]):
             num = ET.SubElement(border, 'text')
             num.attrib['x'] = "4"
@@ -180,14 +190,38 @@ font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
 font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
             ET.SubElement(num, 'tspan').text = n
 
-            if i > 2:
-                continue
-            line = ET.SubElement(border, 'path')
-            line.attrib['d'] = "M 0,{h} 50,{h}".format(h=(690 + i * 587))
-            line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
-            line = ET.SubElement(border, 'path')
-            line.attrib['d'] = "M 3450,{h} 3500,{h}".format(h=(690 + i * 587))
-            line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+            if i < 3:
+                line = ET.SubElement(border, 'path')
+                line.attrib['d'] = "M 0,{h} 50,{h}".format(h=(690 + i * 587))
+                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line = ET.SubElement(border, 'path')
+                line.attrib['d'] = "M 3450,{h} 3500,{h}".format(h=(690 + i * 587))
+                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+
+        for i, n in enumerate(["F", "E", "D", "C", "B", "A"]):
+            w = 3400 / 6.0
+            num = ET.SubElement(border, 'text')
+            num.attrib['x'] = "%0.5f" % (55 + (w/2.0) + (i * w))
+            num.attrib['y'] = "50"
+            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
+            num.attrib['transform'] = "rotate(-90, %0.5f, 50)" % (50 + (w/2.0) + (i * w))
+            ET.SubElement(num, 'tspan').text = n
+            num = ET.SubElement(border, 'text')
+            num.attrib['x'] = "%0.5f" % (50 + (w/2.0) + (i * w))
+            num.attrib['y'] = "2450"
+            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
+font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
+            ET.SubElement(num, 'tspan').text = n
+
+
+            if i < 5:
+                line = ET.SubElement(border, 'path')
+                line.attrib['d'] = "M {w},0 {w},50".format(w=(w + 50 + (i * w)))
+                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line = ET.SubElement(border, 'path')
+                line.attrib['d'] = "M {w},2400 {w},2450".format(w=(w + 50 + (i * w)))
+                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
 
     @classmethod
     def _draw_subcomponent(cls, doc, scalefactor, position, parent, component):
