@@ -5,7 +5,7 @@ from openrocketdoc import document as rdoc
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as minidom
 from yaml import dump as yamldump
-from math import pi, tan, cos, radians
+from math import pi, fabs, tan, cos, radians
 
 # Unit conversions
 N2LBF = 0.224809
@@ -111,40 +111,78 @@ class SVG(object):
     **Members:**
     """
 
-    MM2PX = 11.81  # 300 dpi
+    A4 = {"mm": (297, 210), "px": (3508, 2480)}
+    SCALES = [1/96.0, 1/64.0, 1/48.0, 1/24.0, 1/16.0, 1/12.0, 1/8.0, 1/4.0, 1/2.0, 1.0]
 
-    @classmethod
-    def _draw_scale(cls, doc, scalefactor):
+    def __init__(self, rocket, page='A4'):
 
-        # local convenience function to get units in px.
-        def scale(u):
-            mm = u * scalefactor * 1000
-            px = mm * cls.MM2PX
-            return px
+        if page == 'A4':
+            self.paper = self.A4
+        else:
+            self.paper = self.A4
 
-        if scalefactor >= 0.5:
-            unit = 1.0
-            unit_name = "1 m"
-        elif scalefactor < 0.5:
+        # DPI:
+        self.MM2PX = self.paper['px'][0] / float(self.paper['mm'][0])
+
+        # determine scale
+        scalefactor = 0.240 / (rocket.length + 0.001)  # avoid divide by 0
+        self.scalefactor = min(self.SCALES, key=lambda x: fabs(x-scalefactor))
+
+        # SVG header
+        self.svg = ET.Element('svg')
+        self.svg.attrib['xmlns:dc'] = "http://purl.org/dc/elements/1.1/"
+        self.svg.attrib['xmlns:rdf'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        self.svg.attrib['xmlns:svg'] = "http://www.w3.org/2000/svg"
+        self.svg.attrib['xmlns'] = "http://www.w3.org/2000/svg"
+        self.svg.attrib['version'] = "1.1"
+        self.svg.attrib['id'] = "svg2"
+
+        # Paper size
+        self.svg.attrib['viewBox'] = "0 0 %d %d" % (self.paper['px'][0], self.paper['px'][1])
+        self.svg.attrib['width'] = "%dmm" % self.paper['mm'][0]
+        self.svg.attrib['height'] = "%dmm" % self.paper['mm'][1]
+
+    def _px(self, m):
+        """Go from meters to pixels"""
+        mm = m * 1000 * self.scalefactor
+        px = mm * self.MM2PX
+        return px
+
+    def _render_path(self, points):
+        return "M " + " ".join(["%0.3f,%0.3f" % (self._px(p[0]), self._px(p[1])) for p in points])
+
+    def _draw_scale(self):
+        """Draw a scale bar in the lower left hand corner"""
+
+        if self.scalefactor >= 0.5:
             unit = 0.1
             unit_name = "10 cm"
+        elif self.scalefactor > 0.5:
+            unit = 0.1
+            unit_name = "10 cm"
+        elif self.scalefactor > 0.05:
+            unit = 1.0
+            unit_name = "1 m"
+        elif self.scalefactor > 0.005:
+            unit = 10.0
+            unit_name = "10 m"
 
-        scalebar = ET.SubElement(doc, 'g')
+        scalebar = ET.SubElement(self.svg, 'g')
         scalebar.attrib['id'] = "scalebar"
 
         line = ET.SubElement(scalebar, 'path')
-        line.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in [(0, 0), (unit, 0)]])
-        line.attrib['style'] = "fill:none;stroke:#000000;stroke-width:5px;"
+        line.attrib['d'] = self._render_path(((0, 0), (unit, 0)))
+        line.attrib['style'] = "fill:none;stroke:#000000;stroke-width:9px;"
 
         zero = ET.SubElement(scalebar, 'text')
-        zero.attrib['x'] = "0"
+        zero.attrib['x'] = "-16"
         zero.attrib['y'] = "65"
         zero.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
 font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
         ET.SubElement(zero, 'tspan').text = "0"
 
         one = ET.SubElement(scalebar, 'text')
-        one.attrib['x'] = "%0.5f" % scale(unit)
+        one.attrib['x'] = "%0.5f" % self._px(unit)
         one.attrib['y'] = "65"
         one.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
 font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
@@ -152,93 +190,186 @@ font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;"""
 
         scalebar.attrib['transform'] = "translate(350,2200)"
 
-    @classmethod
-    def _draw_border(cls, doc):
-        border = ET.SubElement(doc, 'g')
+    def _draw_border(self):
+
+        # border width in px
+        gutter = 50
+        width = self.paper['px'][0] - (2 * gutter)
+        height = self.paper['px'][1] - (2 * gutter)
+
+        boxstyle = "fill:none;stroke:#999999;stroke-width:2px;"
+        fontstyle = "font-style:normal;font-weight:normal;font-size:45px;font-family:sans-serif;\
+fill:#999999;fill-opacity:1;stroke:none;"
+
+        # Add SVG group
+        border = ET.SubElement(self.svg, 'g')
         border.attrib['id'] = "border"
 
         box = ET.SubElement(border, 'rect')
-        box.attrib['x'] = "50"
-        box.attrib['y'] = "50"
-        box.attrib['width'] = "3400"
-        box.attrib['height'] = "2350"
-        box.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+        box.attrib['x'] = str(gutter)
+        box.attrib['y'] = str(gutter)
+        box.attrib['width'] = str(width)
+        box.attrib['height'] = str(height)
+        box.attrib['style'] = boxstyle
 
         titleh = 500
         titlew = 1400
         title = ET.SubElement(border, 'rect')
-        title.attrib['x'] = "%d" % (3450 - titlew)
-        title.attrib['y'] = "%d" % (2400 - titleh)
-        title.attrib['width'] = "%d" % (titlew)
-        title.attrib['height'] = "%d" % (titleh)
-        title.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+        title.attrib['x'] = "%d" % (self.paper['px'][0] - gutter - titlew)
+        title.attrib['y'] = "%d" % (self.paper['px'][1] - gutter - titleh)
+        title.attrib['width'] = str(titlew)
+        title.attrib['height'] = str(titleh)
+        title.attrib['style'] = boxstyle
 
+        # size
+        size = ET.SubElement(border, 'text')
+        size.attrib['x'] = "%d" % (self.paper['px'][0] - gutter - titlew + 20)
+        size.attrib['y'] = "%d" % (self.paper['px'][1] - gutter - titleh + 258)
+        size.attrib['style'] = "font-style:normal;font-weight:normal;font-size:25px;font-family:sans-serif;\
+fill:#999999;fill-opacity:1;stroke:none;"
+        ET.SubElement(size, 'tspan').text = "SIZE:"
+        line = ET.SubElement(border, 'path')
+        line.attrib['d'] = "M {l},{h} {r},{h}".format(l=(self.paper['px'][0] - gutter - titlew),
+                                                      r=(self.paper['px'][0] - gutter),
+                                                      h=self.paper['px'][1] - gutter - titleh + 220)
+        line.attrib['style'] = boxstyle
+        size = ET.SubElement(border, 'text')
+        size.attrib['x'] = "%d" % (self.paper['px'][0] - gutter - titlew + 40)
+        size.attrib['y'] = "%d" % (self.paper['px'][1] - gutter - titleh + 330)
+        size.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;\
+fill:#444444;fill-opacity:1;stroke:none;"
+        ET.SubElement(size, 'tspan').text = "A4"
+
+        # scale
+        scale = ET.SubElement(border, 'text')
+        scale.attrib['x'] = "%d" % (self.paper['px'][0] - gutter - titlew + 20)
+        scale.attrib['y'] = "%d" % (self.paper['px'][1] - gutter - titleh + 398)
+        scale.attrib['style'] = "font-style:normal;font-weight:normal;font-size:25px;font-family:sans-serif;\
+fill:#999999;fill-opacity:1;stroke:none;"
+        ET.SubElement(scale, 'tspan').text = "SCALE:"
+        line = ET.SubElement(border, 'path')
+        line.attrib['d'] = "M {l},{h} {r},{h}".format(l=(self.paper['px'][0] - gutter - titlew),
+                                                      r=(self.paper['px'][0] - gutter),
+                                                      h=self.paper['px'][1] - gutter - titleh + 365)
+        line.attrib['style'] = boxstyle
+
+        scale = ET.SubElement(border, 'text')
+        scale.attrib['x'] = "%d" % (self.paper['px'][0] - gutter - titlew + 40)
+        scale.attrib['y'] = "%d" % (self.paper['px'][1] - gutter - titleh + 460)
+        scale.attrib['style'] = "font-style:normal;font-weight:normal;font-size:60px;font-family:sans-serif;\
+fill:#444444;fill-opacity:1;stroke:none;"
+        ET.SubElement(scale, 'tspan').text = "1:%d" % (1/self.scalefactor)
 
         for i, n in enumerate(["4", "3", "2", "1"]):
             num = ET.SubElement(border, 'text')
-            num.attrib['x'] = "4"
-            num.attrib['y'] = "%0.5f" % (360 + i * 587)
-            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
-font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
-            num.attrib['transform'] = "rotate(-90, 45, %0.5f)" % (360 + i * 587)
+            num.attrib['x'] = "3"
+            num.attrib['y'] = "%0.5f" % (gutter + 22 + (height/8.0) + i * (height/4.0))
+            num.attrib['style'] = fontstyle
+            num.attrib['transform'] = "rotate(-90, 10, %0.5f)" % (gutter - 8 + (height/8.0) + i * (height/4.0))
             ET.SubElement(num, 'tspan').text = n
 
             num = ET.SubElement(border, 'text')
-            num.attrib['x'] = "3455"
-            num.attrib['y'] = "%0.5f" % (366 + i * 587)
-            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
-font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
+            num.attrib['x'] = "%d" % (width + gutter + 10)
+            num.attrib['y'] = "%0.5f" % (gutter + 22 + (height/8.0) + i * (height/4.0))
+            num.attrib['style'] = fontstyle
             ET.SubElement(num, 'tspan').text = n
 
             if i < 3:
                 line = ET.SubElement(border, 'path')
-                line.attrib['d'] = "M 0,{h} 50,{h}".format(h=(690 + i * 587))
-                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line.attrib['d'] = "M 0,{h} {edge},{h}".format(edge=gutter,
+                                                               h=(gutter + (height/4.0) + i * (height/4.0)))
+                line.attrib['style'] = boxstyle
                 line = ET.SubElement(border, 'path')
-                line.attrib['d'] = "M 3450,{h} 3500,{h}".format(h=(690 + i * 587))
-                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line.attrib['d'] = "M {edge},{h} {paper},{h}".format(edge=(self.paper['px'][0] - gutter),
+                                                                     paper=self.paper['px'][0],
+                                                                     h=(gutter + (height/4.0) + i * (height/4.0)))
+                line.attrib['style'] = boxstyle
 
         for i, n in enumerate(["F", "E", "D", "C", "B", "A"]):
-            w = 3400 / 6.0
             num = ET.SubElement(border, 'text')
-            num.attrib['x'] = "%0.5f" % (55 + (w/2.0) + (i * w))
-            num.attrib['y'] = "50"
-            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
-font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
-            num.attrib['transform'] = "rotate(-90, %0.5f, 50)" % (50 + (w/2.0) + (i * w))
-            ET.SubElement(num, 'tspan').text = n
-            num = ET.SubElement(border, 'text')
-            num.attrib['x'] = "%0.5f" % (50 + (w/2.0) + (i * w))
-            num.attrib['y'] = "2450"
-            num.attrib['style'] = """font-style:normal;font-weight:normal;font-size:60px;\
-font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
+            num.attrib['x'] = "%0.5f" % (gutter + 22 + (width/12.0) + i * (width/6.0))
+            num.attrib['y'] = "%d" % (gutter - 3)
+            num.attrib['style'] = fontstyle
+            num.attrib['transform'] = "rotate(-90, %0.5f, 45)" % (gutter + 22 + (width/12.0) + i * (width/6.0))
             ET.SubElement(num, 'tspan').text = n
 
+            num = ET.SubElement(border, 'text')
+            num.attrib['x'] = "%0.5f" % (gutter + 10 + (width/12.0) + i * (width/6.0))
+            num.attrib['y'] = "%d" % (gutter + height + 42)
+            num.attrib['style'] = fontstyle
+            ET.SubElement(num, 'tspan').text = n
 
             if i < 5:
                 line = ET.SubElement(border, 'path')
-                line.attrib['d'] = "M {w},0 {w},50".format(w=(w + 50 + (i * w)))
-                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line.attrib['d'] = "M {w},0 {w},{g}".format(w=(gutter + (width/6.0) + i * (width/6.0)), g=gutter)
+                line.attrib['style'] = boxstyle
                 line = ET.SubElement(border, 'path')
-                line.attrib['d'] = "M {w},2400 {w},2450".format(w=(w + 50 + (i * w)))
-                line.attrib['style'] = "fill:none;stroke:#999999;stroke-width:2px;"
+                line.attrib['d'] = "M {w},{edge} {w},{paper}".format(edge=self.paper['px'][1] - gutter,
+                                                                     w=(gutter + (width/6.0) + i * (width/6.0)),
+                                                                     paper=self.paper['px'][1])
+                line.attrib['style'] = boxstyle
 
-    @classmethod
-    def _draw_subcomponent(cls, doc, scalefactor, position, parent, component):
-        def scale(u):
-            mm = u * scalefactor * 1000
-            px = mm * cls.MM2PX
-            return px
+    def _draw_component(self, doc, position, parent, component):
 
+        # Nosecone ########################################################
+        if type(component) == rdoc.Nosecone:
+            path = ET.SubElement(doc, 'path')
+            path.attrib['id'] = "nose"
+            path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+
+            if component.shape == rdoc.Noseshape.TANGENT_OGIVE:
+                midpointx = component.length / 2.0
+                midpointy = component.diameter / 4.0
+                slope = -component.length / (component.diameter / 2.0)
+                radius = -slope * midpointx + midpointy
+                path.attrib['d'] = """M {length},{width} A {radius} {radius}, 0, 0, 1, 0 0\
+ A {radius} {radius}, 0, 0, 1, {length} -{width}""".format(length=self._px(component.length),
+                                                           width=self._px(component.diameter/2.0),
+                                                           radius=self._px(radius))
+            else:
+                points = []
+                points.append((component.length, component.diameter / 2.0))
+                points.append((0, 0))
+                points.append((component.length, -component.diameter / 2.0))
+                path.attrib['d'] = self._render_path(points)
+
+            position += component.length
+
+        # Bodytube ########################################################
+        if type(component) == rdoc.Bodytube:
+            # horizontal tube
+            path = ET.SubElement(doc, 'rect')
+            path.attrib['id'] = component.name
+            path.attrib['x'] = "%0.4f" % self._px(position)
+            path.attrib['y'] = "%0.4f" % self._px(-component.diameter / 2.0)
+            path.attrib['width'] = "%0.4f" % self._px(component.length)
+            path.attrib['height'] = "%0.4f" % self._px(component.diameter)
+            path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+
+            # top down view
+            path = ET.SubElement(doc, 'circle')
+            path.attrib['cx'] = "900"
+            path.attrib['cy'] = "700"
+            path.attrib['r'] = "%0.5f" % self._px(component.diameter / 2.0)
+            path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+            path = ET.SubElement(doc, 'circle')
+            path.attrib['cx'] = "900"
+            path.attrib['cy'] = "700"
+            path.attrib['r'] = "2"
+            path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
+            position += component.length
+
+        # Mass ################################################################
         if type(component) == rdoc.Mass:
             path = ET.SubElement(doc, 'rect')
             path.attrib['id'] = component.name
-            path.attrib['x'] = "%0.4f" % scale(position)
-            path.attrib['y'] = "%0.4f" % scale(-parent.diameter / 2.0)
-            path.attrib['width'] = "%0.4f" % scale(parent.diameter)
-            path.attrib['height'] = "%0.4f" % scale(parent.diameter)
+            path.attrib['x'] = "%0.4f" % self._px(position)
+            path.attrib['y'] = "%0.4f" % self._px(-parent.diameter / 2.0)
+            path.attrib['width'] = "%0.4f" % self._px(parent.diameter)
+            path.attrib['height'] = "%0.4f" % self._px(parent.diameter)
             path.attrib['style'] = "opacity:1;fill:#ccdddd;fill-opacity:1;stroke:#55bbbb;stroke-width:2px;"
 
+        # Fins ################################################################
         if type(component) == rdoc.Finset:
             fin = component.fin
             start = position - fin.root - 0.001
@@ -256,123 +387,53 @@ font-family:sans-serif;fill:#999999;fill-opacity:1;stroke:none;"""
                 points.append((start + fin.span/tan(radians(90 - fin.sweepangle)) + fin.tip, level - (fin.span * cosp)))
                 points.append((start + fin.root, level))
                 points.append((start, level))
-                findraw.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
+                findraw.attrib['d'] = self._render_path(points)
 
+                # top down
                 findraw = ET.SubElement(doc, 'rect')
                 findraw.attrib['id'] = "Fin" + str(i+1) + "top"
                 findraw.attrib['style'] = "fill:none;stroke:#666666;stroke-width:2px;"
-                findraw.attrib['x'] = "%0.4f" % (800 - scale(base))
-                findraw.attrib['y'] = "%0.4f" % (800 - 5)
-                findraw.attrib['width'] = "%0.4f" % scale(fin.span)
-                findraw.attrib['height'] = "10"
-                findraw.attrib['transform'] = "rotate(%0.2f, 800, 800)" % (i * (360/component.number_of_fins))
+                findraw.attrib['x'] = "%0.4f" % (900 - self._px(base))
+                findraw.attrib['y'] = "%0.4f" % (700 - 5)
+                findraw.attrib['width'] = "%0.4f" % self._px(fin.span)
+                findraw.attrib['height'] = "8"
+                findraw.attrib['transform'] = "rotate(%0.2f, 900, 700)" % (i * (360/component.number_of_fins))
 
         for sub in component.components:
-            cls._draw_subcomponent(doc, scalefactor, position, component, sub)
+            self._draw_component(doc, position, component, sub)
+        return position
 
     @classmethod
     def dump(cls, ordoc, drawscale=True, drawborder=True):
         """Return a `str` entire svg drawing of the rocket
 
-        :param ordoc: the OpenRocketDoc file to convert
+        :param ordoc: the OpenRocketDoc document to draw
         :param bool drawscale: (optional) if true, draws a scale bar in the document.
         :param bool drawborder: (optional) if true, draws an engineering border around the document.
         :returns: `str` SVG document
         """
 
-        # Determine the scale:
-        length = ordoc.length
-        scalefactor = 0.230 / (length + 0.001)  # avoid divide by 0
-
-        # local convenience function to get units in px.
-        def scale(u):
-            mm = u * scalefactor * 1000
-            px = mm * cls.MM2PX
-            return px
-
-        # SVG header
-        svg = ET.Element('svg')
-        svg.attrib['xmlns:dc'] = "http://purl.org/dc/elements/1.1/"
-        svg.attrib['xmlns:rdf'] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        svg.attrib['xmlns:svg'] = "http://www.w3.org/2000/svg"
-        svg.attrib['xmlns'] = "http://www.w3.org/2000/svg"
-        svg.attrib['version'] = "1.1"
-        svg.attrib['id'] = "svg2"
-
-        # Landscape A4 paper
-        svg.attrib['viewBox'] = "0 0 3508 2480"  # 2480 x 3508 pixels (210mm X 297mm @ 300 dpi)
-        svg.attrib['height'] = "210mm"
-        svg.attrib['width'] = "297mm"
+        # Create a SVG object
+        svg = SVG(ordoc)
 
         if drawborder:
-            cls._draw_border(svg)
+            svg._draw_border()
 
         # Group to draw in
-        drawing = ET.SubElement(svg, 'g')
+        drawing = ET.SubElement(svg.svg, 'g')
         drawing.attrib['id'] = "rocket"
 
         position = 0
-        # Draw elements:
         for component in ordoc.stages[0].components:
+            position = svg._draw_component(drawing, position, None, component)
 
-            # Nosecone ########################################################
-            if type(component) == rdoc.Nosecone:
-                path = ET.SubElement(drawing, 'path')
-                path.attrib['id'] = "nose"
-                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
-
-                if component.shape == rdoc.Noseshape.TANGENT_OGIVE:
-                    midpointx = component.length / 2.0
-                    midpointy = component.diameter / 4.0
-                    slope = -component.length / (component.diameter / 2.0)
-                    radius = -slope * midpointx + midpointy
-                    path.attrib['d'] = """M {length},{width} A {radius} {radius}, 0, 0, 1, 0 0\
- A {radius} {radius}, 0, 0, 1, {length} -{width}""".format(length=scale(component.length),
-                                                           width=scale(component.diameter/2.0),
-                                                           radius=scale(radius))
-                else:
-                    points = []
-                    points.append((component.length, component.diameter / 2.0))
-                    points.append((0, 0))
-                    points.append((component.length, -component.diameter / 2.0))
-                    path.attrib['d'] = "M " + " ".join(["%0.5f,%0.5f" % (scale(p[0]), scale(p[1])) for p in points])
-
-                position += component.length
-
-            # Bodytube ########################################################
-            if type(component) == rdoc.Bodytube:
-                # horizontal tube
-                path = ET.SubElement(drawing, 'rect')
-                path.attrib['id'] = component.name
-                path.attrib['x'] = "%0.4f" % scale(position)
-                path.attrib['y'] = "%0.4f" % scale(-component.diameter / 2.0)
-                path.attrib['width'] = "%0.4f" % scale(component.length)
-                path.attrib['height'] = "%0.4f" % scale(component.diameter)
-                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
-                position += component.length
-
-                # top down view
-                path = ET.SubElement(drawing, 'circle')
-                path.attrib['cx'] = "800"
-                path.attrib['cy'] = "800"
-                path.attrib['r'] = "%0.5f" % scale(component.diameter / 2.0)
-                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
-                path = ET.SubElement(drawing, 'circle')
-                path.attrib['cx'] = "800"
-                path.attrib['cy'] = "800"
-                path.attrib['r'] = "2"
-                path.attrib['style'] = "fill:none;stroke:#666666;stroke-width:4px;"
-
-            for sub in component.components:
-                cls._draw_subcomponent(drawing, scalefactor, position, component, sub)
-
-        drawing.attrib['transform'] = "translate(350,700)"
+        drawing.attrib['transform'] = "translate(300,600)"
 
         if drawscale:
-            cls._draw_scale(svg, scalefactor)
+            svg._draw_scale()
 
         # pretty print
-        xmldoc = minidom.parseString(ET.tostring(svg, encoding="UTF-8"))
+        xmldoc = minidom.parseString(ET.tostring(svg.svg, encoding="UTF-8"))
         return xmldoc.toprettyxml(indent="  ")
 
 
