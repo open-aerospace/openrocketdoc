@@ -142,6 +142,35 @@ class SVG(object):
         self.svg.attrib['width'] = "%dmm" % self.paper['mm'][0]
         self.svg.attrib['height'] = "%dmm" % self.paper['mm'][1]
 
+        # Marker definitions
+        defs = ET.SubElement(self.svg, 'defs')
+        defs.attrib['id'] = "definitions"
+
+        arrow_end = ET.SubElement(defs, 'marker')
+        arrow_end.attrib['style'] = "overflow:visible;"
+        arrow_end.attrib['id'] = "Arrow1Mend"
+        arrow_end.attrib['refX'] = "0.0"
+        arrow_end.attrib['refY'] = "0.0"
+        arrow_end.attrib['orient'] = "auto"
+
+        arrow_end_path = ET.SubElement(arrow_end, 'path')
+        arrow_end_path.attrib['transform'] = "scale(0.4) rotate(180) translate(30,0)"
+        arrow_end_path.attrib['style'] = "fill-rule:evenodd;stroke:#4c71d7;stroke-width:1pt;stroke-opacity:1;fill:#4c71d7;fill-opacity:1"
+        arrow_end_path.attrib['d'] = "M 0.0,0.0 L 15.0,-15.0 L -30,0.0 L 15.0,15.0 L 0.0,0.0 z "
+
+        arrow_begin = ET.SubElement(defs, 'marker')
+        arrow_begin.attrib['style'] = "overflow:visible;"
+        arrow_begin.attrib['id'] = "Arrow1Mbegin"
+        arrow_begin.attrib['refX'] = "0.0"
+        arrow_begin.attrib['refY'] = "0.0"
+        arrow_begin.attrib['orient'] = "auto"
+
+        arrow_begin_path = ET.SubElement(arrow_begin, 'path')
+        arrow_begin_path.attrib['transform'] = "scale(0.4) translate(30,0)"
+        arrow_begin_path.attrib['style'] = "fill-rule:evenodd;stroke:#4c71d7;stroke-width:1pt;stroke-opacity:1;fill:#4c71d7;fill-opacity:1"
+        arrow_begin_path.attrib['d'] = "M 0.0,0.0 L 15.0,-15.0 L -30,0.0 L 15.0,15.0 L 0.0,0.0 z "
+
+
     def _px(self, m):
         """Go from meters to pixels"""
         mm = m * 1000 * self.scalefactor
@@ -309,6 +338,19 @@ fill:#444444;fill-opacity:1;stroke:none;"
                                                                      paper=self.paper['px'][1])
                 line.attrib['style'] = boxstyle
 
+    def _draw_annotation(self, position, component):
+         # Add SVG group
+        group = ET.SubElement(self.svg, 'g')
+
+        # Line from edges of component
+        line = ET.SubElement(group, 'path')
+        line.attrib['d'] = self._render_path([(position, 0),(position+component.length, 0)])
+        line.attrib['style'] = "fill:none;stroke:#4c71d7;stroke-width:2px;marker-start:url(#Arrow1Mbegin);marker-end:url(#Arrow1Mend)"
+
+        # TODO: Text
+
+        group.attrib['transform'] = "translate(300,850)"
+
     def _draw_component(self, doc, position, parent, component):
 
         # Nosecone ########################################################
@@ -404,7 +446,7 @@ fill:#444444;fill-opacity:1;stroke:none;"
         return position
 
     @classmethod
-    def dump(cls, ordoc, drawscale=True, drawborder=True):
+    def dump(cls, ordoc, drawscale=True, drawborder=True, annotate=True):
         """Return a `str` entire svg drawing of the rocket
 
         :param ordoc: the OpenRocketDoc document to draw
@@ -425,7 +467,13 @@ fill:#444444;fill-opacity:1;stroke:none;"
 
         position = 0
         for component in ordoc.stages[0].components:
+            # Annotate top level components:
+            if annotate:
+                svg._draw_annotation(position, component)
+
+            # draw real components and subcomponents
             position = svg._draw_component(drawing, position, None, component)
+
 
         drawing.attrib['transform'] = "translate(300,600)"
 
