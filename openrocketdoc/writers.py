@@ -170,7 +170,6 @@ class SVG(object):
         arrow_begin_path.attrib['style'] = "fill-rule:evenodd;stroke:#4c71d7;stroke-width:1pt;stroke-opacity:1;fill:#4c71d7;fill-opacity:1"
         arrow_begin_path.attrib['d'] = "M 0.0,0.0 L 15.0,-15.0 L -30,0.0 L 15.0,15.0 L 0.0,0.0 z "
 
-
     def _px(self, m):
         """Go from meters to pixels"""
         mm = m * 1000 * self.scalefactor
@@ -339,15 +338,31 @@ fill:#444444;fill-opacity:1;stroke:none;"
                 line.attrib['style'] = boxstyle
 
     def _draw_annotation(self, position, component):
-         # Add SVG group
+        fontstyle = "font-style:normal;font-weight:normal;font-size:45px;font-family:sans-serif;\
+fill:#999999;fill-opacity:1;stroke:none;"
+
+        # Add SVG group
         group = ET.SubElement(self.svg, 'g')
 
         # Line from edges of component
         line = ET.SubElement(group, 'path')
-        line.attrib['d'] = self._render_path([(position, 0),(position+component.length, 0)])
+        line.attrib['d'] = self._render_path([(position, 0), (position+component.length, 0)])
         line.attrib['style'] = "fill:none;stroke:#4c71d7;stroke-width:2px;marker-start:url(#Arrow1Mbegin);marker-end:url(#Arrow1Mend)"
 
-        # TODO: Text
+        # TODO: Break line instead of clipping box.
+        box = ET.SubElement(group, 'rect')
+        box.attrib['x'] = "%0.1f" % (self._px(position + (component.length/2.0)) - 30)
+        box.attrib['y'] = "-5"
+        box.attrib['width'] = "220"
+        box.attrib['height'] = "10"
+        box.attrib['style'] = "fill:#ffffff;"
+
+        # Text
+        num = ET.SubElement(group, 'text')
+        num.attrib['x'] = "%0.5f" % self._px(position + (component.length/2.0))
+        num.attrib['y'] = "16"
+        num.attrib['style'] = fontstyle
+        ET.SubElement(num, 'tspan').text = "%0.3f m" % component.length
 
         group.attrib['transform'] = "translate(300,850)"
 
@@ -473,7 +488,6 @@ fill:#444444;fill-opacity:1;stroke:none;"
 
             # draw real components and subcomponents
             position = svg._draw_component(drawing, position, None, component)
-
 
         drawing.attrib['transform'] = "translate(300,600)"
 
