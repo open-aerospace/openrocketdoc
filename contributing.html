@@ -1,0 +1,306 @@
+<!doctype html>
+
+
+<html >
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Contributing &mdash; Open Rocket Document format 0.1.0 documentation</title>
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/style.css">
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+
+
+      <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/apple-touch-icon-57x57.png">
+      <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/apple-touch-icon-60x60.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-touch-icon-76x76.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/apple-touch-icon-114x114.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/apple-touch-icon-120x120.png">
+      <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-touch-icon-144x144.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-touch-icon-152x152.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon-180x180.png">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-32x32.png" sizes="32x32">
+      <link rel="icon" type="image/png" href="/assets/img/android-chrome-192x192.png" sizes="192x192">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-96x96.png" sizes="96x96">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-16x16.png" sizes="16x16">
+      <link rel="shortcut icon" href="favicon.ico">
+      <meta name="msapplication-TileColor" content="#6677cc">
+      <meta name="msapplication-TileImage" content="/assets/img/mstile-144x144.png">
+      <meta name="theme-color" content="#6677cc">
+    <link rel="top" title="Open Rocket Document format 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Credits" href="authors.html" />
+    <link rel="prev" title="Writers" href="writers.html" /> 
+  </head>
+  <body role="document">
+ <section class="hero is-primary is-left is-bold">
+   <div class="hero-header">
+    <header class="header">
+     <div class="container">
+
+      <div class="header-left">
+       <a class="header-item" href="/">
+        <img src="/assets/img/title.png" alt="open-aerospace">
+       </a>
+      </div>
+
+      <div id="header-menu" class="header-right header-menu">
+       <span class="header-item">
+        <a  href="/">Home</a>
+       </span>
+       <span class="header-item">
+        <a  href="/about/">About</a>
+       </span>
+       <span class="header-item">
+        <a class="button is-info is-outlined is-inverted" href="https://github.com/open-aerospace">
+         <i class="fa fa-github"></i>
+         GitHub
+         </a>
+       </span>
+      </div>
+     </div>
+    </header>
+   </div>
+  </section>
+
+
+<section class="section">
+
+ <div class="container">
+  <div class="columns">
+      <div class="sphinxsidebar column is-3" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+          
+            
+            
+              <div class="toc">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Rocket Document Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomenclature.html">Descibing Rockets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="document.html">Rocket Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="document.html#rocket">Rocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#stage">Stage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#components">Components:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="document.html#nosecone">Nosecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#bodytube">Bodytube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#mass">Mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#fin">Fin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#finset">Finset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#engine">Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Loaders</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#openrocket">OpenRocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rasp-engine">RASP Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writers.html">Writers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#native-open-rocket-document">Native Open Rocket Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rasp-engine">RASP Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#svg-image">SVG Image</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#types-of-contributions">Types of Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#report-bugs">Report Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fix-bugs">Fix Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#implement-features">Implement Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#write-documentation">Write Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#submit-feedback">Submit Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pull-request-guidelines">Pull Request Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tips">Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#development-lead">Development Lead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="history.html#id1">0.1.0 (2016-01-01)</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            
+          
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>  
+
+    <div class="column">
+     <div class="body content" role="main">
+      
+  <div class="section" id="contributing">
+<h1>Contributing</h1>
+<p>Contributions are welcome, and they are greatly appreciated! Every
+little bit helps, and credit will always be given.</p>
+<p>You can contribute in many ways:</p>
+<div class="section" id="types-of-contributions">
+<h2>Types of Contributions</h2>
+<div class="section" id="report-bugs">
+<h3>Report Bugs</h3>
+<p>Report bugs at <a class="reference external" href="https://github.com/natronics/openrocketdoc/issues">https://github.com/natronics/openrocketdoc/issues</a>.</p>
+<p>If you are reporting a bug, please include:</p>
+<ul class="simple">
+<li>Your operating system name and version.</li>
+<li>Any details about your local setup that might be helpful in troubleshooting.</li>
+<li>Detailed steps to reproduce the bug.</li>
+</ul>
+</div>
+<div class="section" id="fix-bugs">
+<h3>Fix Bugs</h3>
+<p>Look through the GitHub issues for bugs. Anything tagged with &#8220;bug&#8221;
+is open to whoever wants to implement it.</p>
+</div>
+<div class="section" id="implement-features">
+<h3>Implement Features</h3>
+<p>Look through the GitHub issues for features. Anything tagged with &#8220;feature&#8221;
+is open to whoever wants to implement it.</p>
+</div>
+<div class="section" id="write-documentation">
+<h3>Write Documentation</h3>
+<p>Open Rocket Document format could always use more documentation, whether as part of the
+official Open Rocket Document format docs, in docstrings, or even on the web in blog posts,
+articles, and such.</p>
+</div>
+<div class="section" id="submit-feedback">
+<h3>Submit Feedback</h3>
+<p>The best way to send feedback is to file an issue at <a class="reference external" href="https://github.com/natronics/openrocketdoc/issues">https://github.com/natronics/openrocketdoc/issues</a>.</p>
+<p>If you are proposing a feature:</p>
+<ul class="simple">
+<li>Explain in detail how it would work.</li>
+<li>Keep the scope as narrow as possible, to make it easier to implement.</li>
+<li>Remember that this is a volunteer-driven project, and that contributions
+are welcome :)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="get-started">
+<h2>Get Started!</h2>
+<p>Ready to contribute? Here&#8217;s how to set up <cite>openrocketdoc</cite> for local development.</p>
+<ol class="arabic">
+<li><p class="first">Fork the <cite>openrocketdoc</cite> repo on GitHub.</p>
+</li>
+<li><p class="first">Clone your fork locally:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ git clone git@github.com:your_name_here/openrocketdoc.git
+</pre></div>
+</div>
+</li>
+<li><p class="first">Install your local copy into a virtualenv. Assuming you have virtualenvwrapper installed, this is how you set up your fork for local development:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ mkvirtualenv openrocketdoc
+$ cd openrocketdoc/
+$ python setup.py develop
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create a branch for local development:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ git checkout -b name-of-your-bugfix-or-feature
+</pre></div>
+</div>
+<p>Now you can make your changes locally.</p>
+</li>
+<li><p class="first">When you&#8217;re done making changes, check that your changes pass flake8 and the tests, including testing other Python versions with tox:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ flake8 openrocketdoc tests
+$ python setup.py test
+$ tox
+</pre></div>
+</div>
+<p>To get flake8 and tox, just pip install them into your virtualenv.</p>
+</li>
+<li><p class="first">Commit your changes and push your branch to GitHub:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ git add .
+$ git commit -m &quot;Your detailed description of your changes.&quot;
+$ git push origin name-of-your-bugfix-or-feature
+</pre></div>
+</div>
+</li>
+<li><p class="first">Submit a pull request through the GitHub website.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="pull-request-guidelines">
+<h2>Pull Request Guidelines</h2>
+<p>Before you submit a pull request, check that it meets these guidelines:</p>
+<ol class="arabic simple">
+<li>The pull request should include tests.</li>
+<li>If the pull request adds functionality, the docs should be updated. Put
+your new functionality into a function with a docstring, and add the
+feature to the list in README.rst.</li>
+<li>The pull request should work for Python 2.6, 2.7, and 3.3, and for PyPy. Check
+<a class="reference external" href="https://travis-ci.org/natronics/openrocketdoc/pull_requests">https://travis-ci.org/natronics/openrocketdoc/pull_requests</a>
+and make sure that the tests pass for all supported Python versions.</li>
+</ol>
+</div>
+<div class="section" id="tips">
+<h2>Tips</h2>
+<p>To run a subset of tests:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>$ python -m unittest tests.test_openrocketdoc
+</pre></div>
+</div>
+</div>
+</div>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right ">
+          <a href="writers.html" title="Writers"
+             accesskey="P">previous</a></li>
+        <li class="right is-text-right">
+          <a href="authors.html" title="Credits"
+             accesskey="N">next</a></li> 
+      </ul>
+    </div>
+
+     </div>
+   </div>
+
+  </div>
+ </div>
+
+  </section>
+    <footer class="footer" role="contentinfo">
+    <div class="container">
+        &copy; Copyright 2016, Nathan Bergey et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    </footer>
+  </body>
+</html>

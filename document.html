@@ -1,0 +1,1117 @@
+<!doctype html>
+
+
+<html >
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Rocket Document &mdash; Open Rocket Document format 0.1.0 documentation</title>
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/style.css">
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+
+
+      <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/apple-touch-icon-57x57.png">
+      <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/apple-touch-icon-60x60.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-touch-icon-76x76.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/apple-touch-icon-114x114.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/apple-touch-icon-120x120.png">
+      <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-touch-icon-144x144.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-touch-icon-152x152.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon-180x180.png">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-32x32.png" sizes="32x32">
+      <link rel="icon" type="image/png" href="/assets/img/android-chrome-192x192.png" sizes="192x192">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-96x96.png" sizes="96x96">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-16x16.png" sizes="16x16">
+      <link rel="shortcut icon" href="favicon.ico">
+      <meta name="msapplication-TileColor" content="#6677cc">
+      <meta name="msapplication-TileImage" content="/assets/img/mstile-144x144.png">
+      <meta name="theme-color" content="#6677cc">
+    <link rel="top" title="Open Rocket Document format 0.1.0 documentation" href="index.html" />
+    <link rel="next" title="Loaders" href="loaders.html" />
+    <link rel="prev" title="Descibing Rockets" href="nomenclature.html" /> 
+  </head>
+  <body role="document">
+ <section class="hero is-primary is-left is-bold">
+   <div class="hero-header">
+    <header class="header">
+     <div class="container">
+
+      <div class="header-left">
+       <a class="header-item" href="/">
+        <img src="/assets/img/title.png" alt="open-aerospace">
+       </a>
+      </div>
+
+      <div id="header-menu" class="header-right header-menu">
+       <span class="header-item">
+        <a  href="/">Home</a>
+       </span>
+       <span class="header-item">
+        <a  href="/about/">About</a>
+       </span>
+       <span class="header-item">
+        <a class="button is-info is-outlined is-inverted" href="https://github.com/open-aerospace">
+         <i class="fa fa-github"></i>
+         GitHub
+         </a>
+       </span>
+      </div>
+     </div>
+    </header>
+   </div>
+  </section>
+
+
+<section class="section">
+
+ <div class="container">
+  <div class="columns">
+      <div class="sphinxsidebar column is-3" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+          
+            
+            
+              <div class="toc">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Open Rocket Document Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomenclature.html">Descibing Rockets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Rocket Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rocket">Rocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stage">Stage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#components">Components:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#nosecone">Nosecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bodytube">Bodytube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mass">Mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fin">Fin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#finset">Finset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#engine">Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Loaders</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#openrocket">OpenRocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rasp-engine">RASP Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writers.html">Writers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#native-open-rocket-document">Native Open Rocket Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rasp-engine">RASP Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#svg-image">SVG Image</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#types-of-contributions">Types of Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#report-bugs">Report Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#fix-bugs">Fix Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#implement-features">Implement Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#write-documentation">Write Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#submit-feedback">Submit Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#tips">Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#development-lead">Development Lead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="history.html#id1">0.1.0 (2016-01-01)</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            
+          
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>  
+
+    <div class="column">
+     <div class="body content" role="main">
+      
+  <div class="section" id="rocket-document">
+<h1>Rocket Document</h1>
+<div class="section" id="rocket">
+<h2>Rocket</h2>
+<p>The basic structure of a rocket document is a &#8220;Rocket&#8221; type as the root:</p>
+<dl class="class">
+<dt id="openrocketdoc.document.Rocket">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Rocket</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span></dt>
+<dd><p>Top level of an Open Rocket Document. A Rocket is made of stages.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the rocket</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Members:</strong></p>
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.aero_properties">
+<code class="descname">aero_properties</code><em class="property"> = None</em></dt>
+<dd><p>Dictionary of aerodynamic properties, like drag and lift coefficients</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.description">
+<code class="descname">description</code><em class="property"> = None</em></dt>
+<dd><p>A description for this design.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.diameter">
+<code class="descname">diameter</code></dt>
+<dd><p><strong>[m]</strong> Largest diameter of any stage on the rocket</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.length">
+<code class="descname">length</code></dt>
+<dd><p><strong>[m]</strong> Get the total length of the rocket</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.manufacturer">
+<code class="descname">manufacturer</code><em class="property"> = None</em></dt>
+<dd><p>If applicable, a manufacturer or prime contractor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> Get the total <em>dry</em> mass of the rocket</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.name">
+<code class="descname">name</code><em class="property"> = None</em></dt>
+<dd><p>Name of this rocket</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Rocket.stages">
+<code class="descname">stages</code><em class="property"> = None</em></dt>
+<dd><p>List of stages that makes up the rocket.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>The rocket is divided into stages:</p>
+</div>
+<div class="section" id="stage">
+<h2>Stage</h2>
+<dl class="class">
+<dt id="openrocketdoc.document.Stage">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Stage</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span></dt>
+<dd><p>One Stage of a Rocket.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of the stage.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Members:</strong></p>
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.components">
+<code class="descname">components</code><em class="property"> = None</em></dt>
+<dd><p>A list of components that make up the stage.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.diameter">
+<code class="descname">diameter</code></dt>
+<dd><p><strong>[m]</strong> Largest diameter of any top-level component of this stage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.length">
+<code class="descname">length</code></dt>
+<dd><p><strong>[m]</strong> Get the total length of this stage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> Get the total <em>dry</em> mass of this stage</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.name">
+<code class="descname">name</code><em class="property"> = None</em></dt>
+<dd><p>Name of the stage.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Stage.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>A stage is a collection of components:</p>
+</div>
+<div class="section" id="components">
+<h2>Components:</h2>
+<p>Types of components available to describe a rocket stage:</p>
+<div class="section" id="nosecone">
+<h3>Nosecone</h3>
+<dl class="class">
+<dt id="openrocketdoc.document.Nosecone">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Nosecone</code><span class="sig-paren">(</span><em>shape</em>, <em>shape_parameter</em>, <em>mass</em>, <em>length</em>, <em>**kwargs</em><span class="sig-paren">)</span></dt>
+<dd><p>Nose of the rocket. Nosecones come in many shapes. See the
+<a class="reference internal" href="#openrocketdoc.document.Noseshape" title="openrocketdoc.document.Noseshape"><code class="xref py py-class docutils literal"><span class="pre">Noseshape</span></code></a> for nosecone shapes that can be described by this
+module.</p>
+<p>In general a Nosecone is the first component in the top stage. It&#8217;s defined
+by a &#8220;shape&#8221;, like a cone or an ogive, and an optional shape parameter used
+to further define the exact shape. The very tip of the Nosecone is used as
+the reference location (0 coordinate) for the rest of the rocket.</p>
+<p>Defining a Nosecone requires a shape, shape parameter, mass, and length. 0
+is a valid number if mass or length is not known yet, though most
+properties of the nose will not be computed in that case. Diameter is an
+optional parameter, and is often not set directly because it depends on
+another part of the rocket (e.g, the overall radius of the vehicle being
+modeled, input later).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>shape</strong> (<a class="reference internal" href="#openrocketdoc.document.Noseshape" title="openrocketdoc.document.Noseshape"><em>Noseshape</em></a>) &#8211; Shape of the nosecone</li>
+<li><strong>shape_parameter</strong> (<em>float</em>) &#8211; Many nosecone types need a unitless number &#8211;
+to describe their construction. See <a class="reference internal" href="#openrocketdoc.document.Noseshape" title="openrocketdoc.document.Noseshape"><code class="xref py py-class docutils literal"><span class="pre">Noseshape</span></code></a> for details</li>
+<li><strong>[kg] mass</strong> (<em>float</em>) &#8211; Dry mass of the nosecone</li>
+<li><strong>[m] length</strong> (<em>float</em>) &#8211; Tip to base (not including internal structure) length of the nosecone</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">**kwargs:</th><td class="field-body"><ul class="first simple">
+<li><strong>[m] diameter</strong> (<cite>float</cite>) diameter at the base</li>
+<li><strong>material_name</strong> (<cite>str</cite>) name of the main material this component is made of.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Nosecone</span><span class="p">(</span><span class="n">Noseshape</span><span class="o">.</span><span class="n">CONE</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="mf">0.254</span><span class="p">)</span>
+<span class="go">&lt;openrocketdoc.document.Nosecone (0.70 kg)&gt;</span>
+</pre></div>
+</div>
+<p><strong>Members:</strong></p>
+<dl class="method">
+<dt id="openrocketdoc.document.Nosecone.add_class_tag">
+<code class="descname">add_class_tag</code><span class="sig-paren">(</span><em>newclass</em>, <em>newtag</em><span class="sig-paren">)</span></dt>
+<dd><p>Add a new tag that is part of a tag collection (class)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>newclass</strong> (<em>str</em>) &#8211; class that the tag is a member of</li>
+<li><strong>tag</strong> (<em>str</em>) &#8211; the tag to add</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.color">
+<code class="descname">color</code></dt>
+<dd><p>The color (if defined) of this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.component_mass">
+<code class="descname">component_mass</code></dt>
+<dd><p><strong>[kg]</strong> The <em>dry mass</em> of just this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> The total <em>dry mass</em> of this component, <strong>including all
+subcomponents</strong>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.material_name">
+<code class="descname">material_name</code></dt>
+<dd><p>The name of the main material this component is made of.
+Example: &#8220;Aluminium&#8221; or &#8220;440 Stainless&#8221;. This is not used directly,
+but rather is for descriptive purposes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Nosecone.surface_roughness">
+<code class="descname">surface_roughness</code></dt>
+<dd><p><strong>[μm]</strong> The surface roughness of the Nose</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="openrocketdoc.document.Noseshape">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Noseshape</code></dt>
+<dd><p>Enum defining possible shapes of a nosecone.</p>
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.BICONIC">
+<code class="descname">BICONIC</code><em class="property"> = &lt;Noseshape.BICONIC: 3&gt;</em></dt>
+<dd><p>A Cone with a conically blunted tip</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.CONE">
+<code class="descname">CONE</code><em class="property"> = &lt;Noseshape.CONE: 1&gt;</em></dt>
+<dd><p>A simple cone.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.ELLIPTICAL">
+<code class="descname">ELLIPTICAL</code><em class="property"> = &lt;Noseshape.ELLIPTICAL: 7&gt;</em></dt>
+<dd><p>A nose that is one half of an ellipse</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.HAACK_SERIES">
+<code class="descname">HAACK_SERIES</code><em class="property"> = &lt;Noseshape.HAACK_SERIES: 11&gt;</em></dt>
+<dd><p>Cone edges are defined by minimal-drag Sears–Haack body with constant C</p>
+<ul class="simple">
+<li>C = 1/3 for LV-Haack</li>
+<li>C = 0 for LD-Haack, defined as Von Karman</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.PARABOLIC">
+<code class="descname">PARABOLIC</code><em class="property"> = &lt;Noseshape.PARABOLIC: 8&gt;</em></dt>
+<dd><p>Similar to elliptical nose, but made of a parabola rather then ellipse</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.POWER_SERIES">
+<code class="descname">POWER_SERIES</code><em class="property"> = &lt;Noseshape.POWER_SERIES: 10&gt;</em></dt>
+<dd><p>Cone edges are defined by a set of polynomial equations.</p>
+<p>For n = 0..1: y = R(x/L)^n</p>
+<ul class="simple">
+<li>n = 1 is cone</li>
+<li>n = 0.75 for a 3/4 power</li>
+<li>n = 0.5 for a 1/2 power (parabola)</li>
+<li>n = 0 for a cylinder</li>
+</ul>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.SECANT_OGIVE">
+<code class="descname">SECANT_OGIVE</code><em class="property"> = &lt;Noseshape.SECANT_OGIVE: 5&gt;</em></dt>
+<dd><p>An ovgive nose not tangent to body</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.SPHERE_BLUNTED_CONE">
+<code class="descname">SPHERE_BLUNTED_CONE</code><em class="property"> = &lt;Noseshape.SPHERE_BLUNTED_CONE: 2&gt;</em></dt>
+<dd><p>A Cone with a spherically blunt tip</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.SPHERE_BLUNTED_OGIVE">
+<code class="descname">SPHERE_BLUNTED_OGIVE</code><em class="property"> = &lt;Noseshape.SPHERE_BLUNTED_OGIVE: 6&gt;</em></dt>
+<dd><p>A tangent ogive cone with a spherically blunted tip</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.TANGENT_OGIVE">
+<code class="descname">TANGENT_OGIVE</code><em class="property"> = &lt;Noseshape.TANGENT_OGIVE: 4&gt;</em></dt>
+<dd><p>A nosecone defined as tangent (to body) set of ogives</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Noseshape.VONKARMAN">
+<code class="descname">VONKARMAN</code><em class="property"> = &lt;Noseshape.VONKARMAN: 9&gt;</em></dt>
+<dd><p>The Von Karman nosecone is a kind of optimzed nosecone shape. It&#8217;s
+formed by a Haack series (C = 0) giving minimum drag for the given length and diameter.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="bodytube">
+<h3>Bodytube</h3>
+<dl class="class">
+<dt id="openrocketdoc.document.Bodytube">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Bodytube</code><span class="sig-paren">(</span><em>name</em>, <em>mass</em>, <em>length</em>, <em>**kwargs</em><span class="sig-paren">)</span></dt>
+<dd><p>A cylindrical section of the outer body of the rocket.</p>
+<p>The main part of a rocket is going to be a long cylindrical tube.</p>
+<p>A name, the mass and length are required. 0 is a valid number if mass or
+length is not known yet, though most properties of the component will not
+be computed in that case. Diameter is an optional parameter, and is often
+not set directly because it depends on another part of the rocket (e.g, the
+overall radius of the vehicle being modeled, input later).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the component</li>
+<li><strong>[kg] mass</strong> (<em>float</em>) &#8211; Dry mass of this section of body</li>
+<li><strong>[m] length</strong> (<em>float</em>) &#8211; Length of this section of body</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">**kwargs:</th><td class="field-body"><ul class="first simple">
+<li><strong>[m] diameter</strong> (<cite>float</cite>) diameter at the base</li>
+<li><strong>material_name</strong> (<cite>str</cite>) name of the main material this component is made of.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Bodytube</span><span class="p">(</span><span class="s2">&quot;My Tube&quot;</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">0.538</span><span class="p">)</span>
+<span class="go">&lt;openrocketdoc.document.Bodytube &quot;My Tube&quot; (1.20 kg)&gt;</span>
+</pre></div>
+</div>
+<p><strong>Members:</strong></p>
+<dl class="method">
+<dt id="openrocketdoc.document.Bodytube.add_class_tag">
+<code class="descname">add_class_tag</code><span class="sig-paren">(</span><em>newclass</em>, <em>newtag</em><span class="sig-paren">)</span></dt>
+<dd><p>Add a new tag that is part of a tag collection (class)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>newclass</strong> (<em>str</em>) &#8211; class that the tag is a member of</li>
+<li><strong>tag</strong> (<em>str</em>) &#8211; the tag to add</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.color">
+<code class="descname">color</code></dt>
+<dd><p>The color (if defined) of this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.component_mass">
+<code class="descname">component_mass</code></dt>
+<dd><p><strong>[kg]</strong> The <em>dry mass</em> of just this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.density">
+<code class="descname">density</code></dt>
+<dd><p><strong>[kg/m³]</strong> The average material density of the tube</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> The total <em>dry mass</em> of this component, <strong>including all
+subcomponents</strong>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.material_name">
+<code class="descname">material_name</code></dt>
+<dd><p>The name of the main material this component is made of.
+Example: &#8220;Aluminium&#8221; or &#8220;440 Stainless&#8221;. This is not used directly,
+but rather is for descriptive purposes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.surface_area">
+<code class="descname">surface_area</code></dt>
+<dd><p><strong>[m²]</strong> Surface area (skin of the vehicle)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Bodytube.surface_roughness">
+<code class="descname">surface_roughness</code></dt>
+<dd><p><strong>[μm]</strong> The surface roughness of the Body tube.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="mass">
+<h3>Mass</h3>
+<dl class="class">
+<dt id="openrocketdoc.document.Mass">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Mass</code><span class="sig-paren">(</span><em>name</em>, <em>mass</em>, <em>**kwargs</em><span class="sig-paren">)</span></dt>
+<dd><p>Generic mass component. This is a catch-all for internal structure that
+contributes to the mass model of the rocket but doesn&#8217;t serve a specific
+purpose to be modeled. Often you know some internal detail like a flange or
+flight computer that is heavy, but it doesn&#8217;t contribute to the
+aerodynamics. When in doubt use this. Give it a descriptive name!</p>
+<p>Defining a Mass component requires a name and a mass. Many optional
+arguments can be set that are used to compute, for example, density.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; name of this mass</li>
+<li><strong>[kg] mass</strong> (<em>float</em>) &#8211; mass of the component</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">**kwargs:</th><td class="field-body"><ul class="first simple">
+<li><strong>[m] length</strong> (<cite>float</cite>) overall length of the mass</li>
+<li><strong>[m] diameter</strong> (<cite>float</cite>) greatest diameter of the mass</li>
+<li><strong>material_name</strong> (<cite>str</cite>) name of the main material this component is made of.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Mass</span><span class="p">(</span><span class="s2">&quot;Flight Computer&quot;</span><span class="p">,</span> <span class="mf">0.0215</span><span class="p">)</span>
+<span class="go">&lt;openrocketdoc.document.Mass &quot;Flight Computer&quot; (0.02 kg)&gt;</span>
+</pre></div>
+</div>
+<p><strong>Members:</strong></p>
+<dl class="method">
+<dt id="openrocketdoc.document.Mass.add_class_tag">
+<code class="descname">add_class_tag</code><span class="sig-paren">(</span><em>newclass</em>, <em>newtag</em><span class="sig-paren">)</span></dt>
+<dd><p>Add a new tag that is part of a tag collection (class)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>newclass</strong> (<em>str</em>) &#8211; class that the tag is a member of</li>
+<li><strong>tag</strong> (<em>str</em>) &#8211; the tag to add</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Mass.color">
+<code class="descname">color</code></dt>
+<dd><p>The color (if defined) of this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Mass.component_mass">
+<code class="descname">component_mass</code></dt>
+<dd><p><strong>[kg]</strong> The <em>dry mass</em> of just this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Mass.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> The total <em>dry mass</em> of this component, <strong>including all
+subcomponents</strong>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Mass.material_name">
+<code class="descname">material_name</code></dt>
+<dd><p>The name of the main material this component is made of.
+Example: &#8220;Aluminium&#8221; or &#8220;440 Stainless&#8221;. This is not used directly,
+but rather is for descriptive purposes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Mass.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="fin">
+<h3>Fin</h3>
+<dl class="class">
+<dt id="openrocketdoc.document.Fin">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Fin</code><span class="sig-paren">(</span><em>name</em>, <em>root</em>, <em>tip</em>, <em>span</em>, <em>sweep=None</em>, <em>sweepangle=45.0</em>, <em>**kwargs</em><span class="sig-paren">)</span></dt>
+<dd><p>A single fin.</p>
+<p>Almost all sounding rockets have a set of fins near the base of the
+vehicle. This class represents a single fin. If there are multiple
+symmetric fins, an <a class="reference internal" href="#openrocketdoc.document.Finset" title="openrocketdoc.document.Finset"><code class="xref py py-class docutils literal"><span class="pre">Finset</span></code></a> can be used to handle replication.</p>
+<p>Fins are assumed to be trapezoidal (Truncated delta wings). To define a fin
+you need to know the length of several chords. The Fin takes the Root
+Chord, Tip Chord and span (height) of the fin.</p>
+<p>The fin sweep can either be defined as a distance (from the start of the
+fin to the beginning of the tip) or as the angle the leading edge of the
+fin makes with respect to the body of the rocket. Do not set both of these
+at the same time, rather set the one convenient for you.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; The name of this fin</li>
+<li><strong>[m] root</strong> (<em>float</em>) &#8211; Length of the Root Chord</li>
+<li><strong>[m] tip</strong> (<em>float</em>) &#8211; Length of the Tip Chord</li>
+<li><strong>[m] span</strong> (<em>float</em>) &#8211; Length of height of the fin away from the rocket
+body</li>
+<li><strong>[m] sweep</strong> (<em>float</em>) &#8211; (Optional) Distance from the start of the
+fin to the beginning of the tip</li>
+<li><strong>[°] sweepangle</strong> (<em>float</em>) &#8211; (Optional) Angle the leading edge of the
+fin makes with respect to the body of the
+rocket.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Fin</span><span class="p">(</span><span class="s2">&quot;My Fin&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">sweepangle</span><span class="o">=</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="go">&lt;openrocketdoc.document.Fin &quot;My Fin&quot;&gt;</span>
+</pre></div>
+</div>
+<p><strong>Members:</strong></p>
+<dl class="method">
+<dt id="openrocketdoc.document.Fin.add_class_tag">
+<code class="descname">add_class_tag</code><span class="sig-paren">(</span><em>newclass</em>, <em>newtag</em><span class="sig-paren">)</span></dt>
+<dd><p>Add a new tag that is part of a tag collection (class)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>newclass</strong> (<em>str</em>) &#8211; class that the tag is a member of</li>
+<li><strong>tag</strong> (<em>str</em>) &#8211; the tag to add</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.color">
+<code class="descname">color</code></dt>
+<dd><p>The color (if defined) of this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.component_mass">
+<code class="descname">component_mass</code></dt>
+<dd><p><strong>[kg]</strong> The <em>dry mass</em> of just this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> The total <em>dry mass</em> of this component, <strong>including all
+subcomponents</strong>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.material_name">
+<code class="descname">material_name</code></dt>
+<dd><p>The name of the main material this component is made of.
+Example: &#8220;Aluminium&#8221; or &#8220;440 Stainless&#8221;. This is not used directly,
+but rather is for descriptive purposes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.root">
+<code class="descname">root</code><em class="property"> = None</em></dt>
+<dd><p><strong>[m]</strong> The Root Chord of the Fin</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.span">
+<code class="descname">span</code><em class="property"> = None</em></dt>
+<dd><p><strong>[m]</strong> Height of the fin away from the rocket body</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.sweep">
+<code class="descname">sweep</code></dt>
+<dd><p><strong>[m]</strong> The Distance from the start of the fin to the beginning of
+the tip.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.sweepangle">
+<code class="descname">sweepangle</code></dt>
+<dd><p><strong>[°]</strong> Angle the leading edge of the fin makes with respect to the
+body of the rocket.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Fin.tip">
+<code class="descname">tip</code><em class="property"> = None</em></dt>
+<dd><p><strong>[m]</strong> The Tip Chord of the Fin</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="finset">
+<h3>Finset</h3>
+<dl class="class">
+<dt id="openrocketdoc.document.Finset">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Finset</code><span class="sig-paren">(</span><em>name</em>, <em>fin</em>, <em>number_of_fins</em>, <em>**kwargs</em><span class="sig-paren">)</span></dt>
+<dd><p>A set of identical fins, set symmetrically around the vehicle.</p>
+<p>For convince and &#8220;Don&#8217;t Repeat Yourself&#8221; sake, a identical, symmetric set
+of fins can be defined as a single &#8220;finset&#8221;. Build a single <a class="reference internal" href="#openrocketdoc.document.Fin" title="openrocketdoc.document.Fin"><code class="xref py py-class docutils literal"><span class="pre">Fin</span></code></a>
+object, and pass that to the constructor of this class along with the
+number of fins, and the full finset is built for you.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; Name of the component</li>
+<li><strong>fin</strong> (<a class="reference internal" href="#openrocketdoc.document.Fin" title="openrocketdoc.document.Fin"><em>Fin</em></a>) &#8211; A single Fin object to be repeated as part of the set</li>
+<li><strong>number_of_fins</strong> (<em>int</em>) &#8211; Number of fins in the set</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a_fin</span> <span class="o">=</span> <span class="n">Fin</span><span class="p">(</span><span class="s2">&quot;My Fin&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.24</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">sweepangle</span><span class="o">=</span><span class="mf">45.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Finset</span><span class="p">(</span><span class="s2">&quot;Fins&quot;</span><span class="p">,</span> <span class="n">a_fin</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">&lt;openrocketdoc.document.Finset &quot;Fins&quot; (3 fins)&gt;</span>
+</pre></div>
+</div>
+<p><strong>Members:</strong></p>
+<dl class="method">
+<dt id="openrocketdoc.document.Finset.add_class_tag">
+<code class="descname">add_class_tag</code><span class="sig-paren">(</span><em>newclass</em>, <em>newtag</em><span class="sig-paren">)</span></dt>
+<dd><p>Add a new tag that is part of a tag collection (class)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>newclass</strong> (<em>str</em>) &#8211; class that the tag is a member of</li>
+<li><strong>tag</strong> (<em>str</em>) &#8211; the tag to add</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.color">
+<code class="descname">color</code></dt>
+<dd><p>The color (if defined) of this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.component_mass">
+<code class="descname">component_mass</code></dt>
+<dd><p><strong>[kg]</strong> The <em>dry mass</em> of just this component.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.fin">
+<code class="descname">fin</code></dt>
+<dd><p>A single fin prototype. Update this to update all fins to a new fin object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.mass">
+<code class="descname">mass</code></dt>
+<dd><p><strong>[kg]</strong> The total <em>dry mass</em> of this component, <strong>including all
+subcomponents</strong>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.material_name">
+<code class="descname">material_name</code></dt>
+<dd><p>The name of the main material this component is made of.
+Example: &#8220;Aluminium&#8221; or &#8220;440 Stainless&#8221;. This is not used directly,
+but rather is for descriptive purposes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Finset.number_of_fins">
+<code class="descname">number_of_fins</code></dt>
+<dd><p>The number of fins in the finset.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="engine">
+<h2>Engine</h2>
+<dl class="class">
+<dt id="openrocketdoc.document.Engine">
+<em class="property">class </em><code class="descclassname">openrocketdoc.document.</code><code class="descname">Engine</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span></dt>
+<dd><p>The business end of the rocket.</p>
+<p>This class can define either the bulk properties of the engine (like total
+thrust and Isp) or define a thrustcuve as a function of time. If a
+thurstcuve is provided then the bulk numbers are computed from the curve.
+If no curve is provided then a simple thrustcuve (flat) is computed.</p>
+<p>Test if the class is constrained (that is, enough information is provided to
+fully solve a thrustcurve) using Engine.constrained (returns a boolean)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<em>str</em>) &#8211; Name of this engine.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Members:</strong></p>
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.I_total">
+<code class="descname">I_total</code></dt>
+<dd><p><strong>[N·s]</strong> Total impulse of the engine over a nominal burn. Either computer
+from a thrust curve, or can be set directly to use in computing
+desired performance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.Isp">
+<code class="descname">Isp</code></dt>
+<dd><p><strong>[s]</strong> Average Specific Impulse (Isp) of the engine. Either computed from a
+thrust curve or can be set directly and used to compute theoretical
+performance numbers based on chemistry.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.V_e">
+<code class="descname">V_e</code></dt>
+<dd><p><strong>[m/s]</strong> Effective velocity (average) of the exhaust gasses of the
+engine.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.constrained">
+<code class="descname">constrained</code></dt>
+<dd><p>Is the system fully described?</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">boolean</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.diameter">
+<code class="descname">diameter</code></dt>
+<dd><p><strong>[m]</strong> Diameter of the engine system</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.length">
+<code class="descname">length</code></dt>
+<dd><p><strong>[m]</strong> Length of the engine, be that the actual length of a self-contained
+solid motor, or the whole system length of a liquid fuel system tanks
+and all.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.m_frac">
+<code class="descname">m_frac</code></dt>
+<dd><p>[unitless] Mass fraction of the engine system. The ratio of the
+loaded mass of the engine system and the empty weight. Often an
+important figure of merit in designing a rocket.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.m_init">
+<code class="descname">m_init</code></dt>
+<dd><p><strong>[kg]</strong> Initial weight of the engine system, including propellent.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.m_prop">
+<code class="descname">m_prop</code></dt>
+<dd><p><strong>[kg]</strong> Mass of the propellent in a loaded engine. This is total mass of
+the fuel and oxidiser.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.name_slug">
+<code class="descname">name_slug</code></dt>
+<dd><p>Create a reusable slug from the engine name, useful for filenames
+and the like.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">openrocketdoc.document</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="s2">&quot;My Rocket Motor 12&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">engine</span><span class="o">.</span><span class="n">name</span>
+<span class="go">My Rocket Motor 12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">engine</span><span class="o">.</span><span class="n">name_slug</span>
+<span class="go">my-rocket-motor-12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.nar_code">
+<code class="descname">nar_code</code></dt>
+<dd><p>The NAR code for a rocket motor is a letter code for the total
+impulse.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.nar_percent">
+<code class="descname">nar_percent</code></dt>
+<dd><p>What percent of the NAR impulse class is the motor</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.t_burn">
+<code class="descname">t_burn</code></dt>
+<dd><p><strong>[s]</strong> Burn time. The time that it takes to burn all the propellent in a
+nominal burn. Either computed from a thrust curve or can be set directly for
+computing desired performance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.thrust_avg">
+<code class="descname">thrust_avg</code></dt>
+<dd><p><strong>[N]</strong> Average thrust of the motor over the length of it&#8217;s nominal burn.
+Either computed from a thrust curve, or can be set directly to use in
+computing desired performance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="openrocketdoc.document.Engine.thrust_peak">
+<code class="descname">thrust_peak</code></dt>
+<dd><p><strong>[N]</strong> Peak thrust during a nominal burn.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right ">
+          <a href="nomenclature.html" title="Descibing Rockets"
+             accesskey="P">previous</a></li>
+        <li class="right is-text-right">
+          <a href="loaders.html" title="Loaders"
+             accesskey="N">next</a></li> 
+      </ul>
+    </div>
+
+     </div>
+   </div>
+
+  </div>
+ </div>
+
+  </section>
+    <footer class="footer" role="contentinfo">
+    <div class="container">
+        &copy; Copyright 2016, Nathan Bergey et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    </footer>
+  </body>
+</html>

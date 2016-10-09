@@ -1,0 +1,272 @@
+<!doctype html>
+
+
+<html >
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Open Rocket Document Format &mdash; Open Rocket Document format 0.1.0 documentation</title>
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/assets/style.css">
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+
+
+      <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/apple-touch-icon-57x57.png">
+      <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/apple-touch-icon-60x60.png">
+      <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/apple-touch-icon-72x72.png">
+      <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-touch-icon-76x76.png">
+      <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/apple-touch-icon-114x114.png">
+      <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/apple-touch-icon-120x120.png">
+      <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/apple-touch-icon-144x144.png">
+      <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/apple-touch-icon-152x152.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/apple-touch-icon-180x180.png">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-32x32.png" sizes="32x32">
+      <link rel="icon" type="image/png" href="/assets/img/android-chrome-192x192.png" sizes="192x192">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-96x96.png" sizes="96x96">
+      <link rel="icon" type="image/png" href="/assets/img/favicon-16x16.png" sizes="16x16">
+      <link rel="shortcut icon" href="favicon.ico">
+      <meta name="msapplication-TileColor" content="#6677cc">
+      <meta name="msapplication-TileImage" content="/assets/img/mstile-144x144.png">
+      <meta name="theme-color" content="#6677cc">
+    <link rel="top" title="Open Rocket Document format 0.1.0 documentation" href="#" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+  </head>
+  <body role="document">
+ <section class="hero is-primary is-left is-bold">
+   <div class="hero-header">
+    <header class="header">
+     <div class="container">
+
+      <div class="header-left">
+       <a class="header-item" href="/">
+        <img src="/assets/img/title.png" alt="open-aerospace">
+       </a>
+      </div>
+
+      <div id="header-menu" class="header-right header-menu">
+       <span class="header-item">
+        <a  href="/">Home</a>
+       </span>
+       <span class="header-item">
+        <a  href="/about/">About</a>
+       </span>
+       <span class="header-item">
+        <a class="button is-info is-outlined is-inverted" href="https://github.com/open-aerospace">
+         <i class="fa fa-github"></i>
+         GitHub
+         </a>
+       </span>
+      </div>
+     </div>
+    </header>
+   </div>
+  </section>
+
+
+<section class="section">
+
+ <div class="container">
+  <div class="columns">
+      <div class="sphinxsidebar column is-3" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+
+          
+            
+            
+              <div class="toc">
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Open Rocket Document Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomenclature.html">Descibing Rockets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="document.html">Rocket Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="document.html#rocket">Rocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#stage">Stage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#components">Components:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="document.html#nosecone">Nosecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#bodytube">Bodytube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#mass">Mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#fin">Fin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="document.html#finset">Finset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#engine">Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Loaders</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#openrocket">OpenRocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rasp-engine">RASP Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writers.html">Writers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#native-open-rocket-document">Native Open Rocket Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rasp-engine">RASP Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#svg-image">SVG Image</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#types-of-contributions">Types of Contributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#report-bugs">Report Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#fix-bugs">Fix Bugs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#implement-features">Implement Features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#write-documentation">Write Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contributing.html#submit-feedback">Submit Feedback</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#tips">Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#development-lead">Development Lead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="history.html#id1">0.1.0 (2016-01-01)</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            
+          
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>  
+
+    <div class="column">
+     <div class="body content" role="main">
+      
+  <div class="toctree-wrapper compound">
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Open Rocket Document Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nomenclature.html">Descibing Rockets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="document.html">Rocket Document</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="document.html#rocket">Rocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#stage">Stage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#components">Components:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="document.html#engine">Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="loaders.html">Loaders</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#openrocket">OpenRocket</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loaders.html#rasp-engine">RASP Engine</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writers.html">Writers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#native-open-rocket-document">Native Open Rocket Document</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rocksim-engine">RockSim Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#rasp-engine">RASP Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writers.html#svg-image">SVG Image</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#types-of-contributions">Types of Contributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#pull-request-guidelines">Pull Request Guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#tips">Tips</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Credits</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#development-lead">Development Lead</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authors.html#contributors">Contributors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="history.html#id1">0.1.0 (2016-01-01)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="open-rocket-document-format">
+<h1>Open Rocket Document Format</h1>
+<a class="reference external image-reference" href="https://pypi.python.org/pypi/openrocketdoc"><img src="https://img.shields.io/pypi/v/openrocketdoc.svg" /></a>
+<a class="reference external image-reference" href="https://travis-ci.org/open-aerospace/openrocketdoc"><img alt="https://travis-ci.org/open-aerospace/openrocketdoc.svg?branch=master" src="https://travis-ci.org/open-aerospace/openrocketdoc.svg?branch=master" /></a>
+<a class="reference external image-reference" href="https://coveralls.io/github/open-aerospace/openrocketdoc?branch=master"><img alt="https://coveralls.io/repos/github/open-aerospace/openrocketdoc/badge.svg?branch=master" src="https://coveralls.io/repos/github/open-aerospace/openrocketdoc/badge.svg?branch=master" /></a>
+<p><em>Open Rocket Document</em> (.ord) is a suggested open document standard for
+describing sounding rockets. Includes many useful format transformations for
+use with scientific computing packages.</p>
+<ul class="simple">
+<li>Python 2 and 3 compatible</li>
+<li>Free software: GPLv3</li>
+<li>Full Documentation: <a class="reference external" href="https://open-aerospace.github.io/openrocketdoc">https://open-aerospace.github.io/openrocketdoc</a>.</li>
+</ul>
+<div class="section" id="motivation">
+<h2>Motivation</h2>
+<p>There is no single tool that can do everything. This is true in many fields, and is true in aerospace as well. When it come to simulating rockets there are many packages and programs available. Often it&#8217;s desirable to use many different ones and compare the results. Or it may be that one package only handles aerodynamics, and another makes a mass model. In fact this is quite common, and even desirable, as it lets one write code that does one thing, and one thing well.</p>
+<p>The problem is these programs almost universally don&#8217;t know how to communicate with each other. Sometimes this is intentional, for example certain proprietary programs, other times one program might be a holdover from the 1980&#8217;s, and still use fixed with text file while anything modern would try and use something like JSON.</p>
+<p>The relevant XKCD here is probably apt:</p>
+<img alt="https://imgs.xkcd.com/comics/standards.png" src="https://imgs.xkcd.com/comics/standards.png" />
+<p>However I believe there are to date very few, perhaps none, existing universal standards for describing rockets.</p>
+</div>
+<div class="section" id="goals">
+<h2>Goals</h2>
+<p>The goal is to create an extensible, universal, usable, interchangeable way of describing model and sounding rockets. I want to be able to both read and write to as many possible existing file types, and have a native file type for this project based on YAML (for human readability and to be version control system friendly).</p>
+<p>This &#8220;Open Rocket Document&#8221; should be flexible enough to both roughly describe a preliminary design (say, this tall, this material) and detailed enough to fully describe a rocket that&#8217;s been built and tested (aerodynamic tables, detail mass breakdown, etc.).</p>
+<p>There should also be extensibility, for instance if you want to have your own tags on objects (that might be read and used by a custom program).</p>
+<p>Often a single component (say, a certain fin construction) might be used on many different designs. So there is a strong desire to have the document optionally spread over many files. This would be at odds of a &#8220;Keep It Simple&#8221; approach however, so it remains to be seen how to implement.</p>
+</div>
+<div class="section" id="features">
+<h2>Features</h2>
+<ul class="simple">
+<li>TODO</li>
+</ul>
+</div>
+</div>
+
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <ul>
+        <li class="right is-text-right">
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a></li> 
+      </ul>
+    </div>
+
+     </div>
+   </div>
+
+  </div>
+ </div>
+
+  </section>
+    <footer class="footer" role="contentinfo">
+    <div class="container">
+        &copy; Copyright 2016, Nathan Bergey et al..
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+    </footer>
+  </body>
+</html>
